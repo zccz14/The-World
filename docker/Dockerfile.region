@@ -3,8 +3,8 @@ FROM node:20-alpine
 # Install系统工具
 RUN apk add --no-cache bash shadow sudo git curl
 
-# 全局安装 opencode
-RUN npm install -g opencode
+# 全局安装 opencode-ai
+RUN npm install -g opencode-ai
 
 # 初始化脚本
 COPY docker/init-scripts/init-users.sh /init-users.sh
