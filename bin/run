@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+const path = require('path');
+const fs = require('fs');
+
+// 动态获取 CLI 入口
+const cliPath = path.resolve(__dirname, '../dist/cli/index.js');
+
+// 确保文件存在
+if (!fs.existsSync(cliPath)) {
+  console.error('CLI entry point not found:', cliPath);
+  process.exit(1);
+}
+
+// 启动 CLI
+require(cliPath);

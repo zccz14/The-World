@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+# Install系统工具
+RUN apk add --no-cache bash shadow sudo git curl
+
+# 全局安装 opencode
+RUN npm install -g opencode
+
+# 初始化脚本
+COPY docker/init-scripts/init-users.sh /init-users.sh
+RUN chmod +x /init-users.sh
+
+# Socket Daemon
+COPY dist/region-daemon/daemon.js /daemon/daemon.js
+
+# 创建基础目录
+RUN mkdir -p /world/shared /world/inbox /world/outbox
+
+# 设置权限
+RUN chmod 777 /world/shared
+
+# 启动 daemon
+CMD ["node", "daemon.js"]
