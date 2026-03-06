@@ -18,7 +18,7 @@ export class DockerManager {
     
     const stream = await this.docker.buildImage({
       context,
-      src: [dockerfile],
+      src: ['docker', 'dist'],
     }, {
       t: imageName,
       dockerfile,
