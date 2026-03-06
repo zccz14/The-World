@@ -29,7 +29,7 @@ export default class OracleSend extends Command {
     const docker = new Docker();
     const container = docker.getContainer(flags.region);
 
-    const hostDir = `/var/world/regions/${flags.region}/inbox`;
+    const hostDir = path.join(process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp', '.the-world', 'regions', flags.region, 'inbox');
     const inboxFile = `oracle-${Date.now()}.msg`;
     
     const content = JSON.stringify({

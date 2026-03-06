@@ -26,7 +26,7 @@ export class RegionManager {
       await this.buildRegionImage();
     }
 
-    const hostDir = `/var/world/regions/${regionName}`;
+    const hostDir = path.join(process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp', '.the-world', 'regions', regionName);
     await this.ensureDirectory(hostDir);
 
     await this.dockerManager.createContainer({

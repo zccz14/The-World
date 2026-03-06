@@ -16,6 +16,13 @@
 ```
 宿主机
 │
+├── ~/.the-world/                 # 数据存储目录
+│   ├── regions/
+│   │   └── region-a/
+│   │       ├── shared/           # 共享文件
+│   │       ├── inbox/            # 神谕接收
+│   │       └── outbox/           # AI 输出
+│
 ├── the-world-ai (Node.js CLI + 代理服务器)
 │   ├── dio start                    # 启动系统
 │   ├── dio region create            # 创建 Region 容器
@@ -28,7 +35,7 @@
 │
 └── Region-A (Docker 容器)
     ├── Socket Daemon (root)
-    ├── opencode (全局安装)
+    ├── opencode-ai (全局安装)
     ├── AI-alpha (Linux user)
     ├── AI-beta (Linux user)
     └── AI-gamma (Linux user)
@@ -76,7 +83,7 @@
 
 **技术栈**：
 - Node.js 20 Alpine
-- opencode (全局安装)
+- opencode-ai (全局安装)
 - Linux user 权限模型
 
 ### 4. Socket Daemon
@@ -129,7 +136,7 @@
 用户 → dio oracle send --to alpha --message "hello"
   → TheWorld CLI
     → 记录到 EverMemOS
-    → 写入 /var/world/regions/region-a/inbox/oracle.msg
+    → 写入 ~/.the-world/regions/region-a/inbox/oracle.msg
       → Region 容器
         → AI-alpha 监听 inbox
           → 读取神谕内容
@@ -247,6 +254,9 @@ AI_TARGET_BASE_URL=https://api.openai.com
 
 # 代理服务器端口
 AI_PROXY_PORT=3456
+
+# TheWorld 数据存储路径（可选，默认为 ~/.the-world）
+# WORLD_DATA_DIR=/custom/path/to/data
 ```
 
 ## 下一步
