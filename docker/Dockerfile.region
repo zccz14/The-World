@@ -20,4 +20,4 @@ RUN mkdir -p /world/shared /world/inbox /world/outbox
 RUN chmod 777 /world/shared
 
 # Start daemon
-CMD ["node", "daemon.js"]
+CMD ["node", "/daemon/daemon.js"]
