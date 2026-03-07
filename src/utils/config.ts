@@ -31,6 +31,11 @@ export class Config {
     return parseInt(process.env.AI_PROXY_PORT || '3456', 10);
   }
 
+  static get SERVER_PORT(): number {
+    this.load();
+    return parseInt(process.env.SERVER_PORT || '3344', 10);
+  }
+
   static get LLM_API_KEY(): string {
     this.load();
     return process.env.LLM_API_KEY || '';
@@ -39,11 +44,6 @@ export class Config {
   static get VECTORIZE_API_KEY(): string {
     this.load();
     return process.env.VECTORIZE_API_KEY || '';
-  }
-
-  static get SERVER_PORT(): number {
-    this.load();
-    return parseInt(process.env.SERVER_PORT || '1996', 10);
   }
 
   static validate(): { valid: boolean; missing: string[] } {
