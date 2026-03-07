@@ -294,12 +294,20 @@ WORLD_DATA_DIR=~/.the-world
 
 ## 未实现功能
 
+❌ **核心架构组件**:
+
+- **World Scheduler（世界调度器）** ⭐ 关键缺失
+  - 当前架构是完全被动响应式的
+  - 缺少驱动 AI 自主性的核心机制
+  - 无法实现 Heartbeat、任务队列、优先级调度
+  - 详见 `docs/decisions/004-world-scheduler.md`
+
 ❌ **愿景功能**:
 
 - 多用户隔离（当前为单一 agent 用户）
 - AI 投影机制
 - Region 间通信
-- Heartbeat 常驻机制
+- Heartbeat 常驻机制（依赖 World Scheduler）
 - 文件系统消息传递（inbox/outbox）
 - AI 间进程通信
 
