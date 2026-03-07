@@ -1,52 +1,46 @@
 import { Command } from '@oclif/core';
-import { AIProxyServer } from '../../proxy/AIProxyServer';
-import { WorldMemory } from '../../memory/MemoryManager';
-import { Config } from '../../utils/config';
+import { APIClient } from '../utils/apiClient';
+import { spawn } from 'child_process';
+import path from 'path';
+import fs from 'fs';
 
 export default class Start extends Command {
-  static description = '启动 TheWorld 系统';
+  static description = '启动 TheWorld 服务器';
 
   async run() {
-    this.log('🚀 启动 TheWorld 系统...');
+    const client = new APIClient();
 
-    const validation = Config.validate();
-    if (!validation.valid) {
-      this.error(`Missing environment variables: ${validation.missing.join(', ')}`);
+    if (await client.isServerRunning()) {
+      this.log('✅ TheWorld 服务器已经在运行');
+      return;
     }
 
-    const memory = new WorldMemory(Config.EVERMEMOS_URL);
+    this.log('🚀 启动 TheWorld 服务器...');
 
-    this.log('⏳ 检查 EverMemOS 连接...');
-    try {
-      const EverMemOSClient = require('../../memory/EverMemOSClient').EverMemOSClient;
-      const client = new EverMemOSClient(Config.EVERMEMOS_URL);
-      const healthy = await client.healthCheck();
-      
-      if (!healthy) {
-        this.warn('⚠️  EverMemOS 连接失败，请确保已启动 EverMemOS');
-      } else {
-        this.log('✅ EverMemOS 连接成功');
-      }
-    } catch (error) {
-      this.warn('⚠️  无法连接到 EverMemOS');
+    const serverPath = path.join(__dirname, '../../server/index.js');
+    const pidFile = path.join(process.env.HOME || '/tmp', '.the-world', 'server.pid');
+    
+    if (!fs.existsSync(serverPath)) {
+      this.error('服务器文件不存在，请先运行 npm run build');
     }
 
-    this.log('🔧 启动 AI 代理服务器...');
-    const proxy = new AIProxyServer({
-      port: Config.AI_PROXY_PORT,
-      realApiKey: Config.REAL_AI_API_KEY,
-      targetBaseUrl: Config.AI_TARGET_BASE_URL,
-      memory,
+    const server = spawn('node', [serverPath], {
+      detached: true,
+      stdio: 'ignore',
+      env: process.env,
     });
 
-    this.log('✅ TheWorld 系统已启动');
-    this.log(`  - AI Proxy: http://localhost:${Config.AI_PROXY_PORT}`);
-    this.log(`  - EverMemOS: ${Config.EVERMEMOS_URL}`);
-    this.log('\n按 Ctrl+C 停止服务器');
+    server.unref();
 
-    process.on('SIGINT', () => {
-      this.log('\n\n👋 停止 TheWorld 系统...');
-      process.exit(0);
-    });
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    if (fs.existsSync(pidFile)) {
+      this.log('✅ TheWorld 服务器已启动');
+      this.log(`   PID: ${fs.readFileSync(pidFile, 'utf-8')}`);
+      this.log('   Server: http://localhost:3344');
+      this.log('   AI Proxy: http://localhost:3456');
+    } else {
+      this.error('❌ 启动失败，请检查日志');
+    }
   }
 }

@@ -1,8 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import { AIUserManager } from '../../../core/AIUserManager';
-import { AIProxyServer } from '../../../proxy/AIProxyServer';
-import { WorldMemory } from '../../../memory/MemoryManager';
-import { Config } from '../../../utils/config';
+import { APIClient } from '../../utils/apiClient';
 
 export default class AICreate extends Command {
   static description = '创建 AI 用户';
@@ -14,25 +11,20 @@ export default class AICreate extends Command {
 
   async run() {
     const { flags } = await this.parse(AICreate);
+    const client = new APIClient();
+
+    if (!(await client.isServerRunning())) {
+      this.error('TheWorld 服务器未运行，请先执行 dio start');
+    }
 
     this.log(`🤖 创建 AI: ${flags.name} (Region: ${flags.region})`);
 
-    const memory = new WorldMemory(Config.EVERMEMOS_URL);
-    const proxy = new AIProxyServer({
-      port: Config.AI_PROXY_PORT,
-      realApiKey: Config.REAL_AI_API_KEY,
-      targetBaseUrl: Config.AI_TARGET_BASE_URL,
-      memory,
-    });
-
-    const aiManager = new AIUserManager(memory, proxy);
-
     try {
-      const dummyKey = await aiManager.createAI(flags.name, flags.region);
+      const result = await client.createAI(flags.name, flags.region);
       this.log(`✅ AI ${flags.name} 已创建`);
-      this.log(`   Dummy Key: ${dummyKey}`);
+      this.log(`   Dummy Key: ${result.dummyKey}`);
     } catch (error: any) {
-      this.error(`创建 AI 失败: ${error.message}`);
+      this.error(`创建 AI 失败: ${error.response?.data?.error || error.message}`);
     }
   }
 }

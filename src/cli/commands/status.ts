@@ -1,24 +1,25 @@
 import { Command } from '@oclif/core';
-import { Config } from '../../utils/config';
+import { APIClient } from '../utils/apiClient';
 
 export default class Status extends Command {
   static description = '查看系统状态';
 
   async run() {
-    this.log('📊 TheWorld 系统状态\n');
+    const client = new APIClient();
 
-    this.log(`EverMemOS URL: ${Config.EVERMEMOS_URL}`);
-    this.log(`AI Proxy Port: ${Config.AI_PROXY_PORT}`);
-    this.log(`Target API: ${Config.AI_TARGET_BASE_URL}`);
+    if (!(await client.isServerRunning())) {
+      this.log('❌ TheWorld 服务器未运行');
+      return;
+    }
 
     try {
-      const EverMemOSClient = require('../../memory/EverMemOSClient').EverMemOSClient;
-      const client = new EverMemOSClient(Config.EVERMEMOS_URL);
-      const healthy = await client.healthCheck();
-      
-      this.log(`EverMemOS 状态: ${healthy ? '✅ 健康' : '❌ 未连接'}`);
+      const status = await client.getStatus();
+      this.log('✅ TheWorld 服务器运行中');
+      this.log(`   运行时间: ${Math.floor(status.uptime)}秒`);
+      this.log(`   Region 数量: ${status.regions}`);
+      this.log(`   AI 用户数量: ${status.aiIdentities}`);
     } catch (error) {
-      this.log('EverMemOS 状态: ❌ 未连接');
+      this.error(`获取状态失败: ${error}`);
     }
   }
 }

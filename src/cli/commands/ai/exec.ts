@@ -1,8 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import { AIUserManager } from '../../../core/AIUserManager';
-import { AIProxyServer } from '../../../proxy/AIProxyServer';
-import { WorldMemory } from '../../../memory/MemoryManager';
-import { Config } from '../../../utils/config';
+import { APIClient } from '../../utils/apiClient';
 
 export default class AIExec extends Command {
   static description = '在 AI 上执行命令';
@@ -15,22 +12,17 @@ export default class AIExec extends Command {
 
   async run() {
     const { flags } = await this.parse(AIExec);
+    const client = new APIClient();
 
-    const memory = new WorldMemory(Config.EVERMEMOS_URL);
-    const proxy = new AIProxyServer({
-      port: Config.AI_PROXY_PORT,
-      realApiKey: Config.REAL_AI_API_KEY,
-      targetBaseUrl: Config.AI_TARGET_BASE_URL,
-      memory,
-    });
-
-    const aiManager = new AIUserManager(memory, proxy);
+    if (!(await client.isServerRunning())) {
+      this.error('TheWorld 服务器未运行，请先执行 dio start');
+    }
 
     try {
-      const result = await aiManager.execCommand(flags.ai, flags.region, flags.cmd);
+      const result = await client.execCommand(flags.ai, flags.region, flags.cmd);
       this.log(result);
     } catch (error: any) {
-      this.error(`执行命令失败: ${error.message}`);
+      this.error(`执行命令失败: ${error.response?.data?.error || error.message}`);
     }
   }
 }

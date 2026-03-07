@@ -41,6 +41,11 @@ export class Config {
     return process.env.VECTORIZE_API_KEY || '';
   }
 
+  static get SERVER_PORT(): number {
+    this.load();
+    return parseInt(process.env.SERVER_PORT || '1996', 10);
+  }
+
   static validate(): { valid: boolean; missing: string[] } {
     this.load();
     const missing: string[] = [];

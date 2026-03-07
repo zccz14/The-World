@@ -1,8 +1,5 @@
 import { Command, Flags } from '@oclif/core';
-import { AIUserManager } from '../../../core/AIUserManager';
-import { AIProxyServer } from '../../../proxy/AIProxyServer';
-import { WorldMemory } from '../../../memory/MemoryManager';
-import { Config } from '../../../utils/config';
+import { APIClient } from '../../utils/apiClient';
 
 export default class AIList extends Command {
   static description = '列出 Region 内的所有 AI';
@@ -13,27 +10,26 @@ export default class AIList extends Command {
 
   async run() {
     const { flags } = await this.parse(AIList);
+    const client = new APIClient();
 
-    const memory = new WorldMemory(Config.EVERMEMOS_URL);
-    const proxy = new AIProxyServer({
-      port: Config.AI_PROXY_PORT,
-      realApiKey: Config.REAL_AI_API_KEY,
-      targetBaseUrl: Config.AI_TARGET_BASE_URL,
-      memory,
-    });
-
-    const aiManager = new AIUserManager(memory, proxy);
-
-    const aiList = await aiManager.listAI(flags.region);
-
-    if (aiList.length === 0) {
-      this.log(`Region ${flags.region} 暂无 AI`);
-      return;
+    if (!(await client.isServerRunning())) {
+      this.error('TheWorld 服务器未运行，请先执行 dio start');
     }
 
-    this.log(`Region ${flags.region} 的 AI 列表:`);
-    aiList.forEach(ai => {
-      this.log(`  - ${ai}`);
-    });
+    try {
+      const aiList = await client.listAI(flags.region);
+
+      if (aiList.length === 0) {
+        this.log(`Region ${flags.region} 暂无 AI`);
+        return;
+      }
+
+      this.log(`Region ${flags.region} 的 AI 列表:`);
+      aiList.forEach((ai: string) => {
+        this.log(`  - ${ai}`);
+      });
+    } catch (error: any) {
+      this.error(`列出 AI 失败: ${error.response?.data?.error || error.message}`);
+    }
   }
 }
