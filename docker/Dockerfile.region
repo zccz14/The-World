@@ -15,7 +15,7 @@ RUN useradd -m -s /bin/bash agent && \
     echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.bashrc && \
     echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.profile && \
     mkdir -p /home/agent/.opencode && \
-    echo '{"apiBaseUrl":"http://host.docker.internal:4041/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
+    echo '{"apiBaseUrl":"http://host.docker.internal:3344/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
     chown -R agent:agent /home/agent/.opencode && \
     chmod 600 /home/agent/.opencode/config.json
 
