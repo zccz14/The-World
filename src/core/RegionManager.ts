@@ -2,17 +2,17 @@ import Docker from 'dockerode';
 import { DockerManager } from './DockerManager';
 import { logger } from '../utils/logger';
 import { WorldMemory } from '../memory/MemoryManager';
-import { AIProxyServer } from '../proxy/AIProxyServer';
+import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import path from 'path';
 import fs from 'fs';
 
 export class RegionManager {
   private dockerManager = new DockerManager();
   private memory: WorldMemory;
-  private proxy: AIProxyServer;
+  private proxy: AIProxyHandler;
   private regionImageName = 'the-world-region:latest';
 
-  constructor(memory: WorldMemory, proxy: AIProxyServer) {
+  constructor(memory: WorldMemory, proxy: AIProxyHandler) {
     this.memory = memory;
     this.proxy = proxy;
   }

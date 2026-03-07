@@ -38,7 +38,7 @@ export default class Start extends Command {
       this.log('✅ TheWorld 服务器已启动');
       this.log(`   PID: ${fs.readFileSync(pidFile, 'utf-8')}`);
       this.log('   Server: http://localhost:3344');
-      this.log('   AI Proxy: http://localhost:3456');
+      this.log('   AI Proxy: http://localhost:3344/v1');
     } else {
       this.error('❌ 启动失败，请检查日志');
     }

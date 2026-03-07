@@ -1,19 +1,17 @@
 import express, { Express, Request, Response } from 'express';
-import { AIProxyServer } from '../proxy/AIProxyServer';
+import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import { WorldMemory } from '../memory/MemoryManager';
 import { RegionManager } from '../core/RegionManager';
 import { AIUserManager } from '../core/AIUserManager';
 import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
-import { AIIdentity } from '../utils/types';
 
 export class TheWorldServer {
   private app: Express;
-  private proxy?: AIProxyServer;
+  private proxyHandler?: AIProxyHandler;
   private memory?: WorldMemory;
   private regionManager?: RegionManager;
   private aiManager?: AIUserManager;
-  private aiIdentities: Map<string, AIIdentity> = new Map();
   private server?: any;
 
   constructor() {
@@ -27,15 +25,14 @@ export class TheWorldServer {
 
     this.memory = new WorldMemory(Config.EVERMEMOS_URL);
     
-    this.proxy = new AIProxyServer({
-      port: Config.AI_PROXY_PORT,
+    this.proxyHandler = new AIProxyHandler({
       realApiKey: Config.REAL_AI_API_KEY,
       targetBaseUrl: Config.AI_TARGET_BASE_URL,
       memory: this.memory,
     });
 
-    this.regionManager = new RegionManager(this.memory, this.proxy);
-    this.aiManager = new AIUserManager(this.memory, this.proxy);
+    this.regionManager = new RegionManager(this.memory, this.proxyHandler as any);
+    this.aiManager = new AIUserManager(this.memory, this.proxyHandler as any);
 
     logger.info('TheWorld Server initialized');
   }
@@ -47,7 +44,7 @@ export class TheWorldServer {
         timestamp: Date.now(),
         services: {
           server: 'running',
-          proxy: this.proxy ? 'running' : 'stopped',
+          proxy: this.proxyHandler ? 'running' : 'stopped',
         },
       });
     });
@@ -58,7 +55,7 @@ export class TheWorldServer {
         res.json({
           status: 'ok',
           regions: regions.length,
-          aiIdentities: this.aiIdentities.size,
+          aiIdentities: this.proxyHandler?.getIdentities().size || 0,
           uptime: process.uptime(),
         });
       } catch (error: any) {
@@ -98,8 +95,6 @@ export class TheWorldServer {
         }
 
         const dummyKey = await this.aiManager!.createAI(name, region);
-        this.aiIdentities.set(dummyKey, { aiName: name, dummyKey, regionId: region });
-        
         res.json({ status: 'ok', ai: name, dummyKey });
       } catch (error: any) {
         logger.error({ error }, 'Failed to create AI');
@@ -151,11 +146,16 @@ export class TheWorldServer {
         res.status(500).json({ error: error.message });
       }
     });
+
+    if (this.proxyHandler) {
+      this.app.use('/v1', this.proxyHandler.getMiddleware());
+    }
   }
 
-  start(port: number = 1996) {
+  start(port: number = 3344) {
     this.server = this.app.listen(port, () => {
       logger.info(`TheWorld Server started on port ${port}`);
+      logger.info(`AI Proxy available at http://localhost:${port}/v1`);
     });
 
     return this.server;

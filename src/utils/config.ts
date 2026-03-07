@@ -26,11 +26,6 @@ export class Config {
     return process.env.AI_TARGET_BASE_URL || 'https://api.openai.com';
   }
 
-  static get AI_PROXY_PORT(): number {
-    this.load();
-    return parseInt(process.env.AI_PROXY_PORT || '3456', 10);
-  }
-
   static get SERVER_PORT(): number {
     this.load();
     return parseInt(process.env.SERVER_PORT || '3344', 10);

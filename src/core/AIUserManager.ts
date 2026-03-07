@@ -1,15 +1,15 @@
 import Docker from 'dockerode';
 import { logger } from '../utils/logger';
-import { AIProxyServer } from '../proxy/AIProxyServer';
+import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import { WorldMemory } from '../memory/MemoryManager';
 import { RegionManager } from './RegionManager';
 
 export class AIUserManager {
   private regionManager: RegionManager;
   private memory: WorldMemory;
-  private proxy: AIProxyServer;
+  private proxy: AIProxyHandler;
 
-  constructor(memory: WorldMemory, proxy: AIProxyServer) {
+  constructor(memory: WorldMemory, proxy: AIProxyHandler) {
     this.memory = memory;
     this.proxy = proxy;
     this.regionManager = new RegionManager(memory, proxy);
@@ -25,7 +25,7 @@ export class AIUserManager {
       throw new Error(`Region not found: ${regionName}`);
     }
 
-    const proxyUrl = process.env.AI_PROXY_URL || 'http://host.docker.internal:3456/v1';
+    const proxyUrl = process.env.AI_PROXY_URL || `http://host.docker.internal:${process.env.SERVER_PORT || 3344}/v1`;
 
     const exec = await container.exec({
       Cmd: [
