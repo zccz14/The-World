@@ -112,8 +112,9 @@ dio status
 
 # 应看到：
 # ✅ TheWorld 服务器运行中
+#    Server: http://localhost:3344
+#    AI Proxy: http://localhost:3344/v1
 #    EverMemOS 状态: ✅ 健康
-#    AI Proxy: ✅ 运行中
 ```
 
 ## 6. 常见问题
