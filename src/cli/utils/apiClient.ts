@@ -35,13 +35,13 @@ export class APIClient {
     return response.data.regions;
   }
 
-  async createAI(name: string, region: string) {
-    const response = await this.client.post('/api/ai', { name, region });
+  async createAI(name: string) {
+    const response = await this.client.post('/api/ai', { name });
     return response.data;
   }
 
-  async listAI(region: string) {
-    const response = await this.client.get('/api/ai', { params: { region } });
+  async listAI() {
+    const response = await this.client.get('/api/ai');
     return response.data.aiList;
   }
 

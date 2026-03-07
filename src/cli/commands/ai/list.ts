@@ -2,14 +2,9 @@ import { Command, Flags } from '@oclif/core';
 import { APIClient } from '../../utils/apiClient';
 
 export default class AIList extends Command {
-  static description = '列出 Region 内的所有 AI';
-
-  static flags = {
-    region: Flags.string({ char: 'r', description: 'Region 名称', default: 'region-a' }),
-  };
+  static description = '列出所有 AI';
 
   async run() {
-    const { flags } = await this.parse(AIList);
     const client = new APIClient();
 
     if (!(await client.isServerRunning())) {
@@ -17,14 +12,14 @@ export default class AIList extends Command {
     }
 
     try {
-      const aiList = await client.listAI(flags.region);
+      const aiList = await client.listAI();
 
       if (aiList.length === 0) {
-        this.log(`Region ${flags.region} 暂无 AI`);
+        this.log('暂无 AI');
         return;
       }
 
-      this.log(`Region ${flags.region} 的 AI 列表:`);
+      this.log('AI 列表:');
       aiList.forEach((ai: string) => {
         this.log(`  - ${ai}`);
       });

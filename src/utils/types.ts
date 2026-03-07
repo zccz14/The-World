@@ -1,15 +1,6 @@
-export interface AIUser {
-  name: string;
-  uid: number;
-  gid: number;
-  homeDir: string;
-  dummyKey?: string;
-}
-
 export interface Region {
   name: string;
   containerId: string;
-  users: AIUser[];
   status: 'running' | 'stopped' | 'creating';
 }
 

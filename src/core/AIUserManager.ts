@@ -16,71 +16,22 @@ export class AIUserManager {
     this.regionManager = new RegionManager(memory, proxy);
   }
 
-  async createAI(aiName: string, regionName: string): Promise<string> {
-    logger.info(`Creating AI: ${aiName} in region: ${regionName}`);
-
-    const dummyKey = this.proxy.registerAI(aiName, regionName);
-
-    const container = await this.regionManager.getRegion(regionName);
-    if (!container) {
-      throw new Error(`Region not found: ${regionName}`);
-    }
-
-    const proxyUrl = 'http://localhost:4041/v1';
-
-    const exec = await container.exec({
-      Cmd: [
-        'sh', '-c',
-        `useradd -m -s /bin/bash ${aiName} && ` +
-        `echo 'export PATH="/usr/local/bin:$PATH"' >> /home/${aiName}/.bashrc && ` +
-        `echo 'export PATH="/usr/local/bin:$PATH"' >> /home/${aiName}/.profile && ` +
-        `mkdir -p /home/${aiName}/.opencode && ` +
-        `echo '{"apiBaseUrl":"${proxyUrl}","apiKey":"${dummyKey}"}' > /home/${aiName}/.opencode/config.json && ` +
-        `chown -R ${aiName}:${aiName} /home/${aiName}/.opencode && ` +
-        `chmod 600 /home/${aiName}/.opencode/config.json`,
-      ],
-      AttachStdout: true,
-      AttachStderr: true,
-    });
-
-    const stream = await exec.start({ Detach: false });
-    await this.streamToString(stream);
-
-    logger.info(`AI created: ${aiName}, initializing opencode...`);
-    
-    const daemonClient = new RegionDaemonClient(regionName);
-    await daemonClient.execute(aiName, 'opencode --version && opencode run "init" --format json', 120000);
-    
-    logger.info(`AI ${aiName} opencode initialized`);
-    
+  async createAI(aiName: string): Promise<string> {
+    logger.info(`Creating AI: ${aiName}`);
+    const dummyKey = this.proxy.registerAI(aiName);
+    logger.info(`AI created: ${aiName} with dummy key: ${dummyKey}`);
     return dummyKey;
   }
 
-  async listAI(regionName: string): Promise<string[]> {
-    const container = await this.regionManager.getRegion(regionName);
-    if (!container) {
-      return [];
-    }
-
-    const exec = await container.exec({
-      Cmd: ['sh', '-c', 'ls /home'],
-      AttachStdout: true,
-    });
-
-    const stream = await exec.start({ Detach: false });
-    const output = await this.streamToString(stream);
-
-    return output
-      .split('\n')
-      .map(s => s.trim())
-      .filter(s => s && !s.startsWith('.'));
+  listAllAI(): string[] {
+    return this.proxy.listAI();
   }
 
   async execCommand(aiName: string, regionName: string, command: string): Promise<string> {
-    logger.debug(`Executing command for ${aiName}: ${command}`);
+    logger.debug(`Executing command for AI ${aiName} in region ${regionName}: ${command}`);
 
     const daemonClient = new RegionDaemonClient(regionName);
-    const result = await daemonClient.execute(aiName, command);
+    const result = await daemonClient.execute('agent', command);
     
     if (result.success) {
       return result.stdout + result.stderr;

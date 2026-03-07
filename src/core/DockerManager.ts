@@ -45,6 +45,7 @@ export class DockerManager {
     mounts?: Array<{ source: string; target: string }>;
     env?: Record<string, string>;
     network?: string;
+    ports?: Record<string, number>;
   }): Promise<Docker.Container> {
     logger.info(`Creating container: ${options.name}`);
 
@@ -60,9 +61,21 @@ export class DockerManager {
       }
     }
 
+    const portBindings: any = {};
+    const exposedPorts: any = {};
+    
+    if (options.ports) {
+      for (const [containerPort, hostPort] of Object.entries(options.ports)) {
+        const portKey = `${containerPort}/tcp`;
+        exposedPorts[portKey] = {};
+        portBindings[portKey] = [{ HostPort: String(hostPort) }];
+      }
+    }
+
     const container = await this.docker.createContainer({
       name: options.name,
       Image: options.image,
+      ExposedPorts: exposedPorts,
       HostConfig: {
         Mounts: options.mounts?.map(m => ({
           Type: 'bind',
@@ -70,6 +83,7 @@ export class DockerManager {
           Target: m.target,
         })),
         NetworkMode: options.network,
+        PortBindings: portBindings,
       },
       Env: [
         ...Object.entries(options.env || {}).map(([k, v]) => `${k}=${v}`),

@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import { WorldMemory } from '../memory/MemoryManager';
 import { RegionManager } from '../core/RegionManager';
@@ -95,12 +96,12 @@ export class TheWorldServer {
 
     this.app.post('/api/ai', async (req: Request, res: Response) => {
       try {
-        const { name, region } = req.body;
-        if (!name || !region) {
-          return res.status(400).json({ error: 'AI name and region are required' });
+        const { name } = req.body;
+        if (!name) {
+          return res.status(400).json({ error: 'AI name is required' });
         }
 
-        const dummyKey = await this.aiManager!.createAI(name, region);
+        const dummyKey = await this.aiManager!.createAI(name);
         res.json({ status: 'ok', ai: name, dummyKey });
       } catch (error: any) {
         logger.error({ error }, 'Failed to create AI');
@@ -110,8 +111,7 @@ export class TheWorldServer {
 
     this.app.get('/api/ai', async (req: Request, res: Response) => {
       try {
-        const { region } = req.query;
-        const aiList = await this.aiManager!.listAI(region as string);
+        const aiList = this.aiManager!.listAllAI();
         res.json({ aiList });
       } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -197,9 +197,9 @@ export class TheWorldServer {
 
         const daemonClient = new RegionDaemonClient(region);
         
-        const command = `opencode run ${message.replace(/"/g, '\\"')} --format json`;
+        const command = `opencode run "${message.replace(/"/g, '\\"')}" --format json`;
         
-        const result = await daemonClient.execute(to, command, 60000);
+        const result = await daemonClient.execute('agent', command, 60000);
         
         if (result.success) {
           const lines = (result.stdout + result.stderr).split('\n').filter(line => line.trim());
@@ -235,6 +235,37 @@ export class TheWorldServer {
       } catch (error: any) {
         logger.error({ error }, 'Failed to send oracle');
         res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.use('/opencode/:region', async (req: Request, res: Response, next) => {
+      const region = req.params.region;
+      
+      try {
+        const port = await this.regionManager!.getRegionOpencodePort(region);
+        if (!port) {
+          return res.status(404).json({ error: `Region ${region} not found or OpenCode not available` });
+        }
+        
+        const proxy = createProxyMiddleware({
+          target: `http://localhost:${port}`,
+          changeOrigin: true,
+          pathRewrite: {
+            [`^/opencode/${region}`]: '',
+          },
+          on: {
+            error: (err: any, req: Request, res: any) => {
+              logger.error({ error: err, region, port }, 'OpenCode proxy error');
+              if (!res.headersSent) {
+                res.status(502).json({ error: 'Failed to connect to OpenCode instance' });
+              }
+            },
+          },
+        });
+        proxy(req, res, next);
+      } catch (error: any) {
+        logger.error({ error, region }, 'Failed to get OpenCode port');
+        res.status(500).json({ error: 'Internal server error' });
       }
     });
 

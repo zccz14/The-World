@@ -11,13 +11,20 @@ RUN npm install -g opencode-ai
 
 RUN opencode --version || true
 
-COPY docker/init-scripts/init-users.sh /init-users.sh
-RUN chmod +x /init-users.sh
+RUN useradd -m -s /bin/bash agent && \
+    echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.bashrc && \
+    echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.profile && \
+    mkdir -p /home/agent/.opencode && \
+    echo '{"apiBaseUrl":"http://host.docker.internal:4041/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
+    chown -R agent:agent /home/agent/.opencode && \
+    chmod 600 /home/agent/.opencode/config.json
 
 COPY dist/region-daemon/RegionDaemon.js /daemon/RegionDaemon.js
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
 RUN mkdir -p /world/shared /world/inbox /world/outbox /world/inbox/processed
 
 RUN chmod 777 /world/shared /world/inbox /world/outbox
 
-CMD ["node", "/daemon/RegionDaemon.js"]
+CMD ["/start.sh"]

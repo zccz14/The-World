@@ -82,11 +82,19 @@ export class AIProxyHandler {
     logger.debug(`Response for ${req.method} ${req.url}: ${res.statusCode}`);
   }
 
-  registerAI(aiName: string, regionId?: string): string {
+  registerAI(aiName: string): string {
     const dummyKey = `tw-${aiName}-${Date.now()}`;
-    this.aiIdentities.set(dummyKey, { aiName, dummyKey, regionId });
+    this.aiIdentities.set(dummyKey, { aiName, dummyKey });
     logger.info(`Registered AI: ${aiName} with dummy key: ${dummyKey}`);
     return dummyKey;
+  }
+
+  listAI(): string[] {
+    const aiNames = new Set<string>();
+    for (const identity of this.aiIdentities.values()) {
+      aiNames.add(identity.aiName);
+    }
+    return Array.from(aiNames);
   }
 
   unregisterAI(dummyKey: string): boolean {

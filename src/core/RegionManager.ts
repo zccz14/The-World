@@ -43,6 +43,9 @@ export class RegionManager {
         { source: path.join(hostDir, 'inbox'), target: '/world/inbox' },
         { source: path.join(hostDir, 'outbox'), target: '/world/outbox' },
       ],
+      ports: {
+        '4096': 0, // Let Docker assign a random host port for opencode serve
+      },
     });
 
     await this.memory.logSystemEvent({
@@ -88,6 +91,18 @@ export class RegionManager {
 
   async getRegion(regionName: string): Promise<Docker.Container | null> {
     return this.dockerManager.getContainer(regionName);
+  }
+
+  async getRegionOpencodePort(regionName: string): Promise<number | null> {
+    const container = await this.dockerManager.getContainer(regionName);
+    if (!container) return null;
+    
+    const inspect = await container.inspect();
+    const portBinding = inspect.NetworkSettings.Ports?.['4096/tcp'];
+    if (portBinding && portBinding[0]?.HostPort) {
+      return parseInt(portBinding[0].HostPort, 10);
+    }
+    return null;
   }
 
   async removeRegion(regionName: string): Promise<void> {

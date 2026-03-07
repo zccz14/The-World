@@ -6,7 +6,6 @@ export default class AICreate extends Command {
 
   static flags = {
     name: Flags.string({ char: 'n', description: 'AI 名称', required: true }),
-    region: Flags.string({ char: 'r', description: 'Region 名称', default: 'region-a' }),
   };
 
   async run() {
@@ -17,10 +16,10 @@ export default class AICreate extends Command {
       this.error('TheWorld 服务器未运行，请先执行 dio start');
     }
 
-    this.log(`🤖 创建 AI: ${flags.name} (Region: ${flags.region})`);
+    this.log(`🤖 创建 AI: ${flags.name}`);
 
     try {
-      const result = await client.createAI(flags.name, flags.region);
+      const result = await client.createAI(flags.name);
       this.log(`✅ AI ${flags.name} 已创建`);
       this.log(`   Dummy Key: ${result.dummyKey}`);
     } catch (error: any) {
