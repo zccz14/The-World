@@ -3,6 +3,7 @@ import { logger } from '../utils/logger';
 import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import { WorldMemory } from '../memory/MemoryManager';
 import { RegionManager } from './RegionManager';
+import { RegionDaemonClient } from '../region-daemon/RegionDaemonClient';
 
 export class AIUserManager {
   private regionManager: RegionManager;
@@ -25,12 +26,18 @@ export class AIUserManager {
       throw new Error(`Region not found: ${regionName}`);
     }
 
-    const proxyUrl = process.env.AI_PROXY_URL || `http://host.docker.internal:${process.env.SERVER_PORT || 3344}/v1`;
+    const proxyUrl = 'http://localhost:4041/v1';
 
     const exec = await container.exec({
       Cmd: [
         'sh', '-c',
-        `useradd -m -s /bin/bash ${aiName} && mkdir -p /home/${aiName}/.opencode && echo '{"apiBaseUrl":"${proxyUrl}","apiKey":"${dummyKey}","model":"gpt-4"}' > /home/${aiName}/.opencode/config.json && chown -R ${aiName}:${aiName} /home/${aiName}/.opencode && chmod 600 /home/${aiName}/.opencode/config.json`,
+        `useradd -m -s /bin/bash ${aiName} && ` +
+        `echo 'export PATH="/usr/local/bin:$PATH"' >> /home/${aiName}/.bashrc && ` +
+        `echo 'export PATH="/usr/local/bin:$PATH"' >> /home/${aiName}/.profile && ` +
+        `mkdir -p /home/${aiName}/.opencode && ` +
+        `echo '{"apiBaseUrl":"${proxyUrl}","apiKey":"${dummyKey}"}' > /home/${aiName}/.opencode/config.json && ` +
+        `chown -R ${aiName}:${aiName} /home/${aiName}/.opencode && ` +
+        `chmod 600 /home/${aiName}/.opencode/config.json`,
       ],
       AttachStdout: true,
       AttachStderr: true,
@@ -39,14 +46,12 @@ export class AIUserManager {
     const stream = await exec.start({ Detach: false });
     await this.streamToString(stream);
 
-    await this.memory.logSystemEvent({
-      type: 'ai_created',
-      aiName,
-      regionId: regionName,
-      timestamp: Date.now(),
-    });
-
-    logger.info(`AI created: ${aiName} with dummy key: ${dummyKey}`);
+    logger.info(`AI created: ${aiName}, initializing opencode...`);
+    
+    const daemonClient = new RegionDaemonClient(regionName);
+    await daemonClient.execute(aiName, 'opencode --version && opencode run "init" --format json', 120000);
+    
+    logger.info(`AI ${aiName} opencode initialized`);
     
     return dummyKey;
   }
@@ -74,19 +79,14 @@ export class AIUserManager {
   async execCommand(aiName: string, regionName: string, command: string): Promise<string> {
     logger.debug(`Executing command for ${aiName}: ${command}`);
 
-    const container = await this.regionManager.getRegion(regionName);
-    if (!container) {
-      throw new Error(`Region not found: ${regionName}`);
+    const daemonClient = new RegionDaemonClient(regionName);
+    const result = await daemonClient.execute(aiName, command);
+    
+    if (result.success) {
+      return result.stdout + result.stderr;
+    } else {
+      throw new Error(result.error || 'Command execution failed');
     }
-
-    const exec = await container.exec({
-      Cmd: ['node', '/daemon/client.js', aiName, command],
-      AttachStdout: true,
-      AttachStderr: true,
-    });
-
-    const stream = await exec.start({ Detach: false });
-    return this.streamToString(stream);
   }
 
   private streamToString(stream: any): Promise<string> {

@@ -11,10 +11,15 @@ export class RegionManager {
   private memory: WorldMemory;
   private proxy: AIProxyHandler;
   private regionImageName = 'the-world-region:latest';
+  private networkName = 'the-world';
 
   constructor(memory: WorldMemory, proxy: AIProxyHandler) {
     this.memory = memory;
     this.proxy = proxy;
+  }
+
+  async initialize() {
+    await this.dockerManager.ensureNetwork(this.networkName);
   }
 
   async createRegion(regionName: string): Promise<void> {
@@ -32,6 +37,7 @@ export class RegionManager {
     await this.dockerManager.createContainer({
       name: regionName,
       image: this.regionImageName,
+      network: this.networkName,
       mounts: [
         { source: path.join(hostDir, 'shared'), target: '/world/shared' },
         { source: path.join(hostDir, 'inbox'), target: '/world/inbox' },

@@ -10,6 +10,10 @@ for user in "${USERS[@]}"; do
     # 创建用户
     useradd -m -s /bin/bash "$user"
     
+    # 设置 PATH 环境变量（包含 node 和 opencode 路径）
+    echo 'export PATH="/usr/local/bin:$PATH"' >> "/home/$user/.bashrc"
+    echo 'export PATH="/usr/local/bin:$PATH"' >> "/home/$user/.profile"
+    
     # 创建 opencode 配置目录
     mkdir -p "/home/$user/.opencode"
     
@@ -21,7 +25,7 @@ for user in "${USERS[@]}"; do
 {
   "apiBaseUrl": "$PROXY_URL",
   "apiKey": "$DUMMY_KEY",
-  "model": "gpt-4"
+  "model": "claude-sonnet-4-6"
 }
 EOF
     

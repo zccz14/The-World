@@ -44,8 +44,21 @@ export class DockerManager {
     image: string;
     mounts?: Array<{ source: string; target: string }>;
     env?: Record<string, string>;
+    network?: string;
   }): Promise<Docker.Container> {
     logger.info(`Creating container: ${options.name}`);
+
+    let hostIp = '172.19.0.1';
+    if (options.network) {
+      try {
+        const network = await this.docker.getNetwork(options.network).inspect();
+        if (network.IPAM?.Config?.[0]?.Gateway) {
+          hostIp = network.IPAM.Config[0].Gateway;
+        }
+      } catch (error) {
+        logger.warn('Failed to get network gateway, using default');
+      }
+    }
 
     const container = await this.docker.createContainer({
       name: options.name,
@@ -56,15 +69,31 @@ export class DockerManager {
           Source: m.source,
           Target: m.target,
         })),
-        ExtraHosts: ['host.docker.internal:host-gateway'],
+        NetworkMode: options.network,
       },
-      Env: Object.entries(options.env || {}).map(([k, v]) => `${k}=${v}`),
+      Env: [
+        ...Object.entries(options.env || {}).map(([k, v]) => `${k}=${v}`),
+        `HOST_GATEWAY_IP=${hostIp}`,
+      ],
     });
 
     await container.start();
     logger.info(`Container started: ${options.name}`);
     
     return container;
+  }
+
+  async ensureNetwork(networkName: string): Promise<void> {
+    try {
+      await this.docker.getNetwork(networkName).inspect();
+      logger.info(`Network ${networkName} already exists`);
+    } catch (error) {
+      await this.docker.createNetwork({
+        Name: networkName,
+        CheckDuplicate: true,
+      });
+      logger.info(`Network ${networkName} created`);
+    }
   }
 
   async getContainer(name: string): Promise<Docker.Container | null> {

@@ -7,7 +7,7 @@ import { RegionManager } from '../core/RegionManager';
 import { AIUserManager } from '../core/AIUserManager';
 import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
-import Docker from 'dockerode';
+import { RegionDaemonClient } from '../region-daemon/RegionDaemonClient';
 
 export class TheWorldServer {
   private app: Express;
@@ -20,7 +20,6 @@ export class TheWorldServer {
   constructor() {
     this.app = express();
     this.app.use(express.json());
-    this.setupRoutes();
   }
 
   async initialize() {
@@ -35,7 +34,11 @@ export class TheWorldServer {
     });
 
     this.regionManager = new RegionManager(this.memory, this.proxyHandler);
+    await this.regionManager.initialize();
+    
     this.aiManager = new AIUserManager(this.memory, this.proxyHandler);
+
+    this.setupRoutes();
 
     logger.info('TheWorld Server initialized');
   }
@@ -130,6 +133,55 @@ export class TheWorldServer {
       }
     });
 
+    this.app.get('/api/agent/:region/:user/status', async (req: Request, res: Response) => {
+      try {
+        const { region, user } = req.params;
+        
+        const daemonClient = new RegionDaemonClient(region);
+        
+        try {
+          const status = await daemonClient.observe(user);
+          res.json({ status });
+        } catch (error: any) {
+          if (error.message?.includes('No serve process')) {
+            res.json({ status: 'stopped', message: 'Agent serve not running' });
+          } else {
+            throw error;
+          }
+        }
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to get agent status');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/agent/:region/:user/serve/start', async (req: Request, res: Response) => {
+      try {
+        const { region, user } = req.params;
+        const { port } = req.body;
+        
+        const daemonClient = new RegionDaemonClient(region);
+        const result = await daemonClient.startServe(user, port);
+        res.json(result);
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to start serve');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/agent/:region/:user/serve/stop', async (req: Request, res: Response) => {
+      try {
+        const { region, user } = req.params;
+        
+        const daemonClient = new RegionDaemonClient(region);
+        const result = await daemonClient.stopServe(user);
+        res.json(result);
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to stop serve');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
     this.app.post('/api/oracle/send', async (req: Request, res: Response) => {
       try {
         const { to, region, message } = req.body;
@@ -143,62 +195,41 @@ export class TheWorldServer {
           content: message,
         });
 
-        const docker = new Docker();
+        const daemonClient = new RegionDaemonClient(region);
         
-        try {
-          const container = docker.getContainer(region);
+        const command = `opencode run ${message.replace(/"/g, '\\"')} --format json`;
+        
+        const result = await daemonClient.execute(to, command, 60000);
+        
+        if (result.success) {
+          const lines = (result.stdout + result.stderr).split('\n').filter(line => line.trim());
+          let responseText = '';
           
-          const oracleData = {
-            to,
-            from: 'human',
-            content: message,
-            timestamp: Date.now(),
-          };
-          
-          const inboxFile = `oracle-${Date.now()}.msg`;
-          
-          const exec = await container.exec({
-            Cmd: ['sh', '-c', `echo '${JSON.stringify(oracleData)}' > /world/inbox/${inboxFile}`],
-            AttachStdout: true,
-            AttachStderr: true,
-          });
-          
-          await exec.start({ Detach: false });
-          
-          // Wait for AI to process and respond (max 30 seconds)
-          const responseFile = `response-${inboxFile.replace('oracle-', '').replace('.msg', '')}.msg`;
-          const outboxPath = path.join(Config.DATA_DIR, 'regions', region, 'outbox', responseFile);
-          const maxWait = 30000;
-          const startTime = Date.now();
-          
-          while (Date.now() - startTime < maxWait) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            if (fs.existsSync(outboxPath)) {
-              const responseContent = fs.readFileSync(outboxPath, 'utf-8');
-              const aiResponse = JSON.parse(responseContent);
-              
-              return res.json({ 
-                status: 'ok',
-                message: 'Oracle sent and AI responded',
-                file: inboxFile,
-                response: aiResponse,
-              });
+          for (const line of lines) {
+            try {
+              const json = JSON.parse(line);
+              if (json.type === 'text' && json.part?.text) {
+                responseText += json.part.text;
+              }
+            } catch (e) {
+              // Not JSON, skip
             }
           }
           
-          // Timeout - return success but no response
-          res.json({ 
+          res.json({
             status: 'ok',
-            message: 'Oracle sent successfully, waiting for AI response',
-            file: inboxFile,
-            response: null,
+            message: 'Oracle sent and AI responded',
+            response: {
+              to: 'human',
+              from: to,
+              response: responseText || result.stdout,
+            },
           });
-        } catch (dockerError: any) {
-          logger.error({ error: dockerError }, 'Failed to write oracle to container');
-          res.status(500).json({ 
-            error: 'Failed to write oracle to container',
-            details: dockerError.message,
+        } else {
+          res.status(500).json({
+            error: 'Failed to execute oracle',
+            details: result.error,
+            killed: result.killed,
           });
         }
       } catch (error: any) {

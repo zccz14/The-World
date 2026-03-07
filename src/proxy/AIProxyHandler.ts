@@ -23,13 +23,20 @@ export class AIProxyHandler {
     this.proxyMiddleware = createProxyMiddleware({
       target: this.targetBaseUrl,
       changeOrigin: true,
+      pathRewrite: (path) => path,
       on: {
         proxyReq: async (proxyReq: any, req: Request, res: Response) => {
           const dummyKey = req.headers['authorization']?.replace('Bearer ', '');
           
+          logger.info(`Proxy request: ${req.method} ${req.url}, key: ${dummyKey?.substring(0, 20)}...`);
+          
           const identity = this.verifyAI(dummyKey);
           if (!identity) {
-            res.status(401).json({ error: 'Invalid AI identity' });
+            logger.warn(`Invalid AI identity for key: ${dummyKey}`);
+            if (!res.headersSent) {
+              res.status(401).json({ error: 'Invalid AI identity' });
+            }
+            proxyReq.destroy();
             return;
           }
           
@@ -37,10 +44,17 @@ export class AIProxyHandler {
           
           await this.logAIRequest(identity.aiName, req);
           
-          logger.debug(`AI ${identity.aiName} -> ${req.method} ${req.url}`);
+          logger.info(`AI ${identity.aiName} -> ${req.method} ${req.url}`);
         },
         proxyRes: async (proxyRes: any, req: Request) => {
+          logger.info(`Response for ${req.method} ${req.url}: ${proxyRes.statusCode}`);
           await this.logAIResponse(req, proxyRes);
+        },
+        error: (err: any, req: Request, res: any) => {
+          logger.error(`Proxy error: ${err.message}`);
+          if (!res.headersSent && res.status) {
+            res.status(500).json({ error: 'Proxy error', details: err.message });
+          }
         },
       },
     });

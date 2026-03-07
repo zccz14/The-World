@@ -7,7 +7,7 @@ export class APIClient {
   constructor(baseUrl: string = 'http://localhost:3344') {
     this.client = axios.create({
       baseURL: baseUrl,
-      timeout: 30000,
+      timeout: 120000, // 2 minutes for AI responses
     });
   }
 
