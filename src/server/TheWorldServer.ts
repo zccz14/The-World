@@ -5,6 +5,7 @@ import { RegionManager } from '../core/RegionManager';
 import { AIUserManager } from '../core/AIUserManager';
 import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
+import Docker from 'dockerode';
 
 export class TheWorldServer {
   private app: Express;
@@ -31,8 +32,8 @@ export class TheWorldServer {
       memory: this.memory,
     });
 
-    this.regionManager = new RegionManager(this.memory, this.proxyHandler as any);
-    this.aiManager = new AIUserManager(this.memory, this.proxyHandler as any);
+    this.regionManager = new RegionManager(this.memory, this.proxyHandler);
+    this.aiManager = new AIUserManager(this.memory, this.proxyHandler);
 
     logger.info('TheWorld Server initialized');
   }
@@ -140,7 +141,40 @@ export class TheWorldServer {
           content: message,
         });
 
-        res.json({ status: 'ok' });
+        const docker = new Docker();
+        
+        try {
+          const container = docker.getContainer(region);
+          
+          const oracleData = {
+            to,
+            from: 'human',
+            content: message,
+            timestamp: Date.now(),
+          };
+          
+          const inboxFile = `oracle-${Date.now()}.msg`;
+          
+          const exec = await container.exec({
+            Cmd: ['sh', '-c', `echo '${JSON.stringify(oracleData)}' > /world/inbox/${inboxFile}`],
+            AttachStdout: true,
+            AttachStderr: true,
+          });
+          
+          await exec.start({ Detach: false });
+          
+          res.json({ 
+            status: 'ok',
+            message: 'Oracle sent successfully',
+            file: inboxFile,
+          });
+        } catch (dockerError: any) {
+          logger.error({ error: dockerError }, 'Failed to write oracle to container');
+          res.status(500).json({ 
+            error: 'Failed to write oracle to container',
+            details: dockerError.message,
+          });
+        }
       } catch (error: any) {
         logger.error({ error }, 'Failed to send oracle');
         res.status(500).json({ error: error.message });
