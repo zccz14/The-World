@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run build:daemon",
-    "build:daemon": "esbuild src/region-daemon/daemon.ts --bundle --platform=node --outfile=dist/region-daemon/daemon.js",
+    "build:daemon": "esbuild src/region-daemon/daemon.ts --bundle --platform=node --outfile=dist/region-daemon/daemon.js && esbuild src/region-daemon/oracle-processor.ts --bundle --platform=node --outfile=dist/region-daemon/oracle-processor.js",
     "dev": "ts-node src/cli/index.ts",
     "start:server": "node dist/server/index.js",
     "test": "jest",

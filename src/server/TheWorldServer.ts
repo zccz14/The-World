@@ -1,4 +1,6 @@
 import express, { Express, Request, Response } from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
 import { AIProxyHandler } from '../proxy/AIProxyHandler';
 import { WorldMemory } from '../memory/MemoryManager';
 import { RegionManager } from '../core/RegionManager';
@@ -163,10 +165,34 @@ export class TheWorldServer {
           
           await exec.start({ Detach: false });
           
+          // Wait for AI to process and respond (max 30 seconds)
+          const responseFile = `response-${inboxFile.replace('oracle-', '').replace('.msg', '')}.msg`;
+          const outboxPath = path.join(Config.DATA_DIR, 'regions', region, 'outbox', responseFile);
+          const maxWait = 30000;
+          const startTime = Date.now();
+          
+          while (Date.now() - startTime < maxWait) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            if (fs.existsSync(outboxPath)) {
+              const responseContent = fs.readFileSync(outboxPath, 'utf-8');
+              const aiResponse = JSON.parse(responseContent);
+              
+              return res.json({ 
+                status: 'ok',
+                message: 'Oracle sent and AI responded',
+                file: inboxFile,
+                response: aiResponse,
+              });
+            }
+          }
+          
+          // Timeout - return success but no response
           res.json({ 
             status: 'ok',
-            message: 'Oracle sent successfully',
+            message: 'Oracle sent successfully, waiting for AI response',
             file: inboxFile,
+            response: null,
           });
         } catch (dockerError: any) {
           logger.error({ error: dockerError }, 'Failed to write oracle to container');

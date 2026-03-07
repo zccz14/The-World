@@ -10,14 +10,15 @@ RUN npm install -g opencode-ai
 COPY docker/init-scripts/init-users.sh /init-users.sh
 RUN chmod +x /init-users.sh
 
-# Socket Daemon
+# Socket Daemon and Oracle Processor
 COPY dist/region-daemon/daemon.js /daemon/daemon.js
+COPY dist/region-daemon/oracle-processor.js /daemon/oracle-processor.js
 
 # Create base directories
-RUN mkdir -p /world/shared /world/inbox /world/outbox
+RUN mkdir -p /world/shared /world/inbox /world/outbox /world/inbox/processed
 
 # Set permissions
-RUN chmod 777 /world/shared
+RUN chmod 777 /world/shared /world/inbox /world/outbox
 
-# Start daemon
-CMD ["node", "/daemon/daemon.js"]
+# Start daemon and oracle processor
+CMD ["sh", "-c", "node /daemon/oracle-processor.js & node /daemon/daemon.js"]

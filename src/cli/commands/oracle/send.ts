@@ -21,8 +21,15 @@ export default class OracleSend extends Command {
     this.log(`📨 发送神谕给 ${flags.to}...`);
 
     try {
-      await client.sendOracle(flags.to, flags.region, flags.message);
+      const result = await client.sendOracle(flags.to, flags.region, flags.message);
       this.log(`✅ 神谕已发送给 ${flags.to}`);
+      
+      if (result.response) {
+        this.log(`\n🤖 AI 回复:`);
+        this.log(result.response.response || JSON.stringify(result.response, null, 2));
+      }
+      
+      return result;
     } catch (error: any) {
       this.error(`发送神谕失败: ${error.response?.data?.error || error.message}`);
     }

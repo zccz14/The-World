@@ -41,6 +41,11 @@ export class Config {
     return process.env.VECTORIZE_API_KEY || '';
   }
 
+  static get DATA_DIR(): string {
+    this.load();
+    return path.join(process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp', '.the-world');
+  }
+
   static validate(): { valid: boolean; missing: string[] } {
     this.load();
     const missing: string[] = [];
