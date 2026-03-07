@@ -2,260 +2,263 @@
 
 **The World is where AIs Collaborate and Shape Their World**
 
-TheWorld 是一个 AI 协作平台，将宿主机视为一个"世界"，AI 作为"居民"在其中学习、工作和协作。
+TheWorld is an AI collaboration platform that treats the host machine as a "world" where AIs act as "residents" learning, working, and collaborating together.
 
-## 当前状态
+## Current Status
 
-**版本**: v0.1.0 (MVP)  
-**状态**: 生产就绪
+**Version**: v0.1.0 (MVP)  
+**Status**: Production Ready
 
-### 已实现功能 ✅
+### Implemented Features ✅
 
-- Region 容器管理（创建、列出）
-- AI 身份管理（Proxy 层隔离）
-- 命令执行（同步调用）
-- 神谕（直接与 AI 对话）
-- API Key 安全隔离
-- 世界记忆（EverMemOS 集成）
-- opencode serve 管理
+- Region container management (create, list)
+- AI identity management (Proxy layer isolation)
+- Command execution (synchronous invocation)
+- Oracle (direct AI communication)
+- API Key security isolation
+- World Memory (EverMemOS integration)
+- opencode serve management
 
-### 未来规划 ⏳
+### Future Plans ⏳
 
-- 多用户隔离（当前为单用户 + Proxy）
-- AI 投影机制
-- Region 间通信
-- Heartbeat 常驻机制
+- Multi-user isolation (currently single user + Proxy)
+- AI projection mechanism
+- Inter-region communication
+- Heartbeat persistence mechanism
+- **World Scheduler** (v0.3.0) - Core component for AI autonomy
 
-详见 [Roadmap](./docs/04-roadmap.md)
+See [Roadmap](./docs/04-roadmap.md) for details
 
-## 快速开始
+## Quick Start
 
-### 前置要求
+### Prerequisites
 
 - Node.js 18+
 - Docker 20.10+
-- EverMemOS (已部署在 http://localhost:1995)
+- EverMemOS (deployed at http://localhost:1995)
 
-### 安装
+### Installation
 
 ```bash
-# 克隆仓库
+# Clone repository
 git clone https://github.com/the-world/the-world-ai.git
 cd the-world-ai
 
-# 安装依赖
+# Install dependencies
 npm install
 
-# 构建
+# Build
 npm run build
 ```
 
-### 配置
+### Configuration
 
 ```bash
-# 复制配置模板
+# Copy configuration template
 cp .env.example .env
 
-# 编辑 .env 文件，填入必要配置
-# - REAL_AI_API_KEY: 你的 AI API Key
-# - EVERMEMOS_URL: EverMemOS 地址
-# - LLM_API_KEY: EverMemOS 使用的 API Key
-# - VECTORIZE_API_KEY: 向量化 API Key
+# Edit .env file with required configuration:
+# - REAL_AI_API_KEY: Your AI API Key
+# - EVERMEMOS_URL: EverMemOS address
+# - LLM_API_KEY: API Key used by EverMemOS
+# - VECTORIZE_API_KEY: Vectorization API Key
 ```
 
-详见 [EverMemOS 配置指南](./docs/EVERMEMOS_SETUP.md)
+See [EverMemOS Setup Guide](./docs/EVERMEMOS_SETUP.md) for details
 
-### 启动系统
+### Start System
 
 ```bash
-# 启动 TheWorld 服务器（后台运行）
+# Start TheWorld server (background)
 dio start
 
-# 查看状态
+# Check status
 dio status
 ```
 
-### 创建 Region 和 AI
+### Create Region and AI
 
 ```bash
-# 创建 Region 容器
+# Create Region container
 dio region create -n region-a
 
-# 注册 AI 身份
+# Register AI identity
 dio ai create -n alpha
 dio ai create -n beta
 
-# 列出 AI
+# List AIs
 dio ai list
 ```
 
-### 执行命令
+### Execute Commands
 
 ```bash
-# 在 Region 中执行命令
+# Execute command in Region
 dio ai exec -a alpha -r region-a -c "ls -la"
 
-# 发送神谕（与 AI 对话）
-dio oracle send --to alpha --region region-a --message "分析这个项目的架构"
+# Send Oracle (communicate with AI)
+dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
 ```
 
-## 核心概念
+## Core Concepts
 
-### Region (区域)
+### Region
 
-- Docker 容器，提供隔离的执行环境
-- 预装 opencode-ai
-- 挂载共享目录
+- Docker container providing isolated execution environment
+- Pre-installed with opencode-ai
+- Mounted shared directories
 
-### AI (智能体)
+### AI (Agent)
 
-- 通过 Proxy 层管理的身份
-- 每个 AI 有唯一的 dummy key
-- 可以执行命令和调用 AI API
+- Identity managed through Proxy layer
+- Each AI has a unique dummy key
+- Can execute commands and call AI APIs
 
-### Proxy (代理)
+### Proxy
 
-- 隔离真实 API Key
-- 验证 AI 身份
-- 记录审计日志
+- Isolates real API Key
+- Validates AI identity
+- Records audit logs
 
-### World Memory (世界记忆)
+### World Memory
 
-- 基于 EverMemOS
-- 记录所有事件和对话
-- 跨 Region 共享
+- Based on EverMemOS
+- Records all events and conversations
+- Shared across Regions
 
-## 架构
+## Architecture
 
 ```
-宿主机
+Host Machine
 │
 ├── TheWorldServer (3344)
 │   ├── HTTP API (/api/*)
 │   └── AI Proxy (/v1/*)
 │
 ├── CLI (dio)
-│   └── HTTP 客户端
+│   └── HTTP Client
 │
 ├── EverMemOS (1995)
-│   └── 世界记忆
+│   └── World Memory
 │
-└── Region 容器
+└── Region Container
     ├── RegionDaemon (4040)
-    ├── agent 用户
+    ├── agent user
     └── opencode-ai
 ```
 
-详见 [当前架构文档](./docs/02-current-arch.md)
+See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 
-## 文档
+## Documentation
 
-### 核心文档
+### Core Documentation
 
-- [长期愿景](./docs/01-vision.md) - TheWorld 的完整愿景
-- [当前架构](./docs/02-current-arch.md) - MVP 实现细节
-- [发展路线图](./docs/04-roadmap.md) - 未来规划
+- [Long-term Vision](./docs/01-vision.md) - TheWorld's complete vision
+- [Current Architecture](./docs/02-current-arch.md) - MVP implementation details
+- [Development Roadmap](./docs/04-roadmap.md) - Future plans
 
-### 设计决策
+### Design Decisions
 
-- [ADR-001: 单用户架构](./docs/decisions/001-single-user.md)
-- [ADR-002: 统一端口](./docs/decisions/002-unified-port.md)
-- [ADR-003: 同步命令执行](./docs/decisions/003-sync-oracle.md)
+- [ADR-001: Single User Architecture](./docs/decisions/001-single-user.md)
+- [ADR-002: Unified Port](./docs/decisions/002-unified-port.md)
+- [ADR-003: Synchronous Command Execution](./docs/decisions/003-sync-oracle.md)
+- [ADR-004: World Scheduler](./docs/decisions/004-world-scheduler.md)
 
-### 配置指南
+### Configuration Guides
 
-- [EverMemOS 配置](./docs/EVERMEMOS_SETUP.md)
+- [EverMemOS Setup](./docs/EVERMEMOS_SETUP.md)
 
-### 历史文档（归档）
+### Historical Documents (Archived)
 
-- [design.md](./docs/archive/design.md) - 早期完整设计
-- [design-new.md](./docs/archive/design-new.md) - MVP 设计草案
-- [SERVER_REDESIGN.md](./docs/archive/SERVER_REDESIGN.md) - 服务器重构提案
-- [MVP_SUMMARY.md](./docs/archive/MVP_SUMMARY.md) - MVP 实现总结
+- [design.md](./docs/archive/design.md) - Early complete design
+- [design-new.md](./docs/archive/design-new.md) - MVP design draft
+- [SERVER_REDESIGN.md](./docs/archive/SERVER_REDESIGN.md) - Server refactoring proposal
+- [MVP_SUMMARY.md](./docs/archive/MVP_SUMMARY.md) - MVP implementation summary
 
-## 开发
+## Development
 
 ```bash
-# 安装依赖
+# Install dependencies
 npm install
 
-# 开发模式
+# Development mode
 npm run dev
 
-# 构建
+# Build
 npm run build
 
-# 启动服务器（前台）
+# Start server (foreground)
 npm run start:server
 
-# 代码格式化
+# Format code
 npm run format
 
-# 代码检查
+# Lint code
 npm run lint
 ```
 
-## API 参考
+## API Reference
 
 ### HTTP API
 
 ```bash
-# 健康检查
+# Health check
 GET /health
 
-# 状态查询
+# Status query
 GET /api/status
 
-# Region 管理
+# Region management
 POST /api/regions
 GET  /api/regions
 
-# AI 管理
+# AI management
 POST /api/ai
 GET  /api/ai
 
-# 命令执行
+# Command execution
 POST /api/ai/exec
 
-# 神谕
+# Oracle
 POST /api/oracle/send
 ```
 
-### CLI 命令
+### CLI Commands
 
 ```bash
-dio start                           # 启动服务器
-dio stop                            # 停止服务器
-dio status                          # 查看状态
+dio start                           # Start server
+dio stop                            # Stop server
+dio status                          # Check status
 
-dio region create -n <name>         # 创建 Region
-dio region list                     # 列出 Region
+dio region create -n <name>         # Create Region
+dio region list                     # List Regions
 
-dio ai create -n <name>             # 注册 AI
-dio ai list                         # 列出 AI
-dio ai exec -a <ai> -r <region> -c <cmd>  # 执行命令
+dio ai create -n <name>             # Register AI
+dio ai list                         # List AIs
+dio ai exec -a <ai> -r <region> -c <cmd>  # Execute command
 
-dio oracle send --to <ai> --region <region> --message <msg>  # 发送神谕
+dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle
 ```
 
-## 工程决策
+## Engineering Decisions
 
-当前 MVP 实现了核心概念的精简版本，通过以下工程权衡加速开发：
+The current MVP implements a simplified version of the core concepts through the following engineering trade-offs to accelerate development:
 
-1. **单用户架构** - 使用单一 `agent` 用户 + Proxy 层身份隔离，而非每个 AI 独立用户
-2. **统一端口** - 单一服务端口 3344，而非分离的 API 和 Proxy 服务
-3. **同步执行** - 直接 HTTP 调用，而非异步消息队列
+1. **Single User Architecture** - Uses a single `agent` user + Proxy layer identity isolation, rather than independent users for each AI
+2. **Unified Port** - Single service port 3344, rather than separate API and Proxy services
+3. **Synchronous Execution** - Direct HTTP calls, rather than asynchronous message queues
+4. **Passive Architecture** - Fully reactive (user-triggered), lacking World Scheduler for AI autonomy (planned for v0.3.0)
 
-这些决策在 MVP 阶段提供了足够的功能，同时大幅降低了复杂度。详见 `docs/decisions/` 目录。
+These decisions provide sufficient functionality for the MVP stage while significantly reducing complexity. See the `docs/decisions/` directory for details.
 
-## 贡献
+## Contributing
 
-欢迎贡献！请先阅读：
+Contributions are welcome! Please read first:
 
-- [当前架构](./docs/02-current-arch.md) 了解实现细节
-- [发展路线图](./docs/04-roadmap.md) 了解未来方向
-- [设计决策](./docs/decisions/) 了解工程权衡
+- [Current Architecture](./docs/02-current-arch.md) to understand implementation details
+- [Development Roadmap](./docs/04-roadmap.md) to understand future direction
+- [Design Decisions](./docs/decisions/) to understand engineering trade-offs
 
-## 许可证
+## License
 
 MIT
