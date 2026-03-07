@@ -16,8 +16,10 @@ RUN useradd -m -s /bin/bash agent && \
     echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.profile && \
     mkdir -p /home/agent/.opencode && \
     echo '{"apiBaseUrl":"http://host.docker.internal:3344/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
-    chown -R agent:agent /home/agent/.opencode && \
-    chmod 600 /home/agent/.opencode/config.json
+    mkdir -p /home/agent/.config/opencode && \
+    echo '{"$schema":"https://opencode.ai/config.json","disabled_providers":[],"model":"system/default","provider":{"system":{"name":"System","npm":"@ai-sdk/openai-compatible","models":{"default":{"name":"Default Model"}},"options":{"baseURL":"http://host.docker.internal:3344/v1"}}}}' > /home/agent/.config/opencode/opencode.jsonc && \
+    chown -R agent:agent /home/agent/.opencode /home/agent/.config && \
+    chmod 600 /home/agent/.opencode/config.json /home/agent/.config/opencode/opencode.jsonc
 
 COPY dist/region-daemon/RegionDaemon.js /daemon/RegionDaemon.js
 COPY docker/start.sh /start.sh
