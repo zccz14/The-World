@@ -1,59 +1,84 @@
-import { Request, Response } from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import { WorldMemory } from '../memory/MemoryManager';
-import { logger } from '../utils/logger';
-import { AIIdentity } from '../utils/types';
+import { Request, Response } from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import { WorldMemory } from "../memory/MemoryManager";
+import { logger } from "../utils/logger";
+import { AIIdentity } from "../utils/types";
 
 export class AIProxyHandler {
   private memory: WorldMemory;
   private realApiKey: string;
   private targetBaseUrl: string;
+  private realModel: string;
   private aiIdentities: Map<string, AIIdentity> = new Map();
   private proxyMiddleware: any;
 
   constructor(config: {
     realApiKey: string;
     targetBaseUrl: string;
+    realModel: string;
     memory: WorldMemory;
   }) {
     this.memory = config.memory;
     this.realApiKey = config.realApiKey;
     this.targetBaseUrl = config.targetBaseUrl;
-    
+    this.realModel = config.realModel;
+
     this.proxyMiddleware = createProxyMiddleware({
       target: this.targetBaseUrl,
       changeOrigin: true,
       pathRewrite: (path) => path,
       on: {
         proxyReq: async (proxyReq: any, req: Request, res: Response) => {
-          const dummyKey = req.headers['authorization']?.replace('Bearer ', '');
-          
-          logger.info(`Proxy request: ${req.method} ${req.url}, key: ${dummyKey?.substring(0, 20)}...`);
-          
+          const dummyKey = req.headers["authorization"]?.replace("Bearer ", "");
+
+          logger.info(
+            `Proxy request: ${req.method} ${req.url}, key: ${dummyKey?.substring(0, 20)}...`,
+          );
+
           const identity = this.verifyAI(dummyKey);
           if (!identity) {
             logger.warn(`Invalid AI identity for key: ${dummyKey}`);
             if (!res.headersSent) {
-              res.status(401).json({ error: 'Invalid AI identity' });
+              res.status(401).json({ error: "Invalid AI identity" });
             }
             proxyReq.destroy();
             return;
           }
-          
-          proxyReq.setHeader('Authorization', `Bearer ${this.realApiKey}`);
-          
+
+          proxyReq.setHeader("Authorization", `Bearer ${this.realApiKey}`);
+
+          // Override model for chat completions requests
+          if (req.path.includes("/chat/completions") && req.body) {
+            const originalModel = req.body.model;
+            const modifiedBody = { ...req.body, model: this.realModel };
+            const bodyData = JSON.stringify(modifiedBody);
+
+            proxyReq.setHeader("Content-Type", "application/json");
+            proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+            proxyReq.write(bodyData);
+            proxyReq.end();
+
+            logger.info(
+              `AI ${identity.aiName} -> model override: ${originalModel} -> ${this.realModel}`,
+            );
+          }
+
           await this.logAIRequest(identity.aiName, req);
-          
+
           logger.info(`AI ${identity.aiName} -> ${req.method} ${req.url}`);
         },
         proxyRes: async (proxyRes: any, req: Request) => {
-          logger.info(`Response for ${req.method} ${req.url}: ${proxyRes.statusCode}`);
+          logger.info(
+            `Response for ${req.method} ${req.url}: ${proxyRes.statusCode}`,
+          );
           await this.logAIResponse(req, proxyRes);
         },
         error: (err: any, req: Request, res: any) => {
           logger.error(`Proxy error: ${err.message}`);
           if (!res.headersSent && res.status) {
-            res.status(500).json({ error: 'Proxy error', details: err.message });
+            res
+              .status(500)
+              .json({ error: "Proxy error", details: err.message });
           }
         },
       },
@@ -69,12 +94,12 @@ export class AIProxyHandler {
     try {
       await this.memory.logAIAction({
         aiName,
-        regionId: 'global',
-        action: 'api_request',
+        regionId: "global",
+        action: "api_request",
         result: `${req.method} ${req.url}`,
       });
     } catch (error) {
-      logger.error({ error }, 'Failed to log AI request');
+      logger.error({ error }, "Failed to log AI request");
     }
   }
 
