@@ -30,10 +30,10 @@ async function callOpenCode(aiName: string, message: string): Promise<string> {
         env: { ...process.env, HOME: `/home/${aiName}`, PATH: '/usr/local/bin:/usr/bin:/bin' },
       }
     );
-    
+
     const fullOutput = stdout + stderr;
     const lines = fullOutput.split('\n').filter((line: string) => line.trim());
-    
+
     let responseText = '';
     for (const line of lines) {
       try {
@@ -45,12 +45,12 @@ async function callOpenCode(aiName: string, message: string): Promise<string> {
         // Not JSON, skip
       }
     }
-    
+
     if (responseText) {
       console.log(`[oracle-processor] AI response: ${responseText.substring(0, 100)}...`);
       return responseText;
     }
-    
+
     // Fallback to raw output if no text found
     console.log(`[oracle-processor] No text in JSON, returning raw output`);
     return fullOutput.substring(0, 500);
@@ -60,18 +60,18 @@ async function callOpenCode(aiName: string, message: string): Promise<string> {
     console.error(`[oracle-processor] error.killed:`, error.killed);
     console.error(`[oracle-processor] stdout length:`, error.stdout?.length);
     console.error(`[oracle-processor] stderr length:`, error.stderr?.length);
-    
+
     if (error.stdout) {
       console.error(`[oracle-processor] stdout preview:`, error.stdout.substring(0, 200));
     }
     if (error.stderr) {
       console.error(`[oracle-processor] stderr preview:`, error.stderr.substring(0, 200));
     }
-    
+
     // Try to parse stdout/stderr even if command failed
     const fullOutput = (error.stdout || '') + (error.stderr || '');
     const lines = fullOutput.split('\n').filter((line: string) => line.trim());
-    
+
     let responseText = '';
     for (const line of lines) {
       try {
@@ -83,12 +83,14 @@ async function callOpenCode(aiName: string, message: string): Promise<string> {
         // Not JSON, skip
       }
     }
-    
+
     if (responseText) {
-      console.log(`[oracle-processor] AI response (from error): ${responseText.substring(0, 100)}...`);
+      console.log(
+        `[oracle-processor] AI response (from error): ${responseText.substring(0, 100)}...`
+      );
       return responseText;
     }
-    
+
     return error.message;
   }
 }
@@ -101,13 +103,13 @@ async function processOracleMessage(messageFile: string) {
   console.log(`[oracle-processor] Processing message for ${oracle.to}`);
   console.log(`[oracle-processor] From: ${oracle.from}`);
   console.log(`[oracle-processor] Content: ${oracle.content}`);
-  
+
   console.log(`[oracle-processor] Calling opencode for ${oracle.to}...`);
   const aiResponse = await callOpenCode(oracle.to, oracle.content);
   console.log(`[oracle-processor] AI response: ${aiResponse.substring(0, 100)}...`);
 
   const timestamp = oracle.timestamp || Date.now();
-  
+
   const response = {
     to: oracle.from,
     from: oracle.to,
@@ -118,7 +120,7 @@ async function processOracleMessage(messageFile: string) {
 
   const responseFile = `response-${timestamp}.msg`;
   const responsePath = path.join(OUTBOX_DIR, responseFile);
-  
+
   fs.writeFileSync(responsePath, JSON.stringify(response, null, 2));
   console.log(`[oracle-processor] Response written to ${responseFile}`);
 
@@ -129,14 +131,15 @@ async function processOracleMessage(messageFile: string) {
 
 async function watchInbox() {
   await ensureDirectories();
-  
+
   console.log('[oracle-processor] Watching inbox for messages...');
 
   const processedFiles = new Set<string>();
 
   setInterval(() => {
     try {
-      const files = fs.readdirSync(INBOX_DIR)
+      const files = fs
+        .readdirSync(INBOX_DIR)
         .filter(f => f.startsWith('oracle-') && f.endsWith('.msg'));
 
       files.forEach(file => {

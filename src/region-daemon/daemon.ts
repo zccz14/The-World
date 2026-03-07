@@ -30,16 +30,16 @@ export class SocketDaemon {
 
   private async createUserSocket(username: string) {
     const socketPath = path.join(this.socketDir, `${username}.sock`);
-    
+
     if (fs.existsSync(socketPath)) {
       fs.unlinkSync(socketPath);
     }
 
-    const server = net.createServer((conn) => {
+    const server = net.createServer(conn => {
       this.handleConnection(conn, username);
     });
 
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       server.listen(socketPath, () => {
         fs.chmodSync(socketPath, 0o600);
         logger.info(`Socket created: ${socketPath}`);
@@ -50,8 +50,8 @@ export class SocketDaemon {
 
   private async handleConnection(conn: net.Socket, username: string) {
     let data = '';
-    
-    conn.on('data', async (chunk) => {
+
+    conn.on('data', async chunk => {
       data += chunk.toString();
     });
 
@@ -70,11 +70,11 @@ export class SocketDaemon {
       } catch (error: any) {
         conn.write(`Error: ${error.message}`);
       }
-      
+
       conn.end();
     });
 
-    conn.on('error', (err) => {
+    conn.on('error', err => {
       logger.error(`Connection error for ${username}:`, err.message);
     });
   }

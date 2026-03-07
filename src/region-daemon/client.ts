@@ -13,7 +13,7 @@ export class DaemonClient {
       });
 
       let data = '';
-      client.on('data', (chunk) => {
+      client.on('data', chunk => {
         data += chunk;
       });
 

@@ -26,12 +26,17 @@ export class RegionManager {
     logger.info(`Creating region: ${regionName}`);
 
     const imageExists = await this.dockerManager.isImageExists(this.regionImageName);
-    
+
     if (!imageExists) {
       await this.buildRegionImage();
     }
 
-    const hostDir = path.join(process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp', '.the-world', 'regions', regionName);
+    const hostDir = path.join(
+      process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp',
+      '.the-world',
+      'regions',
+      regionName
+    );
     await this.ensureDirectory(hostDir);
 
     await this.dockerManager.createContainer({
@@ -59,11 +64,11 @@ export class RegionManager {
 
   private async buildRegionImage(): Promise<void> {
     logger.info('Building region image');
-    
+
     const context = path.resolve(__dirname, '../../');
     const dockerfile = 'docker/Dockerfile.region';
     await this.dockerManager.buildImage(this.regionImageName, context, dockerfile);
-    
+
     logger.info('Region image built');
   }
 
@@ -96,7 +101,7 @@ export class RegionManager {
   async getRegionOpencodePort(regionName: string): Promise<number | null> {
     const container = await this.dockerManager.getContainer(regionName);
     if (!container) return null;
-    
+
     const inspect = await container.inspect();
     const portBinding = inspect.NetworkSettings.Ports?.['4096/tcp'];
     if (portBinding && portBinding[0]?.HostPort) {
@@ -107,15 +112,15 @@ export class RegionManager {
 
   async removeRegion(regionName: string): Promise<void> {
     logger.info(`Removing region: ${regionName}`);
-    
+
     await this.dockerManager.removeContainer(regionName);
-    
+
     await this.memory.logSystemEvent({
       type: 'region_removed',
       regionId: regionName,
       timestamp: Date.now(),
     });
-    
+
     logger.info(`Region removed: ${regionName}`);
   }
 }

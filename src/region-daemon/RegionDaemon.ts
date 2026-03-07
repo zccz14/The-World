@@ -28,13 +28,13 @@ export class RegionDaemon {
 
   async start() {
     await Promise.all([
-      new Promise<void>((resolve) => {
+      new Promise<void>(resolve => {
         this.controlServer.listen(DAEMON_PORT, '0.0.0.0', () => {
           console.log(`[RegionDaemon] Control server listening on 0.0.0.0:${DAEMON_PORT}`);
           resolve();
         });
       }),
-      new Promise<void>((resolve) => {
+      new Promise<void>(resolve => {
         this.aiProxyServer.listen(AI_PROXY_PORT, '0.0.0.0', () => {
           console.log(`[RegionDaemon] AI Proxy listening on 0.0.0.0:${AI_PROXY_PORT}`);
           resolve();
@@ -74,20 +74,20 @@ export class RegionDaemon {
 
   private handleAIProxyRequest(req: http.IncomingMessage, res: http.ServerResponse) {
     const targetUrl = HOST_API_URL + req.url;
-    
+
     console.log(`[RegionDaemon] AI Proxy: ${req.method} ${targetUrl}`);
-    
+
     const options: http.RequestOptions = {
       method: req.method,
       headers: { ...req.headers, host: 'host.docker.internal:3344' },
     };
 
-    const proxyReq = http.request(targetUrl, options, (proxyRes) => {
+    const proxyReq = http.request(targetUrl, options, proxyRes => {
       res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
       proxyRes.pipe(res);
     });
 
-    proxyReq.on('error', (error) => {
+    proxyReq.on('error', error => {
       console.error('[RegionDaemon] AI Proxy error:', error.message);
       if (!res.headersSent) {
         res.writeHead(502);
@@ -101,7 +101,7 @@ export class RegionDaemon {
   private async handleExecute(req: http.IncomingMessage, res: http.ServerResponse) {
     const body = await this.readBody(req);
     console.log(`[RegionDaemon] handleExecute received body: ${body.substring(0, 200)}`);
-    
+
     const { user, command, timeout = 120000 } = JSON.parse(body);
 
     if (!user || !command) {
@@ -118,21 +118,23 @@ export class RegionDaemon {
       console.log('[RegionDaemon] Calling executeAsUser...');
       const result = await this.executeAsUser(user, command, timeout);
       console.log('[RegionDaemon] executeAsUser completed');
-      console.log(`[RegionDaemon] stdout length: ${result.stdout.length}, stderr length: ${result.stderr.length}`);
-      
+      console.log(
+        `[RegionDaemon] stdout length: ${result.stdout.length}, stderr length: ${result.stderr.length}`
+      );
+
       const response = JSON.stringify({
         success: true,
         stdout: result.stdout,
         stderr: result.stderr,
       });
       console.log(`[RegionDaemon] Response length: ${response.length}`);
-      
+
       res.writeHead(200);
       res.end(response);
       console.log('[RegionDaemon] Response sent');
     } catch (error: any) {
       console.error(`[RegionDaemon] Execute error:`, error.message);
-      
+
       const response = JSON.stringify({
         success: false,
         error: error.message,
@@ -141,14 +143,18 @@ export class RegionDaemon {
         stdout: error.stdout || '',
         stderr: error.stderr || '',
       });
-      
+
       res.writeHead(200);
       res.end(response);
       console.log('[RegionDaemon] Error response sent');
     }
   }
 
-  private executeAsUser(user: string, command: string, timeout: number): Promise<{ stdout: string; stderr: string }> {
+  private executeAsUser(
+    user: string,
+    command: string,
+    timeout: number
+  ): Promise<{ stdout: string; stderr: string }> {
     return new Promise((resolve, reject) => {
       const scriptPath = `/tmp/cmd-${Date.now()}-${Math.random().toString(36).slice(2)}.sh`;
       const scriptContent = `#!/bin/sh
@@ -156,10 +162,10 @@ export PATH=/usr/local/bin:/usr/bin:/bin
 cd /home/${user}
 ${command}
 `;
-      
+
       console.log(`[RegionDaemon] Creating script: ${scriptPath}`);
       fs.writeFileSync(scriptPath, scriptContent, { mode: 0o755 });
-      
+
       console.log(`[RegionDaemon] Spawning: su - ${user} -c ${scriptPath}`);
       const proc = spawn('su', ['-', user, '-c', scriptPath], {
         env: { ...process.env, HOME: `/home/${user}`, PATH: '/usr/local/bin:/usr/bin:/bin' },
@@ -173,10 +179,14 @@ ${command}
 
       console.log(`[RegionDaemon] Setting timeout for ${timeout}ms`);
       const timer = setTimeout(() => {
-        console.log(`[RegionDaemon] TIMEOUT reached! killed=${killed}, hasFinished=${hasFinished}, resolved=${resolved}`);
+        console.log(
+          `[RegionDaemon] TIMEOUT reached! killed=${killed}, hasFinished=${hasFinished}, resolved=${resolved}`
+        );
         killed = true;
         proc.kill();
-        try { fs.unlinkSync(scriptPath); } catch {}
+        try {
+          fs.unlinkSync(scriptPath);
+        } catch {}
         const error: any = new Error('Timeout');
         error.killed = true;
         error.stdout = stdout;
@@ -184,11 +194,14 @@ ${command}
         reject(error);
       }, timeout);
 
-      proc.stdout.on('data', (data) => {
+      proc.stdout.on('data', data => {
         const chunk = data.toString();
         stdout += chunk;
-        console.log(`[RegionDaemon] ${user} stdout chunk (${chunk.length}b):`, chunk.substring(0, 100));
-        
+        console.log(
+          `[RegionDaemon] ${user} stdout chunk (${chunk.length}b):`,
+          chunk.substring(0, 100)
+        );
+
         if (stdout.includes('"type":"step_finish"') && !hasFinished) {
           console.log(`[RegionDaemon] ${user} step_finish detected!`);
           hasFinished = true;
@@ -201,37 +214,50 @@ ${command}
               killed = true;
               console.log(`[RegionDaemon] Killing process and resolving...`);
               proc.kill();
-              try { fs.unlinkSync(scriptPath); } catch {}
-              console.log(`[RegionDaemon] Resolving with stdout=${stdout.length}b, stderr=${stderr.length}b`);
+              try {
+                fs.unlinkSync(scriptPath);
+              } catch {}
+              console.log(
+                `[RegionDaemon] Resolving with stdout=${stdout.length}b, stderr=${stderr.length}b`
+              );
               resolve({ stdout, stderr });
             }
           }, 500);
         }
       });
 
-      proc.stderr.on('data', (data) => {
+      proc.stderr.on('data', data => {
         stderr += data.toString();
-        console.log(`[RegionDaemon] ${user} stderr (${data.length}b):`, data.toString().substring(0, 200));
+        console.log(
+          `[RegionDaemon] ${user} stderr (${data.length}b):`,
+          data.toString().substring(0, 200)
+        );
       });
 
-      proc.on('close', (code) => {
-        console.log(`[RegionDaemon] ${user} process closed with code ${code}, killed=${killed}, resolved=${resolved}`);
+      proc.on('close', code => {
+        console.log(
+          `[RegionDaemon] ${user} process closed with code ${code}, killed=${killed}, resolved=${resolved}`
+        );
         clearTimeout(timer);
-        try { fs.unlinkSync(scriptPath); } catch {}
+        try {
+          fs.unlinkSync(scriptPath);
+        } catch {}
         if (killed || resolved) {
           console.log(`[RegionDaemon] Already handled, returning`);
           return;
         }
-        
+
         resolved = true;
         console.log(`[RegionDaemon] Resolving from close event`);
         resolve({ stdout, stderr });
       });
 
-      proc.on('error', (err) => {
+      proc.on('error', err => {
         console.log(`[RegionDaemon] ${user} process error:`, err);
         clearTimeout(timer);
-        try { fs.unlinkSync(scriptPath); } catch {}
+        try {
+          fs.unlinkSync(scriptPath);
+        } catch {}
         if (!resolved) {
           resolved = true;
           reject(err);
@@ -240,7 +266,11 @@ ${command}
     });
   }
 
-  private async handleObserve(req: http.IncomingMessage, res: http.ServerResponse, pathname: string) {
+  private async handleObserve(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    pathname: string
+  ) {
     const user = pathname.split('/')[2];
 
     if (!user) {
@@ -257,7 +287,7 @@ ${command}
     }
 
     const targetUrl = `http://localhost:${serveProcess.port}`;
-    
+
     this.proxyRequest(targetUrl, req, res);
   }
 
@@ -284,15 +314,15 @@ ${command}
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
-    proc.stdout?.on('data', (data) => {
+    proc.stdout?.on('data', data => {
       console.log(`[RegionDaemon] ${user} stdout:`, data.toString());
     });
 
-    proc.stderr?.on('data', (data) => {
+    proc.stderr?.on('data', data => {
       console.log(`[RegionDaemon] ${user} stderr:`, data.toString());
     });
 
-    proc.on('exit', (code) => {
+    proc.on('exit', code => {
       console.log(`[RegionDaemon] ${user} serve process exited with code ${code}`);
       this.serveProcesses.delete(user);
     });
@@ -306,11 +336,13 @@ ${command}
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      user,
-      port,
-    }));
+    res.end(
+      JSON.stringify({
+        success: true,
+        user,
+        port,
+      })
+    );
   }
 
   private async handleServeStop(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -336,16 +368,18 @@ ${command}
     this.serveProcesses.delete(user);
 
     res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      user,
-    }));
+    res.end(
+      JSON.stringify({
+        success: true,
+        user,
+      })
+    );
   }
 
   private async readBody(req: http.IncomingMessage): Promise<string> {
     return new Promise((resolve, reject) => {
       let body = '';
-      req.on('data', chunk => body += chunk);
+      req.on('data', chunk => (body += chunk));
       req.on('end', () => resolve(body));
       req.on('error', reject);
     });
@@ -353,15 +387,19 @@ ${command}
 
   private proxyRequest(targetUrl: string, req: http.IncomingMessage, res: http.ServerResponse) {
     const url = new URL(req.url!, `http://localhost:${DAEMON_PORT}`);
-    const proxyReq = http.request(targetUrl + url.pathname + url.search, {
-      method: req.method,
-      headers: req.headers,
-    }, (proxyRes) => {
-      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
-      proxyRes.pipe(res);
-    });
+    const proxyReq = http.request(
+      targetUrl + url.pathname + url.search,
+      {
+        method: req.method,
+        headers: req.headers,
+      },
+      proxyRes => {
+        res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+        proxyRes.pipe(res);
+      }
+    );
 
-    proxyReq.on('error', (error) => {
+    proxyReq.on('error', error => {
       console.error('[RegionDaemon] Proxy error:', error);
       res.writeHead(502);
       res.end(JSON.stringify({ error: 'Proxy error' }));

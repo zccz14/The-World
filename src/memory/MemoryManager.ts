@@ -8,11 +8,7 @@ export class WorldMemory {
     this.client = new EverMemOSClient(baseUrl);
   }
 
-  async logOracle(params: {
-    aiName: string;
-    regionId: string;
-    content: string;
-  }) {
+  async logOracle(params: { aiName: string; regionId: string; content: string }) {
     logger.debug({ params }, 'Logging oracle message');
 
     return this.client.storeMemory({
@@ -30,12 +26,7 @@ export class WorldMemory {
     });
   }
 
-  async logAIAction(params: {
-    aiName: string;
-    regionId: string;
-    action: string;
-    result: string;
-  }) {
+  async logAIAction(params: { aiName: string; regionId: string; action: string; result: string }) {
     logger.debug({ params }, 'Logging AI action');
 
     return this.client.storeMemory({
@@ -76,11 +67,7 @@ export class WorldMemory {
     });
   }
 
-  async retrieveMemories(params: {
-    aiName: string;
-    query: string;
-    regionId?: string;
-  }) {
+  async retrieveMemories(params: { aiName: string; query: string; regionId?: string }) {
     logger.debug({ params }, 'Retrieving memories');
 
     return this.client.searchMemories({

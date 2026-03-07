@@ -54,14 +54,19 @@ export class RegionDaemonClient {
     return JSON.parse(response);
   }
 
-  private async execCurl(pathname: string, method: string, body?: string, timeout?: number): Promise<string> {
+  private async execCurl(
+    pathname: string,
+    method: string,
+    body?: string,
+    timeout?: number
+  ): Promise<string> {
     const container = this.docker.getContainer(this.containerName);
     const actualTimeout = timeout || this.timeout;
-    
+
     const curlCmd = body
       ? `curl -s -X ${method} -H "Content-Type: application/json" -d '${body.replace(/'/g, "'\\''")}' http://localhost:${this.daemonPort}${pathname}`
       : `curl -s -X ${method} http://localhost:${this.daemonPort}${pathname}`;
-    
+
     const exec = await container.exec({
       Cmd: ['sh', '-c', curlCmd],
       AttachStdout: true,
@@ -69,13 +74,13 @@ export class RegionDaemonClient {
     });
 
     const stream = await exec.start({ Detach: false });
-    
+
     return new Promise((resolve, reject) => {
       let output = '';
       const timer = setTimeout(() => {
         reject(new Error('Timeout'));
       }, actualTimeout);
-      
+
       stream.on('data', (chunk: Buffer) => {
         output += chunk.toString();
       });
@@ -83,7 +88,7 @@ export class RegionDaemonClient {
         clearTimeout(timer);
         resolve(output);
       });
-      stream.on('error', (err) => {
+      stream.on('error', err => {
         clearTimeout(timer);
         reject(err);
       });

@@ -32,7 +32,7 @@ export class AIUserManager {
 
     const daemonClient = new RegionDaemonClient(regionName);
     const result = await daemonClient.execute('agent', command);
-    
+
     if (result.success) {
       return result.stdout + result.stderr;
     } else {

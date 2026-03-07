@@ -15,20 +15,23 @@ export class DockerManager {
 
   async buildImage(imageName: string, context: string, dockerfile: string): Promise<void> {
     logger.info(`Building image: ${imageName}`);
-    
-    const stream = await this.docker.buildImage({
-      context,
-      src: ['docker', 'dist'],
-    }, {
-      t: imageName,
-      dockerfile,
-    });
+
+    const stream = await this.docker.buildImage(
+      {
+        context,
+        src: ['docker', 'dist'],
+      },
+      {
+        t: imageName,
+        dockerfile,
+      }
+    );
 
     await new Promise<void>((resolve, reject) => {
       this.docker.modem.followProgress(
         stream,
-        (err) => (err ? reject(err) : resolve()),
-        (event) => {
+        err => (err ? reject(err) : resolve()),
+        event => {
           if (event.stream) {
             logger.info(event.stream.trim());
           }
@@ -63,7 +66,7 @@ export class DockerManager {
 
     const portBindings: any = {};
     const exposedPorts: any = {};
-    
+
     if (options.ports) {
       for (const [containerPort, hostPort] of Object.entries(options.ports)) {
         const portKey = `${containerPort}/tcp`;
@@ -93,7 +96,7 @@ export class DockerManager {
 
     await container.start();
     logger.info(`Container started: ${options.name}`);
-    
+
     return container;
   }
 
