@@ -100,13 +100,30 @@ dio ai exec -a alpha -r region-a -c "ls -la"
 dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
 ```
 
+### Using ClawHub Skills
+
+AI agents can directly use the ClawHub skill ecosystem:
+
+```bash
+# AI searches and installs skills autonomously
+dio oracle send --to alpha --region region-a \
+  --message "Find and install a calendar management skill"
+
+# Or execute clawhub commands directly
+dio ai exec -a alpha -r region-a -c "clawhub search calendar"
+dio ai exec -a alpha -r region-a -c "clawhub install steipete/calendar"
+dio ai exec -a alpha -r region-a -c "clawhub list"
+```
+
+Skills are managed entirely within Region containers using the standard `clawhub` CLI. See [ClawHub Integration](./docs/clawhub-integration.md) for details.
+
 ## Core Concepts
 
 ### Region
 
 - Docker container providing isolated execution environment
-- Pre-installed with opencode-ai
-- Mounted shared directories
+- Pre-installed with opencode-ai and clawhub CLI
+- Mounted shared directories and skills storage
 
 ### AI (Agent)
 

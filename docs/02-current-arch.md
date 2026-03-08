@@ -311,6 +311,40 @@ WORLD_DATA_DIR=~/.the-world
 - 文件系统消息传递（inbox/outbox）
 - AI 间进程通信
 
+## ClawHub Skills 集成
+
+### 设计决策
+
+TheWorld 选择**原生兼容** OpenClaw/ClawHub Skill 生态，而非自建或翻译：
+
+**核心原因**：
+
+1. **生态优先**：ClawHub 拥有成熟的 Skill 生态（4.6k+ stars，60k+ commits）
+2. **避免 Deno 陷阱**：翻译/适配方案风险高，生态价值 > 技术差异
+3. **一人公司原则**：快速见效，不重复造轮，专注差异化价值
+
+**差异化价值**：
+
+- Multi-Agent 原生架构
+- 容器级安全隔离
+- World Memory 统一记忆
+- World Scheduler（规划中）
+
+### 实现方式
+
+**架构**：完全容器内管理
+
+- Region 容器预装 `clawhub` CLI
+- AI 直接使用标准 clawhub 命令
+- Skills 持久化在容器卷（每个 Region 独立）
+- 宿主机零 Agentic 逻辑（安全边界）
+
+**网络**：容器直接访问 clawhub.ai  
+**持久化**：`~/.the-world/regions/<region>/skills/` → `/home/agent/.openclaw/skills/`  
+**共享**：不跨 Region 共享（简化设计）
+
+详见：`docs/clawhub-integration.md` 和 `docs/decisions/005-clawhub-integration.md`
+
 ## 工程权衡
 
 ### 选择 1: 单用户 vs 多用户

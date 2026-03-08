@@ -47,6 +47,7 @@ export class RegionManager {
         { source: path.join(hostDir, 'shared'), target: '/world/shared' },
         { source: path.join(hostDir, 'inbox'), target: '/world/inbox' },
         { source: path.join(hostDir, 'outbox'), target: '/world/outbox' },
+        { source: path.join(hostDir, 'skills'), target: '/home/agent/.openclaw/skills' },
       ],
       ports: {
         '4096': 0, // Let Docker assign a random host port for opencode serve
@@ -78,7 +79,7 @@ export class RegionManager {
       logger.debug(`Created directory: ${dir}`);
     }
 
-    ['shared', 'inbox', 'outbox'].forEach(subdir => {
+    ['shared', 'inbox', 'outbox', 'skills'].forEach(subdir => {
       const fullPath = path.join(dir, subdir);
       if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath);
