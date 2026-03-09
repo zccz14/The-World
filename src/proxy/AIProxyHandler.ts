@@ -31,19 +31,6 @@ export class AIProxyHandler {
         proxyReq: async (proxyReq: any, req: Request, res: Response) => {
           logger.info(`Proxy request: ${req.method} ${req.url}...`);
 
-          const aiName = this.resolveAIName(req);
-          if (aiName === 'unknown') {
-            logger.warn(
-              { method: req.method, url: req.url },
-              'Rejected proxy request: invalid dummy key'
-            );
-            if (!res.headersSent) {
-              res.status(401).json({ error: 'Invalid AI identity' });
-            }
-            proxyReq.destroy();
-            return;
-          }
-
           proxyReq.setHeader('Authorization', `Bearer ${this.realApiKey}`);
 
           // Override model for chat completions requests
@@ -60,7 +47,7 @@ export class AIProxyHandler {
             logger.info(`AI -> model override: ${originalModel} -> ${this.realModel}`);
           }
 
-          await this.logAIRequest(aiName, req);
+          await this.logAIRequest(req);
           logger.info(`AI -> ${req.method} ${req.url}`);
         },
         proxyRes: async (proxyRes: any, req: Request) => {
@@ -77,10 +64,10 @@ export class AIProxyHandler {
     });
   }
 
-  private async logAIRequest(aiName: string, req: Request) {
+  private async logAIRequest(req: Request) {
     try {
       await this.memory.logAIAction({
-        aiName,
+        aiName: 'active',
         regionId: 'global',
         action: 'api_request',
         result: `${req.method} ${req.url}`,
@@ -88,17 +75,6 @@ export class AIProxyHandler {
     } catch (error) {
       logger.error({ error }, 'Failed to log AI request');
     }
-  }
-
-  private resolveAIName(req: Request): string {
-    const auth = req.headers.authorization;
-    if (!auth?.startsWith('Bearer ')) {
-      return 'unknown';
-    }
-
-    const token = auth.slice(7).trim();
-    const identity = this.aiIdentities.get(token);
-    return identity?.aiName || 'unknown';
   }
 
   private async logAIResponse(req: Request, res: any) {
