@@ -28,7 +28,8 @@ export class TheWorldServer {
   async initialize() {
     logger.info('Initializing TheWorld Server...');
 
-    this.memory = new WorldMemory(Config.EVERMEMOS_URL);
+    const auditLogPath = path.join(Config.DATA_DIR, 'audit', 'world-memory-audit.jsonl');
+    this.memory = new WorldMemory(Config.EVERMEMOS_URL, auditLogPath);
 
     this.proxyHandler = new AIProxyHandler({
       realApiKey: Config.REAL_AI_API_KEY,
@@ -195,6 +196,15 @@ export class TheWorldServer {
         }
 
         const result = await this.aiManager!.execCommand(ai, region, command);
+
+        await this.memory!.logCommandExecution({
+          aiName: ai,
+          regionId: region,
+          command,
+          output: result,
+          success: true,
+        });
+
         res.json({ result });
       } catch (error: any) {
         logger.error({ error }, 'Failed to execute command');
@@ -287,6 +297,12 @@ export class TheWorldServer {
               // Not JSON, skip
             }
           }
+
+          await this.memory!.logOracleResponse({
+            aiName: to,
+            regionId: region,
+            content: responseText || result.stdout,
+          });
 
           res.json({
             status: 'ok',

@@ -16,7 +16,7 @@ TheWorld is an AI collaboration platform that treats the host machine as a "worl
 - Command execution (synchronous invocation)
 - Oracle (direct AI communication)
 - API Key security isolation
-- World Memory (EverMemOS integration)
+- Layered World Memory (EverMemOS + host audit)
 - opencode serve management
 
 ### Future Plans ⏳
@@ -139,8 +139,10 @@ Skills are managed entirely within Region containers using the standard `clawhub
 
 ### World Memory
 
-- Based on EverMemOS
-- Records all events and conversations
+- Layered memory design
+- Working/Knowledge/Episode memories are stored as compact summaries in EverMemOS
+- Full audit records are appended on host machine for traceability
+- Audit file path: `~/.the-world/audit/world-memory-audit.jsonl`
 - Shared across Regions
 
 ## Architecture
@@ -184,6 +186,7 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 ### Configuration Guides
 
 - [EverMemOS Setup](./docs/EVERMEMOS_SETUP.md)
+- [GUI Desktop (noVNC)](./docs/GUI_DESKTOP.md)
 
 ### Historical Documents (Archived)
 

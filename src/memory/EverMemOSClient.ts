@@ -35,7 +35,7 @@ export class EverMemOSClient {
   async searchMemories(params: any): Promise<any> {
     try {
       const response = await this.client.get('/api/v1/memories/search', {
-        data: params,
+        params,
       });
       return response.data;
     } catch (error) {

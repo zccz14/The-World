@@ -211,14 +211,20 @@ WORLD_DATA_DIR=/var/lib/the-world
 dio start
 
 # 创建 Region
-dio region create region-a
+dio region create -n region-a
 
 # 创建 AI
-dio ai create alpha -r region-a
+dio ai create -n alpha
 
 # 开始使用！
-dio ai exec alpha "hello world"
+dio ai exec -a alpha -r region-a -c "hello world"
 ```
+
+## 11. 分层记忆说明
+
+- EverMemOS 存储可召回的压缩记忆（工作层/知识层/情节层）
+- 完整审计记录写入宿主机：`~/.the-world/audit/world-memory-audit.jsonl`
+- 审计层默认长期累积，用于追溯，不直接拼接到 AI 上下文
 
 ## 参考链接
 

@@ -1,0 +1,28 @@
+FROM lscr.io/linuxserver/webtop:ubuntu-xfce
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+    bash \
+    sudo \
+    git \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN npm install -g opencode-ai clawhub
+
+RUN opencode --version || true
+RUN clawhub --cli-version || true
+
+RUN mkdir -p /config/.opencode /config/.config/opencode /config/.openclaw/skills && \
+    printf '%s\n' '{"apiBaseUrl":"http://host.docker.internal:3344/v1","apiKey":"sk-default"}' > /config/.opencode/config.json && \
+    printf '%s\n' '{"$schema":"https://opencode.ai/config.json","disabled_providers":[],"model":"system/default","provider":{"system":{"name":"System","npm":"@ai-sdk/openai-compatible","models":{"default":{"name":"Default Model"}},"options":{"baseURL":"http://host.docker.internal:3344/v1"}}}}' > /config/.config/opencode/opencode.jsonc && \
+    chown -R abc:abc /config/.opencode /config/.config/opencode /config/.openclaw && \
+    chmod 600 /config/.opencode/config.json /config/.config/opencode/opencode.jsonc
+
+USER abc
