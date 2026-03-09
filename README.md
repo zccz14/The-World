@@ -6,26 +6,33 @@ TheWorld is an AI collaboration platform that treats the host machine as a "worl
 
 ## Current Status
 
-**Version**: v0.1.0 (MVP)  
-**Status**: Production Ready
+**Version**: v0.1.0 (MVP) → v0.2.0 (迁移中)  
+**Status**: v0.1 Production Ready, v0.2 Migrating to Async Event Model
 
 ### Implemented Features ✅
 
 - Region container management (create, list)
 - AI identity management (Proxy layer isolation)
-- Command execution (synchronous invocation)
-- Oracle (direct AI communication)
+- Command execution (synchronous invocation, maintenance channel)
 - API Key security isolation
 - Layered World Memory (EverMemOS + host audit)
-- opencode serve management
+- opencode serve auto-start (container startup)
+- GUI Desktop support (webtop/noVNC)
+- ClawHub Skills native integration
+
+### Migrating Features 🚧 (v0.1 → v0.2)
+
+- **Async Oracle mechanism**: inbox/outbox mounted, serve running, but main path still synchronous (migrating)
+- **serve-first execution model**: serve process resident, but main path still uses temporary `opencode run` (migrating to attach)
 
 ### Future Plans ⏳
 
-- Multi-user isolation (currently single user + Proxy)
+- Multi-user isolation (currently single user + Proxy, ultimate goal)
 - AI projection mechanism
 - Inter-region communication
 - Heartbeat persistence mechanism
 - **World Scheduler** (v0.3.0) - Core component for AI autonomy
+- Human control mechanisms (approval gates, cancellation, replay)
 
 See [Roadmap](./docs/04-roadmap.md) for details
 
@@ -93,11 +100,18 @@ dio ai list
 ### Execute Commands
 
 ```bash
-# Execute command in Region
+# Execute command in Region (maintenance channel)
 dio ai exec -a alpha -r region-a -c "ls -la"
 
 # Send Oracle (communicate with AI)
+# Note: v0.1 still synchronous, v0.2 will be async event delivery
 dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
+
+# v0.2 planned usage (async):
+# dio oracle send --to alpha --region region-a --message "..."
+# → Returns oracle_id immediately
+# dio oracle status <oracle_id>
+# → Query oracle status and responses
 ```
 
 ### Using ClawHub Skills

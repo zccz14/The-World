@@ -132,6 +132,7 @@ ${command}
       console.log(`[RegionDaemon] Spawning: su - ${user} -c ${scriptPath}`);
       const proc = spawn('su', ['-', user, '-c', scriptPath], {
         env: { ...process.env, HOME: `/home/${user}`, PATH: '/usr/local/bin:/usr/bin:/bin' },
+        stdio: ['ignore', 'pipe', 'pipe'],
       });
 
       let stdout = '';
@@ -169,23 +170,19 @@ ${command}
           console.log(`[RegionDaemon] ${user} step_finish detected!`);
           hasFinished = true;
           clearTimeout(timer);
-          console.log(`[RegionDaemon] Timer cleared, scheduling resolve in 500ms`);
-          setTimeout(() => {
-            console.log(`[RegionDaemon] 500ms elapsed, killed=${killed}, resolved=${resolved}`);
-            if (!killed && !resolved) {
-              resolved = true;
-              killed = true;
-              console.log(`[RegionDaemon] Killing process and resolving...`);
-              proc.kill();
-              try {
-                fs.unlinkSync(scriptPath);
-              } catch {}
-              console.log(
-                `[RegionDaemon] Resolving with stdout=${stdout.length}b, stderr=${stderr.length}b`
-              );
-              resolve({ stdout, stderr });
-            }
-          }, 500);
+          if (!killed && !resolved) {
+            resolved = true;
+            console.log(
+              `[RegionDaemon] Resolving with stdout=${stdout.length}b, stderr=${stderr.length}b`
+            );
+            resolve({ stdout, stderr });
+            killed = true;
+            console.log(`[RegionDaemon] Killing process after resolve...`);
+            proc.kill();
+            try {
+              fs.unlinkSync(scriptPath);
+            } catch {}
+          }
         }
       });
 

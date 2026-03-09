@@ -301,9 +301,25 @@ export class TheWorldServer {
 
         const daemonClient = new RegionDaemonClient(region);
 
-        const command = `opencode run "${message.replace(/"/g, '\\"')}" --format json`;
+        // Write oracle message to file
+        const timestamp = Date.now();
+        const filename = `oracle-${timestamp}-human-${to}.txt`;
+        const containerPath = `/world/inbox/${filename}`;
 
-        const result = await daemonClient.execute('agent', command, 60000);
+        const hostDir = path.join(
+          process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp',
+          '.the-world',
+          'regions',
+          region,
+          'inbox'
+        );
+        await fs.promises.writeFile(path.join(hostDir, filename), message, 'utf-8');
+
+        // Use --attach to connect to running opencode serve and --file to reference the oracle
+        const prompt = `请阅读并执行 ${containerPath} 中的 oracle 消息`;
+        const command = `opencode run "${prompt}" --file ${containerPath} --format json --attach http://localhost:4096`;
+
+        const result = await daemonClient.execute('agent', command, 120000);
 
         if (result.success) {
           const lines = (result.stdout + result.stderr).split('\n').filter(line => line.trim());
