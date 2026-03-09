@@ -51,6 +51,40 @@ export class Config {
     return path.join(process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp', '.the-world');
   }
 
+  static get SCHEDULER_ENABLED(): boolean {
+    this.load();
+    return (process.env.SCHEDULER_ENABLED || 'true') === 'true';
+  }
+
+  static get SCHEDULER_STRATEGY(): 'realtime' | 'batch' | 'learning' {
+    this.load();
+    const strategy = process.env.SCHEDULER_STRATEGY || 'realtime';
+    if (strategy === 'batch' || strategy === 'learning' || strategy === 'realtime') {
+      return strategy;
+    }
+    return 'realtime';
+  }
+
+  static get SCHEDULER_TICK_INTERVAL(): number {
+    this.load();
+    return parseInt(process.env.SCHEDULER_TICK_INTERVAL || '5000', 10);
+  }
+
+  static get SCHEDULER_HEARTBEAT_PROMPT(): string {
+    this.load();
+    return (
+      process.env.SCHEDULER_HEARTBEAT_PROMPT ||
+      'You are {aiName} in region {regionName}. Perform your heartbeat check, review recent context, and plan your next valuable actions at {timestamp}.'
+    );
+  }
+
+  static get SCHEDULER_PERSISTENCE_PATH(): string {
+    this.load();
+    return (
+      process.env.SCHEDULER_PERSISTENCE_PATH || path.join(this.DATA_DIR, 'scheduler-queue.json')
+    );
+  }
+
   static validate(): { valid: boolean; missing: string[] } {
     this.load();
     const missing: string[] = [];

@@ -9,6 +9,7 @@ import { AIUserManager } from '../core/AIUserManager';
 import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { RegionDaemonClient } from '../region-daemon/RegionDaemonClient';
+import { WorldScheduler } from '../scheduler/WorldScheduler';
 
 export class TheWorldServer {
   private app: Express;
@@ -16,6 +17,7 @@ export class TheWorldServer {
   private memory?: WorldMemory;
   private regionManager?: RegionManager;
   private aiManager?: AIUserManager;
+  private scheduler?: WorldScheduler;
   private server?: any;
 
   constructor() {
@@ -39,6 +41,16 @@ export class TheWorldServer {
     await this.regionManager.initialize();
 
     this.aiManager = new AIUserManager(this.memory, this.proxyHandler);
+
+    this.scheduler = new WorldScheduler(this.aiManager, this.regionManager, this.memory, {
+      enabled: Config.SCHEDULER_ENABLED,
+      strategyName: Config.SCHEDULER_STRATEGY,
+      tickInterval: Config.SCHEDULER_TICK_INTERVAL,
+      persistencePath: Config.SCHEDULER_PERSISTENCE_PATH,
+      heartbeatPrompt: Config.SCHEDULER_HEARTBEAT_PROMPT,
+    });
+
+    await this.scheduler.start();
 
     this.setupRoutes();
 
@@ -65,10 +77,66 @@ export class TheWorldServer {
           regions: regions.length,
           aiIdentities: this.proxyHandler?.getIdentities().size || 0,
           uptime: process.uptime(),
+          scheduler: this.scheduler?.getStatus(),
         });
       } catch (error: any) {
         res.status(500).json({ error: error.message });
       }
+    });
+
+    this.app.get('/api/scheduler/status', (req: Request, res: Response) => {
+      if (!this.scheduler) {
+        return res.status(404).json({ error: 'Scheduler is not initialized' });
+      }
+
+      res.json({ status: this.scheduler.getStatus() });
+    });
+
+    this.app.get('/api/scheduler/tasks', (req: Request, res: Response) => {
+      if (!this.scheduler) {
+        return res.status(404).json({ error: 'Scheduler is not initialized' });
+      }
+
+      res.json({ tasks: this.scheduler.getPendingTasks() });
+    });
+
+    this.app.post('/api/scheduler/tasks', async (req: Request, res: Response) => {
+      if (!this.scheduler) {
+        return res.status(404).json({ error: 'Scheduler is not initialized' });
+      }
+
+      const { type, priority, aiName, regionName, payload, timeout } = req.body;
+      if (!type || priority === undefined || !aiName || !regionName) {
+        return res.status(400).json({
+          error: 'type, priority, aiName, and regionName are required',
+        });
+      }
+
+      const taskId = await this.scheduler.scheduleTask({
+        type,
+        priority,
+        aiName,
+        regionName,
+        payload: payload || {},
+        timeout,
+      });
+
+      res.json({ status: 'scheduled', taskId });
+    });
+
+    this.app.delete('/api/scheduler/tasks/:taskId', async (req: Request, res: Response) => {
+      if (!this.scheduler) {
+        return res.status(404).json({ error: 'Scheduler is not initialized' });
+      }
+
+      const { taskId } = req.params;
+      const cancelled = await this.scheduler.cancelTask(taskId);
+
+      if (!cancelled) {
+        return res.status(404).json({ error: `Task ${taskId} not found` });
+      }
+
+      res.json({ status: 'cancelled', taskId });
     });
 
     this.app.post('/api/regions', async (req: Request, res: Response) => {
@@ -290,6 +358,10 @@ export class TheWorldServer {
   }
 
   stop() {
+    if (this.scheduler) {
+      void this.scheduler.stop();
+    }
+
     if (this.server) {
       this.server.close();
       logger.info('TheWorld Server stopped');
