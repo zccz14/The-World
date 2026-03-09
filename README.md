@@ -182,6 +182,8 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 - [ADR-002: Unified Port](./docs/decisions/002-unified-port.md)
 - [ADR-003: Synchronous Command Execution](./docs/decisions/003-sync-oracle.md)
 - [ADR-004: World Scheduler](./docs/decisions/004-world-scheduler.md)
+- [ADR-005: ClawHub Skills Integration](./docs/decisions/005-clawhub-integration.md)
+- [ADR-006: GUI-first Region Default](./docs/decisions/006-gui-first-region.md)
 
 ### Configuration Guides
 

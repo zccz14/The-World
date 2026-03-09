@@ -2,6 +2,8 @@
 
 This project includes a ready-to-run container desktop based on noVNC, suitable for browser automation fallback and manual human verification flows.
 
+As of ADR-006 (`docs/decisions/006-gui-first-region.md`), GUI capability is treated as the default direction for Region runtime (GUI-first). This document describes the current standalone GUI container setup used during migration.
+
 The GUI image is built from `lscr.io/linuxserver/webtop:ubuntu-xfce` and pre-installs:
 
 - Node.js 20
