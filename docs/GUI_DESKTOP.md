@@ -1,53 +1,47 @@
-# GUI Desktop in Container (noVNC)
+# Region GUI Access (noVNC)
 
-This project includes a ready-to-run container desktop based on noVNC, suitable for browser automation fallback and manual human verification flows.
+TheWorld uses a single Region container runtime. Region containers are GUI-first by default (ADR-006) and include browser-accessible desktop capability.
 
-As of ADR-006 (`docs/decisions/006-gui-first-region.md`), GUI capability is treated as the default direction for Region runtime (GUI-first). This document describes the current standalone GUI container setup used during migration.
-
-The GUI image is built from `lscr.io/linuxserver/webtop:ubuntu-xfce` and pre-installs:
-
-- Node.js 20
-- `opencode-ai` CLI (`opencode`)
-- `clawhub` CLI
+There is no separate standalone GUI container path anymore.
 
 ## What You Get
 
-- Linux desktop (XFCE) running inside Docker
-- Browser-based remote desktop (noVNC)
-- Shared host directory mounted into the desktop container
-- Localhost-only exposure by default for safer access
+- Linux desktop (XFCE) inside each Region container
+- Browser-based remote desktop (noVNC on container port `3000`)
+- Unified host access via TheWorld proxy route: `/gui/:region/*`
 
-## Start
+## Usage
+
+1. Create a Region:
 
 ```bash
-docker compose -f docker/docker-compose.gui.yml up -d
+dio region create -n region-a
 ```
 
-The first run will build the local image `the-world/gui-desktop:latest`.
+2. Start TheWorld server:
 
-Open:
+```bash
+dio start
+```
+
+3. Open GUI through unified proxy:
 
 ```text
-http://127.0.0.1:3000
+http://127.0.0.1:3344/gui/region-a/
 ```
 
-## Stop
+4. Optional: query GUI status/port:
 
 ```bash
-docker compose -f docker/docker-compose.gui.yml down
+curl http://127.0.0.1:3344/api/regions/region-a/gui
 ```
-
-## Volumes
-
-- `${HOME}/.the-world/gui/config` -> `/config` (desktop/browser persistence)
-- `${HOME}/.the-world/shared` -> `/workspace/shared` (shared files)
 
 ## Security Notes
 
-- The web port is bound to `127.0.0.1` only in the compose file.
-- If you need remote access from another machine, put it behind VPN or reverse proxy auth; do not expose directly to the public internet.
+- Recommended default is localhost-only access (`127.0.0.1`).
+- If cross-machine access is needed, use VPN or authenticated reverse proxy. Do not expose directly to public internet.
 
-## Tips for Browser Stability
+## Notes
 
-- `shm_size: 1gb` is enabled to reduce browser crashes.
-- If the host is low on memory, reduce concurrent tabs/processes first.
+- Region runtime remains compatible with `agent` execution semantics while GUI session runs on webtop's native desktop user.
+- GUI-first prioritizes capability completeness over resource minimization.

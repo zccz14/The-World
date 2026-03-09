@@ -5,4 +5,3 @@ coverage
 *.log
 .env
 .the-world
-docker/start.sh
