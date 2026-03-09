@@ -1,0 +1,6 @@
+#!/usr/bin/with-contenv bash
+
+set -e
+
+su - agent -c "opencode serve --hostname 0.0.0.0" &
+exec node /daemon/RegionDaemon.js

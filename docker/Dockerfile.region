@@ -1,35 +1,38 @@
-FROM node:20-slim
+FROM lscr.io/linuxserver/webtop:ubuntu-xfce
+
+USER root
 
 RUN apt-get update && apt-get install -y \
     bash \
     sudo \
     git \
     curl \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g opencode-ai
-RUN npm install -g clawhub
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN npm install -g opencode-ai clawhub
 
 RUN opencode --version || true
-RUN clawhub --version || true
+RUN clawhub --cli-version || true
 
-RUN useradd -m -s /bin/bash agent && \
+RUN if ! id -u agent >/dev/null 2>&1; then useradd -m -s /bin/bash agent; fi && \
     echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.bashrc && \
     echo 'export PATH="/usr/local/bin:$PATH"' >> /home/agent/.profile && \
     mkdir -p /home/agent/.opencode && \
-    echo '{"apiBaseUrl":"http://host.docker.internal:3344/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
+    printf '%s\n' '{"apiBaseUrl":"http://host.docker.internal:3344/v1","apiKey":"sk-default"}' > /home/agent/.opencode/config.json && \
     mkdir -p /home/agent/.config/opencode && \
-    echo '{"$schema":"https://opencode.ai/config.json","disabled_providers":[],"model":"system/default","provider":{"system":{"name":"System","npm":"@ai-sdk/openai-compatible","models":{"default":{"name":"Default Model"}},"options":{"baseURL":"http://host.docker.internal:3344/v1"}}}}' > /home/agent/.config/opencode/opencode.jsonc && \
+    printf '%s\n' '{"$schema":"https://opencode.ai/config.json","disabled_providers":[],"model":"system/default","provider":{"system":{"name":"System","npm":"@ai-sdk/openai-compatible","models":{"default":{"name":"Default Model"}},"options":{"baseURL":"http://host.docker.internal:3344/v1"}}}}' > /home/agent/.config/opencode/opencode.jsonc && \
     mkdir -p /home/agent/.openclaw/skills && \
     chown -R agent:agent /home/agent/.opencode /home/agent/.config /home/agent/.openclaw && \
     chmod 600 /home/agent/.opencode/config.json /home/agent/.config/opencode/opencode.jsonc
 
 COPY dist/region-daemon/RegionDaemon.js /daemon/RegionDaemon.js
-COPY docker/start.sh /start.sh
-RUN chmod +x /start.sh
+COPY docker/services/region-daemon /custom-services.d/region-daemon
+RUN chmod +x /custom-services.d/region-daemon
 
 RUN mkdir -p /world/shared /world/inbox /world/outbox /world/inbox/processed
-
 RUN chmod 777 /world/shared /world/inbox /world/outbox
-
-CMD ["/start.sh"]

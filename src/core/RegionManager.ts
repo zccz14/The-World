@@ -51,6 +51,7 @@ export class RegionManager {
       ],
       ports: {
         '4096': 0, // Let Docker assign a random host port for opencode serve
+        '3000': 0, // Let Docker assign a random host port for GUI desktop
       },
     });
 
@@ -105,6 +106,18 @@ export class RegionManager {
 
     const inspect = await container.inspect();
     const portBinding = inspect.NetworkSettings.Ports?.['4096/tcp'];
+    if (portBinding && portBinding[0]?.HostPort) {
+      return parseInt(portBinding[0].HostPort, 10);
+    }
+    return null;
+  }
+
+  async getRegionGuiPort(regionName: string): Promise<number | null> {
+    const container = await this.dockerManager.getContainer(regionName);
+    if (!container) return null;
+
+    const inspect = await container.inspect();
+    const portBinding = inspect.NetworkSettings.Ports?.['3000/tcp'];
     if (portBinding && portBinding[0]?.HostPort) {
       return parseInt(portBinding[0].HostPort, 10);
     }

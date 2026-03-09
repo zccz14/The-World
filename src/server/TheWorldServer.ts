@@ -264,6 +264,28 @@ export class TheWorldServer {
       }
     });
 
+    this.app.get('/api/regions/:region/gui', async (req: Request, res: Response) => {
+      try {
+        const { region } = req.params;
+        const port = await this.regionManager!.getRegionGuiPort(region);
+        if (!port) {
+          return res.status(404).json({
+            error: `Region ${region} not found or GUI not available`,
+          });
+        }
+
+        res.json({
+          status: 'ok',
+          region,
+          port,
+          path: `/gui/${region}/`,
+        });
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to get region GUI status');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
     this.app.post('/api/oracle/send', async (req: Request, res: Response) => {
       try {
         const { to, region, message } = req.body;
@@ -355,6 +377,40 @@ export class TheWorldServer {
         proxy(req, res, next);
       } catch (error: any) {
         logger.error({ error, region }, 'Failed to get OpenCode port');
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+
+    this.app.use('/gui/:region', async (req: Request, res: Response, next) => {
+      const region = req.params.region;
+
+      try {
+        const port = await this.regionManager!.getRegionGuiPort(region);
+        if (!port) {
+          return res.status(404).json({
+            error: `Region ${region} not found or GUI not available`,
+          });
+        }
+
+        const proxy = createProxyMiddleware({
+          target: `http://localhost:${port}`,
+          changeOrigin: true,
+          ws: true,
+          pathRewrite: {
+            [`^/gui/${region}`]: '',
+          },
+          on: {
+            error: (err: any, req: Request, res: any) => {
+              logger.error({ error: err, region, port }, 'GUI proxy error');
+              if (!res.headersSent) {
+                res.status(502).json({ error: 'Failed to connect to GUI desktop instance' });
+              }
+            },
+          },
+        });
+        proxy(req, res, next);
+      } catch (error: any) {
+        logger.error({ error, region }, 'Failed to get GUI port');
         res.status(500).json({ error: 'Internal server error' });
       }
     });

@@ -161,9 +161,10 @@ Host Machine
 │   └── World Memory
 │
 └── Region Container
+    ├── GUI Desktop (3000)
     ├── RegionDaemon (62191)
-    ├── agent user
-    └── opencode-ai
+    ├── agent user (execution)
+    └── abc user (GUI session)
 ```
 
 See [Current Architecture Documentation](./docs/02-current-arch.md) for details
@@ -233,6 +234,7 @@ GET /api/status
 # Region management
 POST /api/regions
 GET  /api/regions
+GET  /api/regions/:region/gui
 
 # AI management
 POST /api/ai
@@ -243,6 +245,9 @@ POST /api/ai/exec
 
 # Oracle
 POST /api/oracle/send
+
+# Region GUI Proxy
+GET  /gui/:region/*
 ```
 
 ### CLI Commands
