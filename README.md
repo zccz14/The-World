@@ -159,7 +159,7 @@ Host Machine
 │   └── World Memory
 │
 └── Region Container
-    ├── RegionDaemon (4040)
+    ├── RegionDaemon (62191)
     ├── agent user
     └── opencode-ai
 ```

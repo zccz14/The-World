@@ -22,7 +22,7 @@ export class RegionDaemonClient {
 
   constructor(
     private containerName: string,
-    private daemonPort: number = 4040,
+    private daemonPort: number = 62191,
     private timeout: number = 120000
   ) {}
 
@@ -76,17 +76,32 @@ export class RegionDaemonClient {
     const stream = await exec.start({ Detach: false });
 
     return new Promise((resolve, reject) => {
-      let output = '';
+      let stdout = '';
+      let stderr = '';
       const timer = setTimeout(() => {
         reject(new Error('Timeout'));
       }, actualTimeout);
 
-      stream.on('data', (chunk: Buffer) => {
-        output += chunk.toString();
-      });
+      // Demux Docker stream (removes 8-byte headers)
+      this.docker.modem.demuxStream(
+        stream,
+        {
+          write: (chunk: Buffer) => {
+            stdout += chunk.toString();
+          },
+          end: () => {},
+        } as any,
+        {
+          write: (chunk: Buffer) => {
+            stderr += chunk.toString();
+          },
+          end: () => {},
+        } as any
+      );
+
       stream.on('end', () => {
         clearTimeout(timer);
-        resolve(output);
+        resolve(stdout);
       });
       stream.on('error', err => {
         clearTimeout(timer);

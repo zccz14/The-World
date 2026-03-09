@@ -54,7 +54,7 @@
 TheWorldServer
   ↓ POST /api/oracle/send
 RegionDaemonClient
-  ↓ docker exec <region> curl http://localhost:4040/execute
+  ↓ docker exec <region> curl http://localhost:62191/execute
 RegionDaemon
   ↓ executeAsUser('agent', 'opencode run "hello"')
 执行命令

@@ -54,8 +54,7 @@
 │
 └── Region 容器 (Docker)
     ├── RegionDaemon (Node.js)
-    │   ├── 控制服务器 (:4040)       # 命令执行、serve 管理
-    │   └── AI Proxy (:4041)         # 转发到宿主机 3344
+    │   └── 控制服务器 (:62191)      # 命令执行、serve 管理
     │
     ├── agent 用户 (单一用户)
     │   ├── /home/agent/.opencode/config.json
@@ -121,12 +120,10 @@ aiIdentities.set(dummyKey, { aiName, dummyKey });
 
 - 执行命令（以 agent 用户身份）
 - 管理 opencode serve 进程
-- 代理 AI API 请求到宿主机
 
 **端口**:
 
-- 4040: 控制服务器
-- 4041: AI Proxy
+- 62191: 控制服务器 (与 World Server 3344 互补: 3344 | 62191 = 0xFFFF)
 
 **命令执行流程**:
 
@@ -203,7 +200,7 @@ TheWorldServer (3344)
 AIUserManager
   ↓ execCommand(aiName, region, command)
 RegionDaemonClient
-  ↓ docker exec <region> curl http://localhost:4040/execute
+  ↓ docker exec <region> curl http://localhost:62191/execute
 RegionDaemon (容器内)
   ↓ POST /execute
 executeAsUser('agent', command)
@@ -221,8 +218,6 @@ executeAsUser('agent', command)
 读取 ~/.opencode/config.json
   ↓ apiKey: tw-alpha-xxx
   ↓ apiBaseUrl: http://host.docker.internal:3344/v1
-RegionDaemon AI Proxy (4041)
-  ↓ 转发到宿主机
 TheWorldServer AI Proxy (3344/v1)
   ↓ 验证 dummy key
   ↓ 替换为真实 API Key

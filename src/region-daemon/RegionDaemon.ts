@@ -1,14 +1,13 @@
 import * as http from 'http';
-import * as https from 'https';
 import * as fs from 'fs';
 import { exec, spawn, ChildProcess } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-const DAEMON_PORT = 4040;
-const AI_PROXY_PORT = 4041;
-const HOST_API_URL = `http://${process.env.HOST_GATEWAY_IP || '172.19.0.1'}:3344`;
+// World (3344) 和 Region (62191) 互补: 3344 | 62191 = 0xFFFF
+const WORLD_SERVER_PORT = 3344;
+const DAEMON_PORT = 0xffff ^ WORLD_SERVER_PORT; // 62191
 
 interface ServeProcess {
   user: string;
@@ -18,29 +17,19 @@ interface ServeProcess {
 
 export class RegionDaemon {
   private controlServer: http.Server;
-  private aiProxyServer: http.Server;
   private serveProcesses: Map<string, ServeProcess> = new Map();
 
   constructor() {
     this.controlServer = http.createServer((req, res) => this.handleControlRequest(req, res));
-    this.aiProxyServer = http.createServer((req, res) => this.handleAIProxyRequest(req, res));
   }
 
   async start() {
-    await Promise.all([
-      new Promise<void>(resolve => {
-        this.controlServer.listen(DAEMON_PORT, '0.0.0.0', () => {
-          console.log(`[RegionDaemon] Control server listening on 0.0.0.0:${DAEMON_PORT}`);
-          resolve();
-        });
-      }),
-      new Promise<void>(resolve => {
-        this.aiProxyServer.listen(AI_PROXY_PORT, '0.0.0.0', () => {
-          console.log(`[RegionDaemon] AI Proxy listening on 0.0.0.0:${AI_PROXY_PORT}`);
-          resolve();
-        });
-      }),
-    ]);
+    await new Promise<void>(resolve => {
+      this.controlServer.listen(DAEMON_PORT, '0.0.0.0', () => {
+        console.log(`[RegionDaemon] Control server listening on 0.0.0.0:${DAEMON_PORT}`);
+        resolve();
+      });
+    });
   }
 
   private async handleControlRequest(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -70,32 +59,6 @@ export class RegionDaemon {
       res.writeHead(500);
       res.end(JSON.stringify({ error: error.message }));
     }
-  }
-
-  private handleAIProxyRequest(req: http.IncomingMessage, res: http.ServerResponse) {
-    const targetUrl = HOST_API_URL + req.url;
-
-    console.log(`[RegionDaemon] AI Proxy: ${req.method} ${targetUrl}`);
-
-    const options: http.RequestOptions = {
-      method: req.method,
-      headers: { ...req.headers, host: 'host.docker.internal:3344' },
-    };
-
-    const proxyReq = http.request(targetUrl, options, proxyRes => {
-      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
-      proxyRes.pipe(res);
-    });
-
-    proxyReq.on('error', error => {
-      console.error('[RegionDaemon] AI Proxy error:', error.message);
-      if (!res.headersSent) {
-        res.writeHead(502);
-        res.end(JSON.stringify({ error: 'Proxy error', details: error.message }));
-      }
-    });
-
-    req.pipe(proxyReq);
   }
 
   private async handleExecute(req: http.IncomingMessage, res: http.ServerResponse) {
