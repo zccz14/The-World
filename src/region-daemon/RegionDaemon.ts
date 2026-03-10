@@ -1,9 +1,5 @@
 import * as http from 'http';
-import * as fs from 'fs';
-import { exec, spawn, ChildProcess } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
+import { spawn, ChildProcess } from 'child_process';
 
 // World (3344) 和 Region (62191) 互补: 3344 | 62191 = 0xFFFF
 const WORLD_SERVER_PORT = 3344;
@@ -14,6 +10,8 @@ interface ServeProcess {
   port: number;
   process: ChildProcess;
 }
+
+const AGENT_USER = 'agent';
 
 export class RegionDaemon {
   private controlServer: http.Server;
@@ -65,22 +63,22 @@ export class RegionDaemon {
     const body = await this.readBody(req);
     console.log(`[RegionDaemon] handleExecute received body: ${body.substring(0, 200)}`);
 
-    const { user, command, timeout = 120000 } = JSON.parse(body);
+    const { command, timeout = 120000 } = JSON.parse(body);
 
-    if (!user || !command) {
-      console.log('[RegionDaemon] Missing user or command');
+    if (!command) {
+      console.log('[RegionDaemon] Missing command');
       res.writeHead(400);
-      res.end(JSON.stringify({ error: 'Missing user or command' }));
+      res.end(JSON.stringify({ error: 'Missing command' }));
       return;
     }
 
-    console.log(`[RegionDaemon] Execute as ${user}: ${command.substring(0, 100)}...`);
+    console.log(`[RegionDaemon] Execute as ${AGENT_USER}: ${command.substring(0, 100)}...`);
     console.log(`[RegionDaemon] Timeout: ${timeout}ms`);
 
     try {
-      console.log('[RegionDaemon] Calling executeAsUser...');
-      const result = await this.executeAsUser(user, command, timeout);
-      console.log('[RegionDaemon] executeAsUser completed');
+      console.log('[RegionDaemon] Calling executeAsAgent...');
+      const result = await this.executeAsAgent(command, timeout);
+      console.log('[RegionDaemon] executeAsAgent completed');
       console.log(
         `[RegionDaemon] stdout length: ${result.stdout.length}, stderr length: ${result.stderr.length}`
       );
@@ -113,25 +111,14 @@ export class RegionDaemon {
     }
   }
 
-  private executeAsUser(
-    user: string,
+  private executeAsAgent(
     command: string,
     timeout: number
   ): Promise<{ stdout: string; stderr: string }> {
     return new Promise((resolve, reject) => {
-      const scriptPath = `/tmp/cmd-${Date.now()}-${Math.random().toString(36).slice(2)}.sh`;
-      const scriptContent = `#!/bin/sh
-export PATH=/usr/local/bin:/usr/bin:/bin
-cd /home/${user}
-${command}
-`;
-
-      console.log(`[RegionDaemon] Creating script: ${scriptPath}`);
-      fs.writeFileSync(scriptPath, scriptContent, { mode: 0o755 });
-
-      console.log(`[RegionDaemon] Spawning: su - ${user} -c ${scriptPath}`);
-      const proc = spawn('su', ['-', user, '-c', scriptPath], {
-        env: { ...process.env, HOME: `/home/${user}`, PATH: '/usr/local/bin:/usr/bin:/bin' },
+      const proc = spawn('sh', ['-lc', command], {
+        cwd: '/home/agent',
+        env: { ...process.env, HOME: '/home/agent', PATH: '/usr/local/bin:/usr/bin:/bin' },
         stdio: ['ignore', 'pipe', 'pipe'],
       });
 
@@ -148,9 +135,6 @@ ${command}
         );
         killed = true;
         proc.kill();
-        try {
-          fs.unlinkSync(scriptPath);
-        } catch {}
         const error: any = new Error('Timeout');
         error.killed = true;
         error.stdout = stdout;
@@ -162,12 +146,12 @@ ${command}
         const chunk = data.toString();
         stdout += chunk;
         console.log(
-          `[RegionDaemon] ${user} stdout chunk (${chunk.length}b):`,
+          `[RegionDaemon] ${AGENT_USER} stdout chunk (${chunk.length}b):`,
           chunk.substring(0, 100)
         );
 
         if (stdout.includes('"type":"step_finish"') && !hasFinished) {
-          console.log(`[RegionDaemon] ${user} step_finish detected!`);
+          console.log(`[RegionDaemon] ${AGENT_USER} step_finish detected!`);
           hasFinished = true;
           clearTimeout(timer);
           if (!killed && !resolved) {
@@ -179,9 +163,6 @@ ${command}
             killed = true;
             console.log(`[RegionDaemon] Killing process after resolve...`);
             proc.kill();
-            try {
-              fs.unlinkSync(scriptPath);
-            } catch {}
           }
         }
       });
@@ -189,19 +170,16 @@ ${command}
       proc.stderr.on('data', data => {
         stderr += data.toString();
         console.log(
-          `[RegionDaemon] ${user} stderr (${data.length}b):`,
+          `[RegionDaemon] ${AGENT_USER} stderr (${data.length}b):`,
           data.toString().substring(0, 200)
         );
       });
 
       proc.on('close', code => {
         console.log(
-          `[RegionDaemon] ${user} process closed with code ${code}, killed=${killed}, resolved=${resolved}`
+          `[RegionDaemon] ${AGENT_USER} process closed with code ${code}, killed=${killed}, resolved=${resolved}`
         );
         clearTimeout(timer);
-        try {
-          fs.unlinkSync(scriptPath);
-        } catch {}
         if (killed || resolved) {
           console.log(`[RegionDaemon] Already handled, returning`);
           return;
@@ -213,11 +191,8 @@ ${command}
       });
 
       proc.on('error', err => {
-        console.log(`[RegionDaemon] ${user} process error:`, err);
+        console.log(`[RegionDaemon] ${AGENT_USER} process error:`, err);
         clearTimeout(timer);
-        try {
-          fs.unlinkSync(scriptPath);
-        } catch {}
         if (!resolved) {
           resolved = true;
           reject(err);
@@ -254,41 +229,41 @@ ${command}
   private async handleServeStart(req: http.IncomingMessage, res: http.ServerResponse) {
     const body = await this.readBody(req);
     const { user, port = 3000 } = JSON.parse(body);
-
-    if (!user) {
+    if (user && user !== AGENT_USER) {
       res.writeHead(400);
-      res.end(JSON.stringify({ error: 'Missing user' }));
+      res.end(JSON.stringify({ error: `Only ${AGENT_USER} is supported` }));
       return;
     }
 
-    if (this.serveProcesses.has(user)) {
+    if (this.serveProcesses.has(AGENT_USER)) {
       res.writeHead(400);
-      res.end(JSON.stringify({ error: `Serve process already running for ${user}` }));
+      res.end(JSON.stringify({ error: `Serve process already running for ${AGENT_USER}` }));
       return;
     }
 
-    console.log(`[RegionDaemon] Starting opencode serve for ${user} on port ${port}`);
+    console.log(`[RegionDaemon] Starting opencode serve for ${AGENT_USER} on port ${port}`);
 
-    const proc = spawn('su', ['-', user, '-c', `opencode serve --port ${port}`], {
-      env: { ...process.env, HOME: `/home/${user}`, PATH: '/usr/local/bin:/usr/bin:/bin' },
+    const proc = spawn('sh', ['-lc', `opencode serve --port ${port}`], {
+      cwd: '/home/agent',
+      env: { ...process.env, HOME: '/home/agent', PATH: '/usr/local/bin:/usr/bin:/bin' },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     proc.stdout?.on('data', data => {
-      console.log(`[RegionDaemon] ${user} stdout:`, data.toString());
+      console.log(`[RegionDaemon] ${AGENT_USER} stdout:`, data.toString());
     });
 
     proc.stderr?.on('data', data => {
-      console.log(`[RegionDaemon] ${user} stderr:`, data.toString());
+      console.log(`[RegionDaemon] ${AGENT_USER} stderr:`, data.toString());
     });
 
     proc.on('exit', code => {
-      console.log(`[RegionDaemon] ${user} serve process exited with code ${code}`);
-      this.serveProcesses.delete(user);
+      console.log(`[RegionDaemon] ${AGENT_USER} serve process exited with code ${code}`);
+      this.serveProcesses.delete(AGENT_USER);
     });
 
-    this.serveProcesses.set(user, {
-      user,
+    this.serveProcesses.set(AGENT_USER, {
+      user: AGENT_USER,
       port,
       process: proc,
     });
@@ -299,7 +274,7 @@ ${command}
     res.end(
       JSON.stringify({
         success: true,
-        user,
+        user: AGENT_USER,
         port,
       })
     );
@@ -308,30 +283,29 @@ ${command}
   private async handleServeStop(req: http.IncomingMessage, res: http.ServerResponse) {
     const body = await this.readBody(req);
     const { user } = JSON.parse(body);
-
-    if (!user) {
+    if (user && user !== AGENT_USER) {
       res.writeHead(400);
-      res.end(JSON.stringify({ error: 'Missing user' }));
+      res.end(JSON.stringify({ error: `Only ${AGENT_USER} is supported` }));
       return;
     }
 
-    const serveProcess = this.serveProcesses.get(user);
+    const serveProcess = this.serveProcesses.get(AGENT_USER);
     if (!serveProcess) {
       res.writeHead(404);
-      res.end(JSON.stringify({ error: `No serve process for user ${user}` }));
+      res.end(JSON.stringify({ error: `No serve process for user ${AGENT_USER}` }));
       return;
     }
 
-    console.log(`[RegionDaemon] Stopping opencode serve for ${user}`);
+    console.log(`[RegionDaemon] Stopping opencode serve for ${AGENT_USER}`);
 
     serveProcess.process.kill();
-    this.serveProcesses.delete(user);
+    this.serveProcesses.delete(AGENT_USER);
 
     res.writeHead(200);
     res.end(
       JSON.stringify({
         success: true,
-        user,
+        user: AGENT_USER,
       })
     );
   }

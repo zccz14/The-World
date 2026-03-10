@@ -32,7 +32,9 @@ RUN if ! id -u agent >/dev/null 2>&1; then useradd -m -s /bin/bash agent; fi && 
 
 COPY dist/region-daemon/RegionDaemon.js /daemon/RegionDaemon.js
 COPY docker/services/region-daemon /custom-services.d/region-daemon
+COPY docker/scripts/tw-maint /usr/local/bin/tw-maint
 RUN chmod +x /custom-services.d/region-daemon
+RUN chmod +x /usr/local/bin/tw-maint
 
 RUN mkdir -p /world/shared /world/inbox /world/outbox /world/inbox/processed
 RUN chmod 777 /world/shared /world/inbox /world/outbox

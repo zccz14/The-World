@@ -10,6 +10,11 @@ import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { RegionDaemonClient } from '../region-daemon/RegionDaemonClient';
 import { WorldScheduler } from '../scheduler/WorldScheduler';
+import {
+  MaintenanceAction,
+  MaintenanceManager,
+  MaintenanceStatus,
+} from '../core/MaintenanceManager';
 
 export class TheWorldServer {
   private app: Express;
@@ -18,6 +23,7 @@ export class TheWorldServer {
   private regionManager?: RegionManager;
   private aiManager?: AIUserManager;
   private scheduler?: WorldScheduler;
+  private maintenanceManager?: MaintenanceManager;
   private server?: any;
 
   constructor() {
@@ -52,6 +58,8 @@ export class TheWorldServer {
     });
 
     await this.scheduler.start();
+
+    this.maintenanceManager = new MaintenanceManager(Config.DATA_DIR);
 
     this.setupRoutes();
 
@@ -361,6 +369,77 @@ export class TheWorldServer {
       } catch (error: any) {
         logger.error({ error }, 'Failed to send oracle');
         res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/maintenance/tickets', (req: Request, res: Response) => {
+      try {
+        const { region, action, params, reason, expiresInSeconds } = req.body;
+        if (!region || !action || !reason) {
+          return res.status(400).json({ error: 'region, action, reason are required' });
+        }
+
+        if (!['apt_update', 'install_packages'].includes(action)) {
+          return res.status(400).json({ error: `Unsupported action: ${action}` });
+        }
+
+        const ticket = this.maintenanceManager!.createTicket({
+          region,
+          action: action as MaintenanceAction,
+          params,
+          reason,
+          expiresInSeconds,
+        });
+
+        res.json({ status: 'ok', ticket });
+      } catch (error: any) {
+        res.status(400).json({ error: error.message });
+      }
+    });
+
+    this.app.get('/api/maintenance/tickets', (req: Request, res: Response) => {
+      try {
+        const status = req.query.status as MaintenanceStatus | undefined;
+        const tickets = this.maintenanceManager!.listTickets(status);
+        res.json({ tickets });
+      } catch (error: any) {
+        res.status(400).json({ error: error.message });
+      }
+    });
+
+    this.app.get('/api/maintenance/tickets/:id', (req: Request, res: Response) => {
+      try {
+        const ticket = this.maintenanceManager!.getTicket(req.params.id);
+        res.json({ ticket });
+      } catch (error: any) {
+        res.status(404).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/maintenance/tickets/:id/approve', (req: Request, res: Response) => {
+      try {
+        const ticket = this.maintenanceManager!.approveTicket(req.params.id);
+        res.json({ status: 'ok', ticket });
+      } catch (error: any) {
+        res.status(400).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/maintenance/tickets/:id/reject', (req: Request, res: Response) => {
+      try {
+        const ticket = this.maintenanceManager!.rejectTicket(req.params.id, req.body?.reason);
+        res.json({ status: 'ok', ticket });
+      } catch (error: any) {
+        res.status(400).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/maintenance/tickets/:id/run', async (req: Request, res: Response) => {
+      try {
+        const ticket = await this.maintenanceManager!.runTicket(req.params.id);
+        res.json({ status: 'ok', ticket });
+      } catch (error: any) {
+        res.status(400).json({ error: error.message });
       }
     });
 

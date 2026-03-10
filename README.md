@@ -215,6 +215,7 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 
 - [EverMemOS Setup](./docs/EVERMEMOS_SETUP.md)
 - [GUI Desktop (noVNC)](./docs/GUI_DESKTOP.md)
+- [Privileged Maintenance Flow](./docs/maintenance-privileged-ops.md)
 
 ### Historical Documents (Archived)
 

@@ -2,5 +2,4 @@
 
 set -e
 
-su - agent -c "opencode serve --hostname 0.0.0.0 --port 4096" &
-exec node /daemon/RegionDaemon.js
+exec /command/s6-setuidgid agent env HOME=/home/agent USER=agent LOGNAME=agent PATH=/usr/local/bin:/usr/bin:/bin sh -lc 'cd /home/agent && opencode serve --hostname 0.0.0.0 --port 4096 & exec node /daemon/RegionDaemon.js'

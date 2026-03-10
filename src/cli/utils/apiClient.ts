@@ -54,4 +54,42 @@ export class APIClient {
     const response = await this.client.post('/api/oracle/send', { to, region, message });
     return response.data;
   }
+
+  async requestMaintenanceTicket(input: {
+    region: string;
+    action: 'apt_update' | 'install_packages';
+    params?: Record<string, unknown>;
+    reason: string;
+    expiresInSeconds?: number;
+  }) {
+    const response = await this.client.post('/api/maintenance/tickets', input);
+    return response.data.ticket;
+  }
+
+  async listMaintenanceTickets(status?: string) {
+    const response = await this.client.get('/api/maintenance/tickets', {
+      params: status ? { status } : {},
+    });
+    return response.data.tickets;
+  }
+
+  async getMaintenanceTicket(id: string) {
+    const response = await this.client.get(`/api/maintenance/tickets/${id}`);
+    return response.data.ticket;
+  }
+
+  async approveMaintenanceTicket(id: string) {
+    const response = await this.client.post(`/api/maintenance/tickets/${id}/approve`);
+    return response.data.ticket;
+  }
+
+  async rejectMaintenanceTicket(id: string, reason?: string) {
+    const response = await this.client.post(`/api/maintenance/tickets/${id}/reject`, { reason });
+    return response.data.ticket;
+  }
+
+  async runMaintenanceTicket(id: string) {
+    const response = await this.client.post(`/api/maintenance/tickets/${id}/run`);
+    return response.data.ticket;
+  }
 }

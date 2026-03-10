@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+
+set -eu
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "tw-maint must run as root" >&2
+  exit 1
+fi
+
+if [ "$#" -lt 1 ]; then
+  echo "usage: tw-maint <action> [args...]" >&2
+  exit 1
+fi
+
+action="$1"
+shift
+
+case "$action" in
+  apt_update)
+    apt-get update
+    ;;
+  install_packages)
+    if [ "$#" -lt 1 ]; then
+      echo "install_packages requires at least one package" >&2
+      exit 1
+    fi
+
+    for pkg in "$@"; do
+      case "$pkg" in
+        *[!a-zA-Z0-9+.-]*|'')
+          echo "invalid package name: $pkg" >&2
+          exit 1
+          ;;
+      esac
+    done
+
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+    ;;
+  *)
+    echo "unsupported action: $action" >&2
+    exit 1
+    ;;
+esac

@@ -195,7 +195,7 @@ aiIdentities.set(dummyKey, { aiName, dummyKey });
 **命令执行流程（维护通道）**:
 
 ```
-TheWorldServer → RegionDaemonClient → curl → RegionDaemon → su - agent -c <cmd>
+TheWorldServer → RegionDaemonClient → curl → RegionDaemon (agent context) → sh -lc <cmd>
 ```
 
 **当前实现状态（v0.1）**:
@@ -277,8 +277,8 @@ RegionDaemonClient
   ↓ docker exec <region> curl http://localhost:62191/execute
 RegionDaemon (容器内)
   ↓ POST /execute
-executeAsUser('agent', command)
-  ↓ su - agent -c <script>
+executeAsAgent(command)
+  ↓ sh -lc <command> (cwd=/home/agent)
 执行命令
   ↓ stdout/stderr
 返回结果

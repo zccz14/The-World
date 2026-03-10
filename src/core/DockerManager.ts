@@ -133,4 +133,66 @@ export class DockerManager {
     const container = this.docker.getContainer(name);
     await container.remove({ force: true });
   }
+
+  async execInContainer(
+    containerName: string,
+    command: string[],
+    user: string = 'root',
+    timeout: number = 120000
+  ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    const container = this.docker.getContainer(containerName);
+
+    const exec = await container.exec({
+      Cmd: command,
+      User: user,
+      AttachStdout: true,
+      AttachStderr: true,
+    });
+
+    const stream = await exec.start({ Detach: false });
+
+    return new Promise((resolve, reject) => {
+      let stdout = '';
+      let stderr = '';
+
+      const timer = setTimeout(() => {
+        reject(new Error(`Container exec timeout after ${timeout}ms`));
+      }, timeout);
+
+      this.docker.modem.demuxStream(
+        stream,
+        {
+          write: (chunk: Buffer) => {
+            stdout += chunk.toString();
+          },
+          end: () => {},
+        } as any,
+        {
+          write: (chunk: Buffer) => {
+            stderr += chunk.toString();
+          },
+          end: () => {},
+        } as any
+      );
+
+      stream.on('end', async () => {
+        clearTimeout(timer);
+        try {
+          const inspect = await exec.inspect();
+          resolve({
+            stdout,
+            stderr,
+            exitCode: inspect.ExitCode ?? 1,
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+      stream.on('error', error => {
+        clearTimeout(timer);
+        reject(error);
+      });
+    });
+  }
 }
