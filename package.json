@@ -17,6 +17,7 @@
   "scripts": {
     "build": "tsc && npm run build:daemon",
     "build:daemon": "esbuild src/region-daemon/RegionDaemon.ts --bundle --platform=node --outfile=dist/region-daemon/RegionDaemon.js",
+    "build:image:region": "npm run build:daemon && docker build -f docker/Dockerfile.region -t the-world-region:latest .",
     "dev": "ts-node src/cli/index.ts",
     "start:server": "node dist/server/index.js",
     "test": "jest",

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "disabled_providers": [],
+  "model": "system/default",
+  "provider": {
+    "system": {
+      "name": "System",
+      "npm": "@ai-sdk/openai-compatible",
+      "models": {
+        "default": {
+          "name": "Default Model",
+          "limit": {
+            "context": 200000,
+            "output": 64000,
+          }
+        }
+      },
+      "options": {
+        "baseURL": "http://host.docker.internal:3344/v1"
+      },
+    },
+  },
+  "permission": "allow",
+}
