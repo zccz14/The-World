@@ -106,6 +106,9 @@ dio ai speak -t alpha -r region-a -m "Analyze this project architecture"
 # Or use oracle send (compatibility alias)
 dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
 
+# Recall memory only (cross-region, no AI execution)
+dio ai:memory:recall -t alpha -q "project architecture"
+
 # Note: Every message automatically triggers memory recall from EverMemOS
 # AI receives context in /home/agent/MEMORY.md before responding
 ```
@@ -265,6 +268,9 @@ GET  /api/ai
 # AI Communication (unified speak interface)
 POST /api/ai/speak
 
+# AI Memory Recall (cross-region)
+POST /api/ai/memory/recall
+
 # Oracle (compatibility alias for speak)
 POST /api/oracle/send
 
@@ -285,6 +291,7 @@ dio region list                     # List Regions
 dio ai create -n <name>             # Register AI
 dio ai list                         # List AIs
 dio ai speak -t <ai> -r <region> -m <msg>  # Speak to AI (unified interface)
+dio ai:memory:recall -t <ai> -q <query>    # Recall AI memory to stdout (cross-region)
 
 dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle (compatibility alias)
 ```

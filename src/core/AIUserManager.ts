@@ -15,6 +15,13 @@ interface SpeakToAIParams {
   metadata?: Record<string, unknown>;
 }
 
+interface RecallMemoryParams {
+  aiName: string;
+  query: string;
+  fromType?: MessageSourceType;
+  fromId?: string;
+}
+
 export class AIUserManager {
   private memory: WorldMemory;
   private proxy: AIProxyHandler;
@@ -33,6 +40,27 @@ export class AIUserManager {
 
   listAllAI(): string[] {
     return this.proxy.listAI();
+  }
+
+  async recallMemoryForAI(params: RecallMemoryParams): Promise<string> {
+    logger.info(
+      {
+        aiName: params.aiName,
+        fromType: params.fromType || 'system',
+        fromId: params.fromId || 'memory-recall-api',
+      },
+      'Recalling memory for AI'
+    );
+
+    return this.memory.buildWakeupMemory({
+      aiName: params.aiName,
+      message: params.query,
+      fromType: params.fromType || 'system',
+      fromId: params.fromId || 'memory-recall-api',
+      metadata: {
+        recallOnly: true,
+      },
+    });
   }
 
   async speakToAI(params: SpeakToAIParams): Promise<string> {

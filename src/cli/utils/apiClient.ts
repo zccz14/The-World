@@ -63,6 +63,16 @@ export class APIClient {
     return response.data;
   }
 
+  async recallMemory(params: {
+    to: string;
+    query: string;
+    fromType?: 'human' | 'ai' | 'system';
+    fromId?: string;
+  }) {
+    const response = await this.client.post('/api/ai/memory/recall', params);
+    return response.data;
+  }
+
   async requestMaintenanceTicket(input: {
     region: string;
     action: 'apt_update' | 'install_packages';

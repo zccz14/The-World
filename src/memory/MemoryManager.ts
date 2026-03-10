@@ -238,7 +238,7 @@ export class WorldMemory {
 
   async buildWakeupMemory(params: {
     aiName: string;
-    regionId: string;
+    regionId?: string;
     message: string;
     fromType: MessageSourceType;
     fromId: string;
@@ -248,7 +248,7 @@ export class WorldMemory {
       `# Memory Context for ${params.aiName}`,
       '',
       `**Time**: ${new Date().toISOString()}`,
-      `**Region**: ${params.regionId}`,
+      `**Region**: ${params.regionId || 'all (cross-region)'}`,
       `**From**: ${params.fromType}:${params.fromId}`,
       '',
       '---',

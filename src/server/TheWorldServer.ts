@@ -234,6 +234,30 @@ export class TheWorldServer {
       }
     });
 
+    this.app.post('/api/ai/memory/recall', async (req: Request, res: Response) => {
+      try {
+        const { to, query, fromType = 'system', fromId = 'api-memory-recall' } = req.body;
+        if (!to || !query) {
+          return res.status(400).json({ error: 'to and query are required' });
+        }
+
+        const memory = await this.aiManager!.recallMemoryForAI({
+          aiName: to,
+          query,
+          fromType,
+          fromId,
+        });
+
+        res.json({
+          status: 'ok',
+          memory,
+        });
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to recall AI memory');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
     this.app.get('/api/agent/:region/:user/status', async (req: Request, res: Response) => {
       try {
         const { region, user } = req.params;
