@@ -217,7 +217,7 @@ dio region create -n region-a
 dio ai create -n alpha
 
 # 开始使用！
-dio ai exec -a alpha -r region-a -c "hello world"
+dio ai speak -t alpha -r region-a -m "hello world"
 ```
 
 ## 11. 分层记忆说明

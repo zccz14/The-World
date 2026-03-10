@@ -1,5 +1,4 @@
 import express, { Express, Request, Response } from 'express';
-import * as fs from 'fs';
 import * as path from 'path';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { AIProxyHandler } from '../proxy/AIProxyHandler';
@@ -196,26 +195,41 @@ export class TheWorldServer {
       }
     });
 
-    this.app.post('/api/ai/exec', async (req: Request, res: Response) => {
+    this.app.post('/api/ai/speak', async (req: Request, res: Response) => {
       try {
-        const { ai, region, command } = req.body;
-        if (!ai || !region || !command) {
-          return res.status(400).json({ error: 'AI name, region, and command are required' });
+        const {
+          to,
+          region,
+          message,
+          fromType = 'human',
+          fromId = 'api-user',
+          metadata,
+          timeout,
+        } = req.body;
+        if (!to || !region || !message) {
+          return res.status(400).json({ error: 'to, region, and message are required' });
         }
 
-        const result = await this.aiManager!.execCommand(ai, region, command);
-
-        await this.memory!.logCommandExecution({
-          aiName: ai,
-          regionId: region,
-          command,
-          output: result,
-          success: true,
+        const result = await this.aiManager!.speakToAI({
+          aiName: to,
+          regionName: region,
+          message,
+          fromType,
+          fromId,
+          metadata,
+          timeout,
         });
 
-        res.json({ result });
+        res.json({
+          status: 'ok',
+          response: {
+            to,
+            from: to,
+            response: result,
+          },
+        });
       } catch (error: any) {
-        logger.error({ error }, 'Failed to execute command');
+        logger.error({ error }, 'Failed to speak to AI');
         res.status(500).json({ error: error.message });
       }
     });
@@ -301,71 +315,26 @@ export class TheWorldServer {
           return res.status(400).json({ error: 'Target AI, region, and message are required' });
         }
 
-        await this.memory!.logOracle({
+        const result = await this.aiManager!.speakToAI({
           aiName: to,
-          regionId: region,
-          content: message,
+          regionName: region,
+          message,
+          fromType: 'human',
+          fromId: 'oracle',
+          metadata: {
+            channel: 'oracle',
+          },
         });
 
-        const daemonClient = new RegionDaemonClient(region);
-
-        // Write oracle message to file
-        const timestamp = Date.now();
-        const filename = `oracle-${timestamp}-human-${to}.txt`;
-        const containerPath = `/world/inbox/${filename}`;
-
-        const hostDir = path.join(
-          process.env.WORLD_DATA_DIR || process.env.HOME || '/tmp',
-          '.the-world',
-          'regions',
-          region,
-          'inbox'
-        );
-        await fs.promises.writeFile(path.join(hostDir, filename), message, 'utf-8');
-
-        // Use --attach to connect to running opencode serve and --file to reference the oracle
-        const prompt = `请阅读并执行 ${containerPath} 中的 oracle 消息`;
-        const command = `opencode run "${prompt}" --file ${containerPath} --format json --attach http://localhost:4096`;
-
-        const result = await daemonClient.execute('agent', command, 120000);
-
-        if (result.success) {
-          const lines = (result.stdout + result.stderr).split('\n').filter(line => line.trim());
-          let responseText = '';
-
-          for (const line of lines) {
-            try {
-              const json = JSON.parse(line);
-              if (json.type === 'text' && json.part?.text) {
-                responseText += json.part.text;
-              }
-            } catch (e) {
-              // Not JSON, skip
-            }
-          }
-
-          await this.memory!.logOracleResponse({
-            aiName: to,
-            regionId: region,
-            content: responseText || result.stdout,
-          });
-
-          res.json({
-            status: 'ok',
-            message: 'Oracle sent and AI responded',
-            response: {
-              to: 'human',
-              from: to,
-              response: responseText || result.stdout,
-            },
-          });
-        } else {
-          res.status(500).json({
-            error: 'Failed to execute oracle',
-            details: result.error,
-            killed: result.killed,
-          });
-        }
+        res.json({
+          status: 'ok',
+          message: 'Oracle sent and AI responded',
+          response: {
+            to: 'human',
+            from: to,
+            response: result,
+          },
+        });
       } catch (error: any) {
         logger.error({ error }, 'Failed to send oracle');
         res.status(500).json({ error: error.message });

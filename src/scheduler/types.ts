@@ -5,7 +5,7 @@ export enum TaskPriority {
   LOW = 3,
 }
 
-export type TaskType = 'heartbeat' | 'oracle' | 'command' | 'message';
+export type TaskType = 'heartbeat' | 'oracle' | 'message';
 
 export interface Task {
   id: string;

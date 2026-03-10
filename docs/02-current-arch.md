@@ -81,8 +81,8 @@
 │   │   ├── GET  /api/regions
 │   │   ├── POST /api/ai
 │   │   ├── GET  /api/ai
-│   │   ├── POST /api/ai/exec
-│   │   ├── POST /api/oracle/send
+│   │   ├── POST /api/ai/speak
+│   │   ├── POST /api/oracle/send (兼容别名，内部调用 speak)
 │   │   ├── GET  /api/agent/:region/:user/status
 │   │   ├── POST /api/agent/:region/:user/serve/start
 │   │   ├── POST /api/agent/:region/:user/serve/stop
@@ -99,8 +99,8 @@
 │   ├── dio region list              # 列出 Region
 │   ├── dio ai create                # 注册 AI 身份
 │   ├── dio ai list                  # 列出 AI
-│   ├── dio ai exec                  # 执行命令
-│   └── dio oracle send              # 发送神谕
+│   ├── dio ai speak                 # 向 AI 发送消息（统一接口）
+│   └── dio oracle send              # 发送神谕（兼容别名）
 │
 ├── EverMemOS (外部依赖)
 │   └── http://localhost:1995        # 世界记忆系统
@@ -264,25 +264,38 @@ dio
 
 ## 数据流
 
-### AI 执行命令流程
+### AI 对话流程（统一 speakToAI 接口）
 
 ```
 用户
-  ↓ dio ai exec alpha "ls -la"
+  ↓ dio ai speak -t alpha -m "hello" 或 dio oracle send --to alpha --message "hello"
 TheWorldServer (3344)
-  ↓ POST /api/ai/exec
-AIUserManager
-  ↓ execCommand(aiName, region, command)
+  ↓ POST /api/ai/speak (或 /api/oracle/send 兼容别名)
+AIUserManager.speakToAI()
+  ↓ 1. logIncomingMessage (记录入站消息到 EverMemOS + 审计层)
+  ↓ 2. buildWakeupMemory (从 EverMemOS 召回相关记忆)
+  ↓ 3. 写入 /home/agent/MEMORY.md
+  ↓ 4. 构造 opencode run --file /home/agent/MEMORY.md
 RegionDaemonClient
   ↓ docker exec <region> curl http://localhost:62191/execute
 RegionDaemon (容器内)
   ↓ POST /execute
-executeAsAgent(command)
-  ↓ sh -lc <command> (cwd=/home/agent)
-执行命令
-  ↓ stdout/stderr
+executeAsAgent(opencode run ...)
+  ↓ opencode run --file /home/agent/MEMORY.md --attach http://localhost:4096
+  ↓ AI 读取 MEMORY.md 中的召回记忆
+  ↓ AI 生成回复
 返回结果
+  ↓ 5. extractTextFromOpencodeOutput (解析 JSON 输出)
+  ↓ 6. logOutgoingMessage (记录出站消息到 EverMemOS + 审计层)
+返回给用户
 ```
+
+**关键特性**：
+
+- 每次对话都强制召回记忆，确保上下文连续性
+- 记忆写入 `/home/agent/MEMORY.md`，可审计、可调试
+- 支持多源消息（human/ai/system）
+- EverMemOS 不可用时降级，不阻断执行
 
 ### AI 调用 API 流程
 
@@ -302,22 +315,31 @@ TheWorldServer AI Proxy (3344/v1)
 
 ### 神谕流程（v0.2 目标模型）
 
-**设计语义**：神谕是异步事件投递，不是同步 RPC 调用。
+**当前实现状态（v0.1.1）**：
+
+- ✅ 统一 `speakToAI` 接口，所有消息走相同流程
+- ✅ 强制记忆召回，每次对话前从 EverMemOS 检索相关上下文
+- ✅ `/api/oracle/send` 作为兼容别名保留
+- ⚠️ 仍为同步调用模型（等待 AI 回复后返回）
+- ❌ inbox/outbox 异步模型未启用（计划 v0.2）
+
+**v0.2 异步演进方向**：
 
 ```
 用户
   ↓ dio oracle send --to alpha --message "hello"
 TheWorldServer
   ↓ POST /api/oracle/send
-  ↓ 生成 oracle_id，写入 /world/inbox/oracle-{timestamp}-human-{to}.txt
+  ↓ 生成 message_id，写入 /world/inbox/message-{id}.msg
   ↓ 记录到 EverMemOS + 宿主机审计层（状态: pending）
-  ↓ 立即返回 oracle_id（不等待 AI 回复）
+  ↓ 立即返回 message_id（不等待 AI 回复）
 
 容器内 Agent (常驻 opencode serve)
   ↓ 通过 tool/skill 监听 inbox（或由 RegionDaemon 主动通知）
-  ↓ 读取神谕内容，自主决定处理策略
+  ↓ 读取消息内容，召回记忆（与当前 speakToAI 流程一致）
+  ↓ 自主决定处理策略
   ↓ 可能多次调用 "回复人类" tool/skill
-  ↓ 每次回复写入 /world/outbox/response-{timestamp}.txt
+  ↓ 每次回复写入 /world/outbox/response-{timestamp}.msg
   ↓ 通过 RegionDaemon 受控写入（防伪造、可审计）
 
 RegionDaemon
@@ -325,29 +347,17 @@ RegionDaemon
   ↓ 通知 WorldServer（WebSocket/HTTP callback）
 
 WorldServer
-  ↓ 更新 oracle 状态（processing → partial_response → completed）
+  ↓ 更新消息状态（processing → partial_response → completed）
   ↓ 转发到 UI/ChatApp/人类订阅通道
   ↓ 记录到 EverMemOS + 审计层
 
 人类
-  ↓ 通过 UI/CLI 查询 oracle 状态与历史回复
-  ↓ 可撤回未执行的 oracle
-  ↓ 可重放已完成的 oracle
+  ↓ 通过 UI/CLI 查询消息状态与历史回复
+  ↓ 可撤回未执行的消息
+  ↓ 可重放已完成的消息
 ```
 
-**当前实现状态（v0.1）**：
-
-- ❌ 仍为同步调用模型（`execute('agent', 'opencode run ...')`）
-- ❌ 直接等待并返回结果，不支持异步/多次回复
-- ⚠️ inbox/outbox 已挂载但未启用
-- 🚧 正在迁移到异步信箱模型（见工作区 diff）
-
-**迁移路径**：
-
-1. 实现 RegionDaemon 的 outbox 监听与通知机制
-2. 为 Agent 提供 "回复人类" tool/skill（受控写入 outbox）
-3. WorldServer 改为异步投递 + 状态查询接口
-4. CLI 改为返回 oracle_id，提供 `dio oracle status <id>` 查询命令
+**设计语义**：消息是异步事件投递，不是同步 RPC 调用。核心记忆召回流程保持不变，只是传输层从同步 HTTP 改为异步文件。
 
 ## 配置管理
 

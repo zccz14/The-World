@@ -258,31 +258,63 @@ export class WorldScheduler {
   }
 
   private async executeTaskByType(task: Task): Promise<string> {
-    if (task.type === 'command') {
-      const command = this.readString(task.payload.command);
-      if (!command) {
-        throw new Error('Command task requires payload.command');
-      }
-
-      return this.aiManager.execCommand(task.aiName, task.regionName, command);
-    }
-
     if (task.type === 'oracle') {
       const message = this.readString(task.payload.message);
       if (!message) {
         throw new Error('Oracle task requires payload.message');
       }
 
-      const command = `opencode run "${this.escapeDoubleQuotes(message)}" --format json`;
-      return this.aiManager.execCommand(task.aiName, task.regionName, command);
+      return this.aiManager.speakToAI({
+        aiName: task.aiName,
+        regionName: task.regionName,
+        message,
+        fromType: 'system',
+        fromId: 'world-scheduler',
+        metadata: {
+          taskType: task.type,
+          taskId: task.id,
+        },
+      });
     }
 
     if (task.type === 'heartbeat') {
       const prompt =
         this.readString(task.payload.prompt) ||
         this.renderHeartbeatPrompt(task.aiName, task.regionName);
-      const command = `opencode run "${this.escapeDoubleQuotes(prompt)}" --format json`;
-      return this.aiManager.execCommand(task.aiName, task.regionName, command);
+
+      return this.aiManager.speakToAI({
+        aiName: task.aiName,
+        regionName: task.regionName,
+        message: prompt,
+        fromType: 'system',
+        fromId: 'world-scheduler-heartbeat',
+        metadata: {
+          taskType: task.type,
+          taskId: task.id,
+        },
+      });
+    }
+
+    if (task.type === 'message') {
+      const message = this.readString(task.payload.message);
+      if (!message) {
+        throw new Error('Message task requires payload.message');
+      }
+
+      const fromType = this.readSourceType(task.payload.fromType);
+      const fromId = this.readString(task.payload.fromId) || 'scheduler-message';
+
+      return this.aiManager.speakToAI({
+        aiName: task.aiName,
+        regionName: task.regionName,
+        message,
+        fromType,
+        fromId,
+        metadata: {
+          taskType: task.type,
+          taskId: task.id,
+        },
+      });
     }
 
     throw new Error(`Unsupported task type: ${task.type}`);
@@ -311,11 +343,15 @@ export class WorldScheduler {
     return new RealtimeStrategy(config.heartbeatPrompt);
   }
 
-  private escapeDoubleQuotes(value: string): string {
-    return value.replace(/"/g, '\\"');
-  }
-
   private readString(value: unknown): string {
     return typeof value === 'string' ? value : '';
+  }
+
+  private readSourceType(value: unknown): 'human' | 'ai' | 'system' {
+    if (value === 'human' || value === 'ai' || value === 'system') {
+      return value;
+    }
+
+    return 'system';
   }
 }

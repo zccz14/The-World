@@ -85,6 +85,21 @@ export class Config {
     );
   }
 
+  static get MEMORY_RECALL_ENABLED(): boolean {
+    this.load();
+    return (process.env.MEMORY_RECALL_ENABLED || 'true') === 'true';
+  }
+
+  static get MEMORY_RECALL_TOP_K(): number {
+    this.load();
+    return parseInt(process.env.MEMORY_RECALL_TOP_K || '10', 10);
+  }
+
+  static get MEMORY_RECALL_MAX_CHARS(): number {
+    this.load();
+    return parseInt(process.env.MEMORY_RECALL_MAX_CHARS || '500', 10);
+  }
+
   static validate(): { valid: boolean; missing: string[] } {
     this.load();
     const missing: string[] = [];

@@ -45,9 +45,17 @@ export class APIClient {
     return response.data.aiList;
   }
 
-  async execCommand(ai: string, region: string, command: string) {
-    const response = await this.client.post('/api/ai/exec', { ai, region, command });
-    return response.data.result;
+  async speakToAI(params: {
+    to: string;
+    region: string;
+    message: string;
+    fromType?: 'human' | 'ai' | 'system';
+    fromId?: string;
+    metadata?: Record<string, unknown>;
+    timeout?: number;
+  }) {
+    const response = await this.client.post('/api/ai/speak', params);
+    return response.data;
   }
 
   async sendOracle(to: string, region: string, message: string) {

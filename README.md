@@ -97,21 +97,17 @@ dio ai create -n beta
 dio ai list
 ```
 
-### Execute Commands
+### Communicate with AI
 
 ```bash
-# Execute command in Region (maintenance channel)
-dio ai exec -a alpha -r region-a -c "ls -la"
+# Speak to AI (unified interface with memory recall)
+dio ai speak -t alpha -r region-a -m "Analyze this project architecture"
 
-# Send Oracle (communicate with AI)
-# Note: v0.1 still synchronous, v0.2 will be async event delivery
+# Or use oracle send (compatibility alias)
 dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
 
-# v0.2 planned usage (async):
-# dio oracle send --to alpha --region region-a --message "..."
-# → Returns oracle_id immediately
-# dio oracle status <oracle_id>
-# → Query oracle status and responses
+# Note: Every message automatically triggers memory recall from EverMemOS
+# AI receives context in /home/agent/MEMORY.md before responding
 ```
 
 ### Using ClawHub Skills
@@ -120,13 +116,12 @@ AI agents can directly use the ClawHub skill ecosystem:
 
 ```bash
 # AI searches and installs skills autonomously
+dio ai speak -t alpha -r region-a \
+  -m "Find and install a calendar management skill"
+
+# Or use oracle (compatibility alias)
 dio oracle send --to alpha --region region-a \
   --message "Find and install a calendar management skill"
-
-# Or execute clawhub commands directly
-dio ai exec -a alpha -r region-a -c "clawhub search calendar"
-dio ai exec -a alpha -r region-a -c "clawhub install steipete/calendar"
-dio ai exec -a alpha -r region-a -c "clawhub list"
 ```
 
 Skills are managed entirely within Region containers using the standard `clawhub` CLI. See [ClawHub Integration](./docs/clawhub-integration.md) for details.
@@ -210,6 +205,7 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 - [ADR-005: ClawHub Skills Integration](./docs/decisions/005-clawhub-integration.md)
 - [ADR-006: GUI-first Region Default](./docs/decisions/006-gui-first-region.md)
 - [ADR-007: Runtime Security Baseline](./docs/decisions/007-runtime-security-baseline.md)
+- [ADR-008: Unified AI Speak and Memory Recall](./docs/decisions/008-unified-ai-speak-and-memory-recall.md)
 
 ### Configuration Guides
 
@@ -266,10 +262,10 @@ GET  /api/regions/:region/gui
 POST /api/ai
 GET  /api/ai
 
-# Command execution
-POST /api/ai/exec
+# AI Communication (unified speak interface)
+POST /api/ai/speak
 
-# Oracle
+# Oracle (compatibility alias for speak)
 POST /api/oracle/send
 
 # Region GUI Proxy
@@ -288,9 +284,9 @@ dio region list                     # List Regions
 
 dio ai create -n <name>             # Register AI
 dio ai list                         # List AIs
-dio ai exec -a <ai> -r <region> -c <cmd>  # Execute command
+dio ai speak -t <ai> -r <region> -m <msg>  # Speak to AI (unified interface)
 
-dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle
+dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle (compatibility alias)
 ```
 
 ## Engineering Decisions
