@@ -45,6 +45,12 @@
    - `/world/outbox` 写入应走 RegionDaemon 授权通道，防伪造、可审计
    - RegionDaemon 在受控写入成功后，主动通知 WorldServer；WorldServer 再转发到 UI/ChatApp
 
+7. **默认假设可被攻陷（Assume Breach）**
+   - 设计前提是工作负载可能出现 RCE，而不是假设容器天然安全
+   - 安全目标是"容器失陷不等于宿主机失陷"
+   - 运行时坚持最小权限：非 root、最小 capabilities、禁用特权与危险挂载
+   - 具体基线由 ADR-007 约束，作为后续演进的硬边界
+
 ### 价值排序
 
 ```

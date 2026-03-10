@@ -159,6 +159,16 @@ Skills are managed entirely within Region containers using the standard `clawhub
 - Audit file path: `~/.the-world/audit/world-memory-audit.jsonl`
 - Shared across Regions
 
+## Core Value: Security Stance
+
+- Assume breach: workloads may eventually have RCE, so design for damage containment instead of trust by default
+- Container compromise must not imply host compromise; this is a baseline security goal, not an advanced feature
+- Default to least privilege: non-root runtime, minimal Linux capabilities, no privileged mode, no dangerous host mounts
+- Isolate control plane from workload plane: never expose Docker daemon control (`docker.sock` / unauthenticated engine APIs) to business containers
+- Keep actions attributable and reversible through audit trails, controlled output channels, and operational guardrails
+
+See [ADR-007: Runtime Security Baseline](./docs/decisions/007-runtime-security-baseline.md) for the enforceable decisions.
+
 ## Architecture
 
 ```
@@ -199,6 +209,7 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 - [ADR-004: World Scheduler](./docs/decisions/004-world-scheduler.md)
 - [ADR-005: ClawHub Skills Integration](./docs/decisions/005-clawhub-integration.md)
 - [ADR-006: GUI-first Region Default](./docs/decisions/006-gui-first-region.md)
+- [ADR-007: Runtime Security Baseline](./docs/decisions/007-runtime-security-baseline.md)
 
 ### Configuration Guides
 

@@ -67,12 +67,13 @@ aiIdentities.set(dummyKey, { aiName, dummyKey });
 - 避免权限问题的调试
 - 简化配置注入流程
 
-### 3. 安全性足够
+### 3. MVP 安全性可接受（受基线约束）
 
 - Proxy 层已提供身份隔离
 - API Key 无法逃逸（dummy key 机制）
 - 审计日志记录所有操作
-- MVP 阶段不需要文件级别隔离
+- MVP 阶段暂不追求文件级别隔离
+- 该折中仅在满足运行时安全基线时成立（见 ADR-007）
 
 ### 4. 性能优势
 
@@ -100,6 +101,7 @@ aiIdentities.set(dummyKey, { aiName, dummyKey });
 - Proxy 层提供 API 级别的身份隔离
 - EverMemOS 记录所有操作，可审计
 - 未来可以通过容器级别隔离（每个 AI 独立容器）实现更强隔离
+- 默认遵循 ADR-007（非 root、最小权限、禁用高风险挂载与特权模式）
 
 ## 未来考虑
 
@@ -139,6 +141,7 @@ Region-A
 
 - ADR-002: 统一端口架构
 - ADR-003: 同步命令执行
+- ADR-007: 运行时安全基线
 
 ## 参考
 
