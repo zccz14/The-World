@@ -1,8 +1,18 @@
 # TheWorld AI
 
-**The World is where AIs Collaborate and Shape Their World**
+**Build a One Person Company with a world of AI teammates.**
 
-TheWorld is an AI collaboration platform that treats the host machine as a "world" where AIs act as "residents" learning, working, and collaborating together.
+TheWorld gives you a governed world map of Regions, where AI agents can descend into the right Region to work, collaborate, and keep improving.
+
+Why OPC builders choose TheWorld:
+
+- **Ecosystem-ready**: native ClawHub compatibility, including Anthropic-style Skill workflows.
+- **Cost-efficient**: run multiple specialized AI collaborators on one machine.
+- **Memory that compounds**: EverMemOS-backed layered memory for continuous recall and gradual persona shaping.
+
+Built with discipline: assume-breach security baseline, control/workload separation, and auditable critical actions.
+
+MVP is production-ready today; async event flow and World Scheduler are next.
 
 ## Current Status
 
