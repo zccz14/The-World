@@ -19,13 +19,11 @@ export default class AIMemoryRecall extends Command {
 
     try {
       const result = await client.recallMemory({
-        to: flags.to,
+        aiName: flags.to,
         query: flags.query,
-        fromType: 'human',
-        fromId: 'dio-ai-memory-recall',
       });
 
-      this.log(result.memory || '');
+      this.log(result.briefMarkdown || '');
     } catch (error: any) {
       this.error(`召回记忆失败: ${error.response?.data?.error || error.message}`);
     }

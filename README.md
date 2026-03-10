@@ -109,6 +109,12 @@ dio oracle send --to alpha --region region-a --message "Analyze this project arc
 # Recall memory only (cross-region, no AI execution)
 dio ai:memory:recall -t alpha -q "project architecture"
 
+# Remember memory asynchronously (for testing)
+dio ai:memory:remember -t alpha -k fact -c "Alpha prefers concise summaries"
+
+# Check memory pipeline health
+dio ai:memory:health
+
 # Note: Every message automatically triggers memory recall from EverMemOS
 # AI receives context in /home/agent/MEMORY.md before responding
 ```
@@ -209,6 +215,7 @@ See [Current Architecture Documentation](./docs/02-current-arch.md) for details
 - [ADR-006: GUI-first Region Default](./docs/decisions/006-gui-first-region.md)
 - [ADR-007: Runtime Security Baseline](./docs/decisions/007-runtime-security-baseline.md)
 - [ADR-008: Unified AI Speak and Memory Recall](./docs/decisions/008-unified-ai-speak-and-memory-recall.md)
+- [ADR-009: Memory Primitives Remember/Recall](./docs/decisions/009-memory-primitives-remember-recall.md)
 
 ### Configuration Guides
 
@@ -271,6 +278,12 @@ POST /api/ai/speak
 # AI Memory Recall (cross-region)
 POST /api/ai/memory/recall
 
+# AI Memory Remember (async)
+POST /api/ai/memory/remember
+
+# AI Memory Health
+GET  /api/ai/memory/health
+
 # Oracle (compatibility alias for speak)
 POST /api/oracle/send
 
@@ -292,6 +305,8 @@ dio ai create -n <name>             # Register AI
 dio ai list                         # List AIs
 dio ai speak -t <ai> -r <region> -m <msg>  # Speak to AI (unified interface)
 dio ai:memory:recall -t <ai> -q <query>    # Recall AI memory to stdout (cross-region)
+dio ai:memory:remember -t <ai> -k <kind> -c <content>  # Remember memory (async)
+dio ai:memory:health                 # Memory pipeline health
 
 dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle (compatibility alias)
 ```

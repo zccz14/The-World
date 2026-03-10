@@ -20,6 +20,17 @@ interface RecallMemoryParams {
   query: string;
   fromType?: MessageSourceType;
   fromId?: string;
+  topK?: number;
+  budgetChars?: number;
+}
+
+interface RememberMemoryParams {
+  aiName: string;
+  content: string;
+  kind: 'fact' | 'key_dialogue' | 'decision' | 'constraint' | 'todo' | 'lesson' | 'episode';
+  importance: number;
+  source: string;
+  metadata?: Record<string, unknown>;
 }
 
 export class AIUserManager {
@@ -42,7 +53,22 @@ export class AIUserManager {
     return this.proxy.listAI();
   }
 
-  async recallMemoryForAI(params: RecallMemoryParams): Promise<string> {
+  async recallMemoryForAI(params: RecallMemoryParams): Promise<{
+    briefMarkdown: string;
+    items: Array<{
+      text: string;
+      source: 'recent' | 'evermemos';
+      kind?: string;
+      importance: number;
+      timestamp: number;
+    }>;
+    stats: {
+      recentCount: number;
+      everCount: number;
+      mergedCount: number;
+      returnedCount: number;
+    };
+  }> {
     logger.info(
       {
         aiName: params.aiName,
@@ -52,15 +78,30 @@ export class AIUserManager {
       'Recalling memory for AI'
     );
 
-    return this.memory.buildWakeupMemory({
+    return this.memory.recall({
       aiName: params.aiName,
-      message: params.query,
-      fromType: params.fromType || 'system',
-      fromId: params.fromId || 'memory-recall-api',
-      metadata: {
-        recallOnly: true,
-      },
+      query: params.query,
+      topK: params.topK,
+      budgetChars: params.budgetChars,
     });
+  }
+
+  async rememberMemoryForAI(params: RememberMemoryParams) {
+    logger.info(
+      {
+        aiName: params.aiName,
+        kind: params.kind,
+        importance: params.importance,
+        source: params.source,
+      },
+      'Remembering memory for AI'
+    );
+
+    return this.memory.remember(params);
+  }
+
+  getMemoryHealth() {
+    return this.memory.getMemoryHealth();
   }
 
   async speakToAI(params: SpeakToAIParams): Promise<string> {

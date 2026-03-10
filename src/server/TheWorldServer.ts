@@ -236,24 +236,71 @@ export class TheWorldServer {
 
     this.app.post('/api/ai/memory/recall', async (req: Request, res: Response) => {
       try {
-        const { to, query, fromType = 'system', fromId = 'api-memory-recall' } = req.body;
-        if (!to || !query) {
-          return res.status(400).json({ error: 'to and query are required' });
+        const { aiName, to, query, topK, budgetChars } = req.body;
+        const targetAI = aiName || to;
+
+        if (!targetAI || !query) {
+          return res.status(400).json({ error: 'aiName (or to) and query are required' });
         }
 
-        const memory = await this.aiManager!.recallMemoryForAI({
-          aiName: to,
+        const recall = await this.aiManager!.recallMemoryForAI({
+          aiName: targetAI,
           query,
-          fromType,
-          fromId,
+          topK,
+          budgetChars,
         });
 
         res.json({
           status: 'ok',
-          memory,
+          briefMarkdown: recall.briefMarkdown,
+          items: recall.items,
+          stats: recall.stats,
         });
       } catch (error: any) {
         logger.error({ error }, 'Failed to recall AI memory');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/api/ai/memory/remember', async (req: Request, res: Response) => {
+      try {
+        const { aiName, to, content, kind, importance = 3, source, metadata } = req.body;
+        const targetAI = aiName || to;
+
+        if (!targetAI || !content || !kind || !source) {
+          return res
+            .status(400)
+            .json({ error: 'aiName (or to), content, kind, and source are required' });
+        }
+
+        const result = await this.aiManager!.rememberMemoryForAI({
+          aiName: targetAI,
+          content,
+          kind,
+          importance,
+          source,
+          metadata,
+        });
+
+        res.json({
+          status: 'ok',
+          ...result,
+        });
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to remember AI memory');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.get('/api/ai/memory/health', async (req: Request, res: Response) => {
+      try {
+        const health = this.aiManager!.getMemoryHealth();
+        res.json({
+          status: 'ok',
+          ...health,
+        });
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to get memory health');
         res.status(500).json({ error: error.message });
       }
     });

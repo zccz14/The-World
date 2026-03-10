@@ -64,12 +64,31 @@ export class APIClient {
   }
 
   async recallMemory(params: {
-    to: string;
+    aiName?: string;
+    to?: string;
     query: string;
-    fromType?: 'human' | 'ai' | 'system';
-    fromId?: string;
+    topK?: number;
+    budgetChars?: number;
   }) {
     const response = await this.client.post('/api/ai/memory/recall', params);
+    return response.data;
+  }
+
+  async rememberMemory(params: {
+    aiName?: string;
+    to?: string;
+    content: string;
+    kind: 'fact' | 'key_dialogue' | 'decision' | 'constraint' | 'todo' | 'lesson' | 'episode';
+    importance?: number;
+    source: string;
+    metadata?: Record<string, unknown>;
+  }) {
+    const response = await this.client.post('/api/ai/memory/remember', params);
+    return response.data;
+  }
+
+  async getMemoryHealth() {
+    const response = await this.client.get('/api/ai/memory/health');
     return response.data;
   }
 

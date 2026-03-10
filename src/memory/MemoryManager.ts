@@ -15,13 +15,80 @@ interface AuditEvent {
   metadata?: Record<string, unknown>;
 }
 
+type RememberKind =
+  | 'fact'
+  | 'key_dialogue'
+  | 'decision'
+  | 'constraint'
+  | 'todo'
+  | 'lesson'
+  | 'episode';
+
+type RecentStatus = 'pending_sync' | 'sync_submitted' | 'verified_recallable' | 'failed';
+
+interface RecentMemoryEntry {
+  recentId: string;
+  aiName: string;
+  content: string;
+  kind: RememberKind;
+  importance: number;
+  source: string;
+  createdAt: number;
+  status: RecentStatus;
+  requestId?: string;
+  verifyAttempts: number;
+}
+
+interface RememberRequest {
+  aiName: string;
+  content: string;
+  kind: RememberKind;
+  importance: number;
+  source: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface RememberQueueTask {
+  recentId: string;
+  payload: RememberRequest;
+  attempts: number;
+}
+
+interface RecallRequest {
+  aiName: string;
+  query: string;
+  topK?: number;
+  budgetChars?: number;
+}
+
+interface RecallItem {
+  text: string;
+  source: 'recent' | 'evermemos';
+  kind?: string;
+  importance: number;
+  timestamp: number;
+  score: number;
+}
+
 export class WorldMemory {
   private client: EverMemOSClient;
   private auditStore?: AuditStore;
+  private recentStore: Map<string, RecentMemoryEntry[]> = new Map();
+  private requestToRecent: Map<string, { aiName: string; recentId: string }> = new Map();
+  private rememberQueue: RememberQueueTask[] = [];
+  private processingQueue = false;
+  private verifierTimer?: NodeJS.Timeout;
+  private readonly recentTTLms = 30 * 60 * 1000;
+  private statsLookups = 0;
+  private statsFound = 0;
+  private fallbackVerifies = 0;
 
   constructor(baseUrl: string, auditLogPath?: string) {
     this.client = new EverMemOSClient(baseUrl);
     this.auditStore = auditLogPath ? new AuditStore(auditLogPath) : undefined;
+    this.verifierTimer = setInterval(() => {
+      void this.runVerificationCycle();
+    }, 5000);
   }
 
   async logOracle(params: { aiName: string; regionId: string; content: string }) {
@@ -221,6 +288,125 @@ export class WorldMemory {
     });
   }
 
+  async remember(params: RememberRequest): Promise<{
+    accepted: boolean;
+    queued: boolean;
+    recentStored: boolean;
+    recentId?: string;
+    reason?: string;
+  }> {
+    if (!this.shouldRemember(params)) {
+      return {
+        accepted: false,
+        queued: false,
+        recentStored: false,
+        reason: 'Filtered by remember gate',
+      };
+    }
+
+    const recentId = `rmem-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const entry: RecentMemoryEntry = {
+      recentId,
+      aiName: params.aiName,
+      content: this.compactText(params.content, 1200),
+      kind: params.kind,
+      importance: Math.max(1, Math.min(5, params.importance)),
+      source: params.source,
+      createdAt: Date.now(),
+      status: 'pending_sync',
+      verifyAttempts: 0,
+    };
+
+    this.addRecentEntry(entry);
+    this.rememberQueue.push({
+      recentId,
+      payload: params,
+      attempts: 0,
+    });
+    void this.processRememberQueue();
+
+    return {
+      accepted: true,
+      queued: true,
+      recentStored: true,
+      recentId,
+    };
+  }
+
+  async recall(params: RecallRequest): Promise<{
+    briefMarkdown: string;
+    items: Array<Omit<RecallItem, 'score'>>;
+    stats: {
+      recentCount: number;
+      everCount: number;
+      mergedCount: number;
+      returnedCount: number;
+    };
+  }> {
+    const recallTopK = params.topK || Config.MEMORY_RECALL_TOP_K;
+    const budgetChars = params.budgetChars || 2200;
+
+    const recentCandidates = this.getRecentCandidates(params.aiName);
+    const everResponse = await this.retrieveMemories({
+      aiName: params.aiName,
+      query: this.compactText(params.query, 300),
+      regionId: undefined,
+    });
+    const everCandidates = this.extractRecallItemsFromEver(everResponse);
+
+    const merged = this.mergeAndRankRecallItems(
+      params.query,
+      [...recentCandidates, ...everCandidates],
+      recallTopK
+    );
+
+    const selected: RecallItem[] = [];
+    let usedChars = 0;
+    for (const item of merged) {
+      const next = this.compactText(item.text, 420);
+      if (usedChars + next.length > budgetChars && selected.length > 0) {
+        break;
+      }
+
+      selected.push({ ...item, text: next });
+      usedChars += next.length;
+      if (selected.length >= recallTopK) {
+        break;
+      }
+    }
+
+    const briefMarkdown = this.composeRecallBrief(params.aiName, params.query, selected);
+
+    return {
+      briefMarkdown,
+      items: selected.map(item => ({
+        text: item.text,
+        source: item.source,
+        kind: item.kind,
+        importance: item.importance,
+        timestamp: item.timestamp,
+      })),
+      stats: {
+        recentCount: recentCandidates.length,
+        everCount: everCandidates.length,
+        mergedCount: merged.length,
+        returnedCount: selected.length,
+      },
+    };
+  }
+
+  getMemoryHealth() {
+    return {
+      queueDepth: this.rememberQueue.length,
+      recentCount: [...this.recentStore.values()].reduce((acc, items) => acc + items.length, 0),
+      pendingVerificationCount: this.requestToRecent.size,
+      statsLookupCount: this.statsLookups,
+      statsFoundCount: this.statsFound,
+      statsFoundRate: this.statsLookups > 0 ? this.statsFound / this.statsLookups : 0,
+      fallbackVerifyCount: this.fallbackVerifies,
+    };
+  }
+
   async retrieveMemories(params: { aiName: string; query: string; regionId?: string }) {
     logger.debug({ params }, 'Retrieving memories');
 
@@ -244,54 +430,385 @@ export class WorldMemory {
     fromId: string;
     metadata?: Record<string, unknown>;
   }): Promise<string> {
-    const header = [
-      `# Memory Context for ${params.aiName}`,
-      '',
-      `**Time**: ${new Date().toISOString()}`,
-      `**Region**: ${params.regionId || 'all (cross-region)'}`,
-      `**From**: ${params.fromType}:${params.fromId}`,
-      '',
-      '---',
-      '',
-      '## Current Message',
-      '',
-      this.compactText(params.message, 1200),
-      '',
-      '---',
-      '',
-      '## Relevant Context (Recalled from Memory)',
-      '',
-    ];
-
     try {
-      const response = await this.retrieveMemories({
+      const recall = await this.recall({
         aiName: params.aiName,
-        regionId: params.regionId,
         query: this.compactText(params.message, 300),
       });
-
-      const items = this.extractMemoryItems(response);
-      if (items.length === 0) {
-        return `${header.join('\n')}*No relevant recalled memory. You are starting fresh with this message.*\n\n---\n\n**Instructions**: Read the current message above and respond appropriately.\n`;
-      }
-
-      // Take top 5 most relevant, compact each to max 400 chars
-      const topItems = items.slice(0, 5);
-      const memoryLines = topItems
-        .map((item, index) => {
-          const compacted = this.compactText(item, 400);
-          return `### ${index + 1}. ${compacted}\n`;
-        })
-        .join('\n');
-
-      return `${header.join('\n')}${memoryLines}\n---\n\n**Instructions**: Use the recalled context above to inform your response to the current message.\n`;
+      return recall.briefMarkdown;
     } catch (error) {
       logger.warn(
         { error, params },
         'Failed to retrieve memories for wakeup, fallback to minimal memory'
       );
-      return `${header.join('\n')}*Memory retrieval temporarily unavailable. Proceed with caution and conservative assumptions.*\n\n---\n\n**Instructions**: Read the current message above and respond appropriately.\n`;
+      return [
+        `# Memory Recall for ${params.aiName}`,
+        '',
+        `**Time**: ${new Date().toISOString()}`,
+        `**Region**: all (cross-region)`,
+        '',
+        '---',
+        '',
+        '## Query',
+        '',
+        this.compactText(params.message, 1200),
+        '',
+        '---',
+        '',
+        '*Memory retrieval temporarily unavailable. Proceed with caution and conservative assumptions.*',
+        '',
+      ].join('\n');
     }
+  }
+
+  private shouldRemember(params: RememberRequest): boolean {
+    if (!params.aiName || !params.content || !params.kind || !params.source) {
+      return false;
+    }
+
+    const compacted = this.compactText(params.content, 1500);
+    if (compacted.trim().length < 20) {
+      return false;
+    }
+
+    if (this.isNoiseContent(compacted)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private addRecentEntry(entry: RecentMemoryEntry): void {
+    const list = this.recentStore.get(entry.aiName) || [];
+    list.unshift(entry);
+
+    if (list.length > 200) {
+      list.length = 200;
+    }
+
+    this.recentStore.set(entry.aiName, list);
+  }
+
+  private async processRememberQueue(): Promise<void> {
+    if (this.processingQueue) {
+      return;
+    }
+
+    this.processingQueue = true;
+    try {
+      while (this.rememberQueue.length > 0) {
+        const task = this.rememberQueue.shift();
+        if (!task) {
+          continue;
+        }
+
+        try {
+          const result = await this.client.storeMemory({
+            message_id: `remember-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            create_time: new Date().toISOString(),
+            sender: task.payload.aiName,
+            content: this.compactText(task.payload.content, 1200),
+            sender_name: task.payload.aiName,
+            role: 'assistant',
+            metadata: {
+              type: 'remember',
+              remember_kind: task.payload.kind,
+              importance: task.payload.importance,
+              target_ai: task.payload.aiName,
+              ...task.payload.metadata,
+            },
+          });
+
+          const requestId =
+            (result && typeof result === 'object' && 'request_id' in result
+              ? (result.request_id as string)
+              : undefined) || undefined;
+
+          if (requestId) {
+            this.requestToRecent.set(requestId, {
+              aiName: task.payload.aiName,
+              recentId: task.recentId,
+            });
+          }
+
+          this.updateRecentStatus(task.payload.aiName, task.recentId, 'sync_submitted', requestId);
+        } catch (error) {
+          logger.warn({ error, task }, 'Remember queue write failed');
+
+          if (task.attempts < 3) {
+            this.rememberQueue.push({
+              ...task,
+              attempts: task.attempts + 1,
+            });
+          } else {
+            this.updateRecentStatus(task.payload.aiName, task.recentId, 'failed');
+          }
+        }
+      }
+    } finally {
+      this.processingQueue = false;
+    }
+  }
+
+  private getRecentCandidates(aiName: string): RecallItem[] {
+    const now = Date.now();
+    const list = this.recentStore.get(aiName) || [];
+
+    return list
+      .filter(entry => now - entry.createdAt <= this.recentTTLms)
+      .map(entry => ({
+        text: entry.content,
+        source: 'recent' as const,
+        kind: entry.kind,
+        importance: entry.importance,
+        timestamp: entry.createdAt,
+        score: 0,
+      }));
+  }
+
+  private extractRecallItemsFromEver(payload: unknown): RecallItem[] {
+    const memories = this.extractMemoriesArray(payload);
+    if (!memories) {
+      return [];
+    }
+
+    const items: RecallItem[] = [];
+    for (const groupWrapper of memories) {
+      if (!groupWrapper || typeof groupWrapper !== 'object') continue;
+
+      for (const records of Object.values(groupWrapper)) {
+        if (!Array.isArray(records)) continue;
+
+        for (const rawRecord of records) {
+          if (!rawRecord || typeof rawRecord !== 'object') continue;
+
+          const record = rawRecord as Record<string, unknown>;
+          const text = this.extractMemoryContent(record);
+          if (!text || this.isNoiseContent(text)) continue;
+
+          const timestampStr = record.timestamp;
+          const timestamp =
+            typeof timestampStr === 'string'
+              ? new Date(timestampStr).getTime() || Date.now()
+              : Date.now();
+
+          const metadata = record.metadata as Record<string, unknown> | undefined;
+          const importanceRaw = metadata?.importance;
+          const importance =
+            typeof importanceRaw === 'number' ? Math.max(1, Math.min(5, importanceRaw)) : 3;
+
+          items.push({
+            text,
+            source: 'evermemos',
+            kind:
+              typeof metadata?.remember_kind === 'string'
+                ? metadata.remember_kind
+                : typeof record.type === 'string'
+                  ? record.type
+                  : undefined,
+            importance,
+            timestamp,
+            score: 0,
+          });
+        }
+      }
+    }
+
+    return items;
+  }
+
+  private mergeAndRankRecallItems(
+    query: string,
+    items: RecallItem[],
+    maxItems: number
+  ): RecallItem[] {
+    const dedup = new Map<string, RecallItem>();
+
+    for (const item of items) {
+      const key = this.normalizeText(item.text);
+      if (!key) continue;
+
+      const existing = dedup.get(key);
+      if (!existing || item.timestamp > existing.timestamp) {
+        dedup.set(key, item);
+      }
+    }
+
+    const ranked = [...dedup.values()].map(item => {
+      const relevance = this.calculateRelevance(query, item.text);
+      const freshness = this.calculateFreshness(item.timestamp);
+      const sourceTrust = item.source === 'evermemos' ? 0.8 : 0.6;
+
+      const score = relevance * 1000 + freshness * 100 + item.importance * 10 + sourceTrust;
+      return {
+        ...item,
+        score,
+      };
+    });
+
+    ranked.sort((a, b) => b.score - a.score);
+    return ranked.slice(0, Math.max(1, maxItems * 3));
+  }
+
+  private composeRecallBrief(aiName: string, query: string, items: RecallItem[]): string {
+    const lines = [
+      `# Memory Recall for ${aiName}`,
+      '',
+      `**Time**: ${new Date().toISOString()}`,
+      `**Region**: all (cross-region)`,
+      '',
+      '---',
+      '',
+      '## Query',
+      '',
+      query,
+      '',
+      '---',
+      '',
+      '## Relevant Context',
+      '',
+    ];
+
+    if (items.length === 0) {
+      lines.push('*No relevant memory recalled.*');
+    } else {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        lines.push(`### ${i + 1}. ${item.text}`);
+        lines.push(`- source: ${item.source}`);
+        if (item.kind) {
+          lines.push(`- kind: ${item.kind}`);
+        }
+        lines.push(`- importance: ${item.importance}`);
+        lines.push('');
+      }
+    }
+
+    lines.push('---');
+    lines.push('');
+    lines.push('**Instructions**: Use the recalled context above to answer the query.');
+    lines.push('');
+    return lines.join('\n');
+  }
+
+  private async runVerificationCycle(): Promise<void> {
+    await this.verifyPendingRequestStatuses();
+    await this.verifyBySearchFallback();
+    this.cleanupRecentStore();
+  }
+
+  private async verifyPendingRequestStatuses(): Promise<void> {
+    for (const [requestId, ref] of this.requestToRecent.entries()) {
+      try {
+        this.statsLookups += 1;
+        const status = await this.client.getRequestStatus(requestId);
+
+        if (status.found && status.data) {
+          this.statsFound += 1;
+          if (status.data.status === 'success') {
+            this.markRecentVerifiedAndDelete(ref.aiName, ref.recentId);
+            this.requestToRecent.delete(requestId);
+          } else if (status.data.status === 'failed') {
+            this.updateRecentStatus(ref.aiName, ref.recentId, 'failed');
+            this.requestToRecent.delete(requestId);
+          }
+        }
+      } catch (error) {
+        logger.warn({ error, requestId }, 'Request status verification failed');
+      }
+    }
+  }
+
+  private async verifyBySearchFallback(): Promise<void> {
+    for (const [aiName, entries] of this.recentStore.entries()) {
+      for (const entry of entries) {
+        if (entry.status !== 'sync_submitted' && entry.status !== 'pending_sync') {
+          continue;
+        }
+
+        if (entry.verifyAttempts >= 3) {
+          continue;
+        }
+
+        entry.verifyAttempts += 1;
+        this.fallbackVerifies += 1;
+
+        try {
+          const resp = await this.retrieveMemories({
+            aiName,
+            query: this.compactText(entry.content, 120),
+            regionId: undefined,
+          });
+          const items = this.extractMemoryItems(resp);
+          const target = this.normalizeText(entry.content);
+          const found = items.some(item => this.normalizeText(item).includes(target.slice(0, 80)));
+
+          if (found) {
+            this.markRecentVerifiedAndDelete(aiName, entry.recentId);
+            if (entry.requestId) {
+              this.requestToRecent.delete(entry.requestId);
+            }
+          }
+        } catch (error) {
+          logger.warn({ error, aiName, recentId: entry.recentId }, 'Search fallback verify failed');
+        }
+      }
+    }
+  }
+
+  private cleanupRecentStore(): void {
+    const now = Date.now();
+
+    for (const [aiName, entries] of this.recentStore.entries()) {
+      const filtered = entries.filter(entry => now - entry.createdAt <= this.recentTTLms);
+      this.recentStore.set(aiName, filtered);
+    }
+  }
+
+  private updateRecentStatus(
+    aiName: string,
+    recentId: string,
+    status: RecentStatus,
+    requestId?: string
+  ): void {
+    const list = this.recentStore.get(aiName) || [];
+    const hit = list.find(entry => entry.recentId === recentId);
+    if (!hit) {
+      return;
+    }
+
+    hit.status = status;
+    if (requestId) {
+      hit.requestId = requestId;
+    }
+  }
+
+  private markRecentVerifiedAndDelete(aiName: string, recentId: string): void {
+    const list = this.recentStore.get(aiName) || [];
+    const filtered = list.filter(entry => entry.recentId !== recentId);
+    this.recentStore.set(aiName, filtered);
+  }
+
+  private calculateRelevance(query: string, text: string): number {
+    const q = this.normalizeText(query);
+    const t = this.normalizeText(text);
+    if (!q || !t) return 0;
+
+    const tokens = q.split(' ').filter(Boolean);
+    if (tokens.length === 0) return 0;
+
+    const hit = tokens.filter(token => t.includes(token)).length;
+    return hit / tokens.length;
+  }
+
+  private calculateFreshness(timestamp: number): number {
+    const ageMs = Math.max(0, Date.now() - timestamp);
+    const hours = ageMs / (1000 * 60 * 60);
+    if (hours <= 1) return 1;
+    if (hours <= 6) return 0.8;
+    if (hours <= 24) return 0.6;
+    if (hours <= 72) return 0.4;
+    return 0.2;
   }
 
   private compactText(content: string, maxLength: number): string {
