@@ -49,6 +49,9 @@ export class RegionManager {
         { source: path.join(hostDir, 'outbox'), target: '/world/outbox' },
         { source: path.join(hostDir, 'skills'), target: '/home/agent/.openclaw/skills' },
       ],
+      env: {
+        REGION_NAME: regionName,
+      },
       ports: {
         '4096': 0, // Let Docker assign a random host port for opencode serve
         '3000': 0, // Let Docker assign a random host port for GUI desktop

@@ -85,11 +85,24 @@ export class MemoryMcpServer {
     const requestedAiName = typeof args.aiName === 'string' ? args.aiName : undefined;
     const sessionId = this.extractSessionId(payload, res.req);
     const runId = this.extractRunId(payload, res.req);
+    const regionName = this.extractRegionName(payload, res.req);
+    const user = this.extractUser(payload, res.req);
     const resolvedIdentity = this.invocationRegistry.resolve({
       requestedAiName,
       sessionId,
       runId,
+      regionName,
+      user,
     });
+
+    if (sessionId && resolvedIdentity.aiName && resolvedIdentity.source !== 'session') {
+      this.invocationRegistry.bindSessionToAI(
+        sessionId,
+        resolvedIdentity.aiName,
+        regionName,
+        runId
+      );
+    }
 
     if (typeof name !== 'string') {
       this.writeError(res, payload.id ?? null, -32602, 'Invalid params: tool name is required');
@@ -343,6 +356,39 @@ export class MemoryMcpServer {
     }
 
     return this.findFirstStringByKey(payload.params, ['runId', 'run_id']);
+  }
+
+  private extractRegionName(payload: JsonRpcRequest, req: Request): string | undefined {
+    const queryRegion = req.query?.region;
+    if (typeof queryRegion === 'string' && queryRegion.trim()) {
+      return queryRegion.trim();
+    }
+
+    const headerRegion = req.header('x-tw-region') || req.header('x-region');
+    if (headerRegion && headerRegion.trim()) {
+      return headerRegion.trim();
+    }
+
+    return this.findFirstStringByKey(payload.params, ['region', 'regionName', 'region_name']);
+  }
+
+  private extractUser(payload: JsonRpcRequest, req: Request): string {
+    const queryUser = req.query?.user;
+    if (typeof queryUser === 'string' && queryUser.trim()) {
+      return queryUser.trim();
+    }
+
+    const headerUser = req.header('x-tw-user') || req.header('x-user');
+    if (headerUser && headerUser.trim()) {
+      return headerUser.trim();
+    }
+
+    const fromParams = this.findFirstStringByKey(payload.params, ['user']);
+    if (fromParams) {
+      return fromParams;
+    }
+
+    return 'agent';
   }
 
   private findFirstStringByKey(input: unknown, keys: string[]): string | undefined {

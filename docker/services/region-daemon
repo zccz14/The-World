@@ -2,4 +2,8 @@
 
 set -e
 
+if [ -n "${REGION_NAME:-}" ]; then
+  sed -i -E "s#http://host.docker.internal:3344/mcp/memory(\\?[^\" ]*)?#http://host.docker.internal:3344/mcp/memory?region=${REGION_NAME}\\&user=agent#g" /home/agent/.config/opencode/opencode.jsonc
+fi
+
 exec /command/s6-setuidgid agent env HOME=/home/agent USER=agent LOGNAME=agent PATH=/usr/local/bin:/usr/bin:/bin sh -lc 'cd /home/agent && opencode serve --hostname 0.0.0.0 --port 4096 & exec node /daemon/RegionDaemon.js'

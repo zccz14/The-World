@@ -220,6 +220,8 @@ export class TheWorldServer {
           return res.status(400).json({ error: 'to, region, and message are required' });
         }
 
+        this.invocationRegistry?.bindServeContext(region, 'agent', to);
+
         const result = await this.aiManager!.speakToAI({
           aiName: to,
           regionName: region,
@@ -356,7 +358,11 @@ export class TheWorldServer {
     this.app.post('/api/agent/:region/:user/serve/start', async (req: Request, res: Response) => {
       try {
         const { region, user } = req.params;
-        const { port } = req.body;
+        const { port, aiName } = req.body;
+
+        if (typeof aiName === 'string' && aiName.trim()) {
+          this.invocationRegistry?.bindServeContext(region, user, aiName.trim());
+        }
 
         const daemonClient = new RegionDaemonClient(region);
         const result = await daemonClient.startServe(user, port);

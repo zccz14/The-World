@@ -13,21 +13,31 @@ interface SessionBinding {
   updatedAt: number;
 }
 
+interface ServeBinding {
+  regionName: string;
+  user: string;
+  aiName: string;
+  updatedAt: number;
+}
+
 interface ResolveInput {
   requestedAiName?: string;
   sessionId?: string;
   runId?: string;
+  regionName?: string;
+  user?: string;
 }
 
 export interface ResolveResult {
   aiName?: string;
-  source: 'session' | 'run' | 'active' | 'arg' | 'none';
+  source: 'session' | 'run' | 'serve' | 'active' | 'arg' | 'none';
   sessionId?: string;
   runId?: string;
 }
 
 const INVOCATION_TTL_MS = 30 * 60 * 1000;
 const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
+const SERVE_TTL_MS = 6 * 60 * 60 * 1000;
 const RESERVED_AI_NAMES = new Set([
   '',
   'unknown',
@@ -44,6 +54,7 @@ export class AIInvocationRegistry {
   private invocationByRunId: Map<string, InvocationRecord> = new Map();
   private activeInvocations: InvocationRecord[] = [];
   private sessionBindings: Map<string, SessionBinding> = new Map();
+  private serveBindings: Map<string, ServeBinding> = new Map();
 
   beginInvocation(aiName: string, regionName: string): string {
     this.prune();
@@ -81,6 +92,38 @@ export class AIInvocationRegistry {
     });
   }
 
+  bindSessionToAI(sessionId: string, aiName: string, regionName?: string, runId?: string): void {
+    this.prune();
+    const normalizedAiName = this.normalizeAiName(aiName);
+    if (!normalizedAiName) {
+      return;
+    }
+
+    this.sessionBindings.set(sessionId, {
+      sessionId,
+      aiName: normalizedAiName,
+      regionName: regionName || 'unknown',
+      runId,
+      updatedAt: Date.now(),
+    });
+  }
+
+  bindServeContext(regionName: string, user: string, aiName: string): void {
+    this.prune();
+    const normalizedAiName = this.normalizeAiName(aiName);
+    if (!normalizedAiName) {
+      return;
+    }
+
+    const key = this.serveKey(regionName, user);
+    this.serveBindings.set(key, {
+      regionName,
+      user,
+      aiName: normalizedAiName,
+      updatedAt: Date.now(),
+    });
+  }
+
   resolve(input: ResolveInput): ResolveResult {
     this.prune();
 
@@ -104,6 +147,17 @@ export class AIInvocationRegistry {
           aiName: invocation.aiName,
           source: 'run',
           runId: invocation.runId,
+        };
+      }
+    }
+
+    if (input.regionName && input.user) {
+      const binding = this.serveBindings.get(this.serveKey(input.regionName, input.user));
+      if (binding) {
+        binding.updatedAt = Date.now();
+        return {
+          aiName: binding.aiName,
+          source: 'serve',
         };
       }
     }
@@ -163,5 +217,15 @@ export class AIInvocationRegistry {
         this.sessionBindings.delete(sessionId);
       }
     }
+
+    for (const [key, binding] of this.serveBindings.entries()) {
+      if (now - binding.updatedAt > SERVE_TTL_MS) {
+        this.serveBindings.delete(key);
+      }
+    }
+  }
+
+  private serveKey(regionName: string, user: string): string {
+    return `${regionName}:${user}`;
   }
 }
