@@ -76,20 +76,37 @@ export class AIUserManager {
     }
 
     const responseText = this.extractTextFromOpencodeOutput(result.stdout, result.stderr);
-    const output = responseText || result.stdout || result.stderr;
 
+    // Only log meaningful text responses, not raw JSON event streams
+    if (responseText && responseText.trim()) {
+      await this.memory.logOutgoingMessage({
+        aiName: params.aiName,
+        regionId: params.regionName,
+        content: responseText,
+        metadata: {
+          fromType: params.fromType,
+          fromId: params.fromId,
+          ...params.metadata,
+        },
+      });
+      return responseText;
+    }
+
+    // If no text extracted, log a placeholder instead of raw JSON
+    const placeholder = '[AI processing - no text output generated]';
     await this.memory.logOutgoingMessage({
       aiName: params.aiName,
       regionId: params.regionName,
-      content: output,
+      content: placeholder,
       metadata: {
         fromType: params.fromType,
         fromId: params.fromId,
+        noTextOutput: true,
         ...params.metadata,
       },
     });
 
-    return output;
+    return placeholder;
   }
 
   private buildSpeakPrompt(params: SpeakToAIParams): string {

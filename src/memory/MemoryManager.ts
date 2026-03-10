@@ -1,6 +1,7 @@
 import { EverMemOSClient } from './EverMemOSClient';
 import { logger } from '../utils/logger';
 import { AuditStore } from './AuditStore';
+import { Config } from '../utils/config';
 
 type MemoryLayer = 'working' | 'knowledge' | 'episode' | 'audit';
 type MessageSourceType = 'human' | 'ai' | 'system';
@@ -223,13 +224,15 @@ export class WorldMemory {
   async retrieveMemories(params: { aiName: string; query: string; regionId?: string }) {
     logger.debug({ params }, 'Retrieving memories');
 
+    const topK = Config.MEMORY_RECALL_TOP_K;
+
     return this.client.searchMemories({
       query: params.query,
       user_id: params.aiName,
       group_id: params.regionId,
       memory_types: ['episodic_memory'],
       retrieve_method: 'rrf',
-      top_k: 10,
+      top_k: topK,
     });
   }
 
@@ -242,16 +245,22 @@ export class WorldMemory {
     metadata?: Record<string, unknown>;
   }): Promise<string> {
     const header = [
-      `# MEMORY for ${params.aiName}`,
+      `# Memory Context for ${params.aiName}`,
       '',
-      `GeneratedAt: ${new Date().toISOString()}`,
-      `Region: ${params.regionId}`,
-      `IncomingFrom: ${params.fromType}:${params.fromId}`,
+      `**Time**: ${new Date().toISOString()}`,
+      `**Region**: ${params.regionId}`,
+      `**From**: ${params.fromType}:${params.fromId}`,
       '',
-      '## Incoming Message',
+      '---',
+      '',
+      '## Current Message',
+      '',
       this.compactText(params.message, 1200),
       '',
-      '## Recalled Memories',
+      '---',
+      '',
+      '## Relevant Context (Recalled from Memory)',
+      '',
     ];
 
     try {
@@ -263,21 +272,25 @@ export class WorldMemory {
 
       const items = this.extractMemoryItems(response);
       if (items.length === 0) {
-        return `${header.join('\n')}\n- No relevant recalled memory. Continue with current message only.\n`;
+        return `${header.join('\n')}*No relevant recalled memory. You are starting fresh with this message.*\n\n---\n\n**Instructions**: Read the current message above and respond appropriately.\n`;
       }
 
-      const memoryLines = items
-        .slice(0, 8)
-        .map((item, index) => `- ${index + 1}. ${this.compactText(item, 500)}`)
+      // Take top 5 most relevant, compact each to max 400 chars
+      const topItems = items.slice(0, 5);
+      const memoryLines = topItems
+        .map((item, index) => {
+          const compacted = this.compactText(item, 400);
+          return `### ${index + 1}. ${compacted}\n`;
+        })
         .join('\n');
 
-      return `${header.join('\n')}\n${memoryLines}\n`;
+      return `${header.join('\n')}${memoryLines}\n---\n\n**Instructions**: Use the recalled context above to inform your response to the current message.\n`;
     } catch (error) {
       logger.warn(
         { error, params },
         'Failed to retrieve memories for wakeup, fallback to minimal memory'
       );
-      return `${header.join('\n')}\n- Memory retrieval unavailable. Proceed with conservative assumptions.\n`;
+      return `${header.join('\n')}*Memory retrieval temporarily unavailable. Proceed with caution and conservative assumptions.*\n\n---\n\n**Instructions**: Read the current message above and respond appropriately.\n`;
     }
   }
 
@@ -290,63 +303,109 @@ export class WorldMemory {
   }
 
   private extractMemoryItems(payload: unknown): string[] {
-    const candidates = this.findFirstArray(payload);
-    if (!candidates) {
+    // EverMemOS returns: { result: { memories: [{ "<group>": [memoryRecord...] }] } }
+    const memories = this.extractMemoriesArray(payload);
+    if (!memories || memories.length === 0) {
       return [];
     }
 
     const items: string[] = [];
-    for (const entry of candidates) {
-      if (typeof entry === 'string') {
-        items.push(entry);
-        continue;
-      }
+    const seen = new Set<string>();
 
-      if (entry && typeof entry === 'object') {
-        const record = entry as Record<string, unknown>;
-        const content = record.content;
-        if (typeof content === 'string') {
-          items.push(content);
-          continue;
+    for (const groupWrapper of memories) {
+      if (!groupWrapper || typeof groupWrapper !== 'object') continue;
+
+      // Each groupWrapper is like { "test-1": [memoryRecord...] }
+      for (const records of Object.values(groupWrapper)) {
+        if (!Array.isArray(records)) continue;
+
+        for (const record of records) {
+          if (!record || typeof record !== 'object') continue;
+
+          const memRecord = record as Record<string, unknown>;
+          const extracted = this.extractMemoryContent(memRecord);
+          if (!extracted) continue;
+
+          // Filter noise
+          if (this.isNoiseContent(extracted)) continue;
+
+          // Deduplicate
+          const normalized = this.normalizeText(extracted);
+          if (seen.has(normalized)) continue;
+          seen.add(normalized);
+
+          items.push(extracted);
         }
-
-        const text = record.text;
-        if (typeof text === 'string') {
-          items.push(text);
-          continue;
-        }
-
-        items.push(JSON.stringify(record));
       }
     }
 
     return items;
   }
 
-  private findFirstArray(value: unknown): unknown[] | null {
-    if (Array.isArray(value)) {
-      return value;
-    }
+  private extractMemoriesArray(payload: unknown): unknown[] | null {
+    if (!payload || typeof payload !== 'object') return null;
 
-    if (!value || typeof value !== 'object') {
-      return null;
-    }
+    const obj = payload as Record<string, unknown>;
 
-    const record = value as Record<string, unknown>;
-    for (const key of ['memories', 'results', 'items', 'data']) {
-      if (Array.isArray(record[key])) {
-        return record[key] as unknown[];
+    // Try result.memories first (EverMemOS standard response)
+    if (obj.result && typeof obj.result === 'object') {
+      const result = obj.result as Record<string, unknown>;
+      if (Array.isArray(result.memories)) {
+        return result.memories;
       }
     }
 
-    for (const nested of Object.values(record)) {
-      const found = this.findFirstArray(nested);
-      if (found) {
-        return found;
-      }
+    // Fallback to direct memories array
+    if (Array.isArray(obj.memories)) {
+      return obj.memories;
     }
 
     return null;
+  }
+
+  private extractMemoryContent(record: Record<string, unknown>): string | null {
+    // Priority: summary > episode > subject > content
+    const summary = record.summary;
+    if (typeof summary === 'string' && summary.trim()) {
+      return summary.trim();
+    }
+
+    const episode = record.episode;
+    if (typeof episode === 'string' && episode.trim()) {
+      return episode.trim();
+    }
+
+    const subject = record.subject;
+    if (typeof subject === 'string' && subject.trim()) {
+      return subject.trim();
+    }
+
+    const content = record.content;
+    if (typeof content === 'string' && content.trim()) {
+      return content.trim();
+    }
+
+    return null;
+  }
+
+  private isNoiseContent(text: string): boolean {
+    // Filter out event stream fragments
+    if (text.includes('"type":"step_start"')) return true;
+    if (text.includes('"type":"tool_use"')) return true;
+    if (text.includes('"type":"step_finish"')) return true;
+    if (text.startsWith('{"type":')) return true;
+
+    // Filter out very short or empty content
+    if (text.length < 20) return true;
+
+    // Filter out pure JSON objects
+    if (text.startsWith('{') && text.endsWith('}') && text.includes('"id":')) return true;
+
+    return false;
+  }
+
+  private normalizeText(text: string): string {
+    return text.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 200);
   }
 
   private async writeAudit(event: AuditEvent): Promise<void> {
