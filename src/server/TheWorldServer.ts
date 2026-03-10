@@ -9,6 +9,8 @@ import { Config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { RegionDaemonClient } from '../region-daemon/RegionDaemonClient';
 import { WorldScheduler } from '../scheduler/WorldScheduler';
+import { MemoryMcpServer } from '../mcp/MemoryMcpServer';
+import { AIInvocationRegistry } from '../core/AIInvocationRegistry';
 import {
   MaintenanceAction,
   MaintenanceManager,
@@ -23,6 +25,8 @@ export class TheWorldServer {
   private aiManager?: AIUserManager;
   private scheduler?: WorldScheduler;
   private maintenanceManager?: MaintenanceManager;
+  private memoryMcpServer?: MemoryMcpServer;
+  private invocationRegistry?: AIInvocationRegistry;
   private server?: any;
 
   constructor() {
@@ -46,7 +50,13 @@ export class TheWorldServer {
     this.regionManager = new RegionManager(this.memory, this.proxyHandler);
     await this.regionManager.initialize();
 
-    this.aiManager = new AIUserManager(this.memory, this.proxyHandler);
+    this.invocationRegistry = new AIInvocationRegistry();
+    this.aiManager = new AIUserManager(this.memory, this.proxyHandler, this.invocationRegistry);
+    this.memoryMcpServer = new MemoryMcpServer(
+      this.aiManager,
+      this.invocationRegistry,
+      Config.MEMORY_MCP_TOKEN || undefined
+    );
 
     this.scheduler = new WorldScheduler(this.aiManager, this.regionManager, this.memory, {
       enabled: Config.SCHEDULER_ENABLED,
@@ -301,6 +311,19 @@ export class TheWorldServer {
         });
       } catch (error: any) {
         logger.error({ error }, 'Failed to get memory health');
+        res.status(500).json({ error: error.message });
+      }
+    });
+
+    this.app.post('/mcp/memory', async (req: Request, res: Response) => {
+      try {
+        if (!this.memoryMcpServer) {
+          return res.status(503).json({ error: 'Memory MCP server is not initialized' });
+        }
+
+        await this.memoryMcpServer.handleRequest(req, res);
+      } catch (error: any) {
+        logger.error({ error }, 'Failed to handle memory MCP request');
         res.status(500).json({ error: error.message });
       }
     });

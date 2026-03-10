@@ -284,6 +284,9 @@ POST /api/ai/memory/remember
 # AI Memory Health
 GET  /api/ai/memory/health
 
+# OpenCode MCP (memory tools)
+POST /mcp/memory
+
 # Oracle (compatibility alias for speak)
 POST /api/oracle/send
 

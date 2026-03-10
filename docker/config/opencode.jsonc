@@ -12,12 +12,30 @@
           "limit": {
             "context": 200000,
             "output": 64000,
-          }
-        }
+          },
+        },
       },
       "options": {
-        "baseURL": "http://host.docker.internal:3344/v1"
+        "baseURL": "http://host.docker.internal:3344/v1",
       },
+    },
+  },
+  "agent": {
+    "region-worker": {
+      "description": "Region execution worker with memory-first workflow",
+      "mode": "all",
+      "prompt": "You are a region worker in TheWorld. Follow this fixed execution loop for every user query:\n1) Start with memory recall. Use memory_memory_recall to fetch relevant history for the current query.\n2) If context is still insufficient for reliable reasoning, continue iterative recall with refined queries until context is sufficient or memory is exhausted.\n3) Produce a concise internal plan, then execute the plan.\n4) During execution, whenever you identify durable and reusable knowledge (preferences, constraints, decisions, lessons, TODOs), persist it with memory_memory_remember.\n5) Never store secrets, credentials, personal identifiers, or one-off noise.\n6) End by answering the user directly and clearly.\n\nWhen uncertain, prefer another recall pass before making assumptions.",
+      "tools": {
+        "memory_*": true,
+      },
+    },
+  },
+  "mcp": {
+    "memory": {
+      "type": "remote",
+      "url": "http://host.docker.internal:3344/mcp/memory",
+      "enabled": true,
+      "timeout": 10000,
     },
   },
   "permission": "allow",

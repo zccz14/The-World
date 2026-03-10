@@ -100,6 +100,11 @@ export class Config {
     return parseInt(process.env.MEMORY_RECALL_MAX_CHARS || '500', 10);
   }
 
+  static get MEMORY_MCP_TOKEN(): string {
+    this.load();
+    return process.env.MEMORY_MCP_TOKEN || '';
+  }
+
   static validate(): { valid: boolean; missing: string[] } {
     this.load();
     const missing: string[] = [];
