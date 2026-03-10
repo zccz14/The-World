@@ -363,7 +363,7 @@ export class WorldMemory {
     const selected: RecallItem[] = [];
     let usedChars = 0;
     for (const item of merged) {
-      const next = this.compactText(item.text, 420);
+      const next = item.text;
       if (usedChars + next.length > budgetChars && selected.length > 0) {
         break;
       }
@@ -881,15 +881,15 @@ export class WorldMemory {
   }
 
   private extractMemoryContent(record: Record<string, unknown>): string | null {
-    // Priority: summary > episode > subject > content
-    const summary = record.summary;
-    if (typeof summary === 'string' && summary.trim()) {
-      return summary.trim();
-    }
-
+    // Priority: episode > summary > subject > content
     const episode = record.episode;
     if (typeof episode === 'string' && episode.trim()) {
       return episode.trim();
+    }
+
+    const summary = record.summary;
+    if (typeof summary === 'string' && summary.trim()) {
+      return summary.trim();
     }
 
     const subject = record.subject;

@@ -125,14 +125,11 @@ export class RegionDaemon {
       let stdout = '';
       let stderr = '';
       let killed = false;
-      let hasFinished = false;
       let resolved = false;
 
       console.log(`[RegionDaemon] Setting timeout for ${timeout}ms`);
       const timer = setTimeout(() => {
-        console.log(
-          `[RegionDaemon] TIMEOUT reached! killed=${killed}, hasFinished=${hasFinished}, resolved=${resolved}`
-        );
+        console.log(`[RegionDaemon] TIMEOUT reached! killed=${killed}, resolved=${resolved}`);
         killed = true;
         proc.kill();
         const error: any = new Error('Timeout');
@@ -149,22 +146,6 @@ export class RegionDaemon {
           `[RegionDaemon] ${AGENT_USER} stdout chunk (${chunk.length}b):`,
           chunk.substring(0, 100)
         );
-
-        if (stdout.includes('"type":"step_finish"') && !hasFinished) {
-          console.log(`[RegionDaemon] ${AGENT_USER} step_finish detected!`);
-          hasFinished = true;
-          clearTimeout(timer);
-          if (!killed && !resolved) {
-            resolved = true;
-            console.log(
-              `[RegionDaemon] Resolving with stdout=${stdout.length}b, stderr=${stderr.length}b`
-            );
-            resolve({ stdout, stderr });
-            killed = true;
-            console.log(`[RegionDaemon] Killing process after resolve...`);
-            proc.kill();
-          }
-        }
       });
 
       proc.stderr.on('data', data => {
