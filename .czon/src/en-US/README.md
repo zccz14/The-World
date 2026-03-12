@@ -24,7 +24,7 @@ Current releases (v0.1 -> v0.2) are infrastructure milestones for this experimen
 
 ## Current Status
 
-**Version**: v0.1.0 (MVP) → v0.2.0 (迁移中)  
+**Version**: v0.1.0 (MVP) → v0.2.0 (Migrating)  
 **Status**: v0.1 Production Ready, v0.2 Migrating to Async Event Model
 
 ### Implemented Features ✅

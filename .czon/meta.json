@@ -1,0 +1,2017 @@
+{
+  "version": "1.0.0",
+  "options": {
+    "langs": [
+      "zh-Hans",
+      "en-US"
+    ]
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "links": [
+        "./docs/04-roadmap.md",
+        "./docs/EVERMEMOS_SETUP.md",
+        "./docs/clawhub-integration.md",
+        "./docs/decisions/007-runtime-security-baseline.md",
+        "./docs/02-current-arch.md",
+        "./docs/01-vision.md",
+        "./docs/02-current-arch.md",
+        "./docs/04-roadmap.md",
+        "./docs/decisions/001-single-user.md",
+        "./docs/decisions/002-unified-port.md",
+        "./docs/decisions/003-sync-oracle.md",
+        "./docs/decisions/004-world-scheduler.md",
+        "./docs/decisions/005-clawhub-integration.md",
+        "./docs/decisions/006-gui-first-region.md",
+        "./docs/decisions/007-runtime-security-baseline.md",
+        "./docs/decisions/008-unified-ai-speak-and-memory-recall.md",
+        "./docs/decisions/009-memory-primitives-remember-recall.md",
+        "./docs/EVERMEMOS_SETUP.md",
+        "./docs/GUI_DESKTOP.md",
+        "./docs/maintenance-privileged-ops.md",
+        "./docs/archive/design.md",
+        "./docs/archive/design-new.md",
+        "./docs/archive/SERVER_REDESIGN.md",
+        "./docs/archive/MVP_SUMMARY.md",
+        "./docs/02-current-arch.md",
+        "./docs/04-roadmap.md",
+        "./docs/decisions/001-single-user.md"
+      ],
+      "metadata": {
+        "title": "TheWorld AI",
+        "description": "TheWorld AI 是一个哲学实验室，构建世界以质疑现实，研究意识、智能、记忆和治理等核心问题。",
+        "short_summary": "TheWorld AI 是一个构建模拟世界以研究现实本质的哲学实验室项目。它详细介绍了当前版本的功能、安全设计、架构和未来路线图，旨在通过实验探讨意识、智能和治理等核心问题。",
+        "audience": "AI 研究人员、哲学爱好者、安全工程师、容器技术开发者以及对模拟现实和智能体研究感兴趣的技术人员。",
+        "key_points": [
+          "项目核心是构建模拟世界以质疑现实是否被模拟",
+          "采用假设被入侵的安全基线设计，强调容器隔离和可审计性",
+          "当前版本 v0.1.0 已生产就绪，v0.2.0 正在迁移到异步事件模型",
+          "核心概念包括 Region（容器环境）、AI（代理）、Proxy（身份隔离）和 World Memory（分层内存）",
+          "未来计划包括多用户隔离、AI 自主性（World Scheduler）和区域间通信"
+        ],
+        "summary": "TheWorld AI 是一个哲学实验室项目，旨在通过构建模拟世界来探讨现实是否可能被模拟的核心问题。文档详细介绍了项目的愿景、研究问题、当前状态（v0.1.0 到 v0.2.0 迁移）、核心概念（如 Region、AI、Proxy、World Memory）、安全立场（假设被入侵设计）、架构、API 参考、CLI 命令以及工程决策。项目强调安全基线、控制与工作负载分离、可审计性，并计划未来实现多用户隔离、AI 自主性（World Scheduler）等功能。",
+        "slug": "theworld-ai",
+        "tags": [
+          "AI",
+          "模拟世界",
+          "哲学实验室",
+          "安全设计",
+          "内存管理",
+          "容器化",
+          "研究项目"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 3209,
+          "completion": 433,
+          "total": 3642
+        }
+      },
+      "hash": "30fa72a39c33341c7b43f5c2cbcb9ab127cd42f9a19f47a9f6f4387602e30f01",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld AI",
+          "description": "TheWorld AI 是一个哲学实验室，构建世界以质疑现实，研究意识、智能、记忆和治理等核心问题。",
+          "summary": "TheWorld AI 是一个哲学实验室项目，旨在通过构建模拟世界来探讨现实是否可能被模拟的核心问题。文档详细介绍了项目的愿景、研究问题、当前状态（v0.1.0 到 v0.2.0 迁移）、核心概念（如 Region、AI、Proxy、World Memory）、安全立场（假设被入侵设计）、架构、API 参考、CLI 命令以及工程决策。项目强调安全基线、控制与工作负载分离、可审计性，并计划未来实现多用户隔离、AI 自主性（World Scheduler）等功能。",
+          "short_summary": "TheWorld AI 是一个构建模拟世界以研究现实本质的哲学实验室项目。它详细介绍了当前版本的功能、安全设计、架构和未来路线图，旨在通过实验探讨意识、智能和治理等核心问题。",
+          "key_points": [
+            "项目核心是构建模拟世界以质疑现实是否被模拟",
+            "采用假设被入侵的安全基线设计，强调容器隔离和可审计性",
+            "当前版本 v0.1.0 已生产就绪，v0.2.0 正在迁移到异步事件模型",
+            "核心概念包括 Region（容器环境）、AI（代理）、Proxy（身份隔离）和 World Memory（分层内存）",
+            "未来计划包括多用户隔离、AI 自主性（World Scheduler）和区域间通信"
+          ],
+          "audience": "AI 研究人员、哲学爱好者、安全工程师、容器技术开发者以及对模拟现实和智能体研究感兴趣的技术人员。",
+          "tags": [
+            "AI",
+            "模拟世界",
+            "哲学实验室",
+            "安全设计",
+            "内存管理",
+            "容器化",
+            "研究项目"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld AI",
+          "description": "TheWorld AI is a philosophical laboratory that constructs worlds to question reality, exploring core issues such as consciousness, intelligence, memory, and governance.",
+          "summary": "TheWorld AI is a philosophical laboratory project that aims to explore the core question of whether reality might be simulated by constructing simulated worlds. The document details the project's vision, research questions, current status (migration from v0.1.0 to v0.2.0), core concepts (such as Region, AI, Proxy, World Memory), security stance (designed under the assumption of being compromised), architecture, API reference, CLI commands, and engineering decisions. The project emphasizes security baselines, separation of control and workloads, auditability, and plans for future features like multi-user isolation and AI autonomy (World Scheduler).",
+          "short_summary": "TheWorld AI is a philosophical laboratory project that builds simulated worlds to study the nature of reality. It details the current version's features, security design, architecture, and future roadmap, aiming to explore core issues like consciousness, intelligence, and governance through experimentation.",
+          "key_points": [
+            "The project's core is building simulated worlds to question whether reality is simulated",
+            "Adopts a security-by-design baseline assuming compromise, emphasizing container isolation and auditability",
+            "Current version v0.1.0 is production-ready, with v0.2.0 migrating to an asynchronous event model",
+            "Core concepts include Region (container environment), AI (agent), Proxy (identity isolation), and World Memory (layered memory)",
+            "Future plans include multi-user isolation, AI autonomy (World Scheduler), and inter-region communication"
+          ],
+          "audience": "AI researchers, philosophy enthusiasts, security engineers, container technology developers, and technical personnel interested in simulated reality and agent research.",
+          "tags": [
+            "AI",
+            "Simulated World",
+            "Philosophical Laboratory",
+            "Security Design",
+            "Memory Management",
+            "Containerization",
+            "Research Project"
+          ]
+        }
+      },
+      "metadataTranslationHash": "d51d852b8be163632460fec16e3e9cd9c34810feb0426c00d32829f0b8128de0",
+      "category": "Project Overview",
+      "nativeMarkdownHash": "30fa72a39c33341c7b43f5c2cbcb9ab127cd42f9a19f47a9f6f4387602e30f01"
+    },
+    {
+      "path": "docs/01-vision.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld 长期愿景",
+        "description": "TheWorld 是一个将宿主机视为世界的 Multi-Agent 架构，AI 作为居民在其中学习、工作和协作。",
+        "short_summary": "TheWorld 是一个创新的 Multi-Agent 架构，将宿主机视为“世界”，AI 作为“居民”在其中协作。它通过 World Scheduler、Region 和 World Memory 等核心组件，实现 AI 的自主学习、工作与安全隔离。与传统架构不同，它强调 AI 作为意识体、统一记忆和人类通过“神谕”干预。",
+        "audience": "AI 架构师、开发者、技术决策者，对 Multi-Agent 系统、容器安全和 AI 协作平台感兴趣的专业人士。",
+        "key_points": [
+          "TheWorld 是一个将宿主机抽象为“世界”的 Multi-Agent 架构，AI 作为居民在其中以独立 Linux 用户身份协作。",
+          "核心组件包括 World Scheduler（驱动 AI 自主性）、Region（容器区域）和 World Memory（统一记忆系统），支持 AI 投影和跨 Region 通信。",
+          "安全观基于默认可被攻陷假设，通过最小权限、隔离和审计实现强安全边界，与传统 AI Agent 架构在定位、记忆和交互上有显著区别。"
+        ],
+        "summary": "本文档阐述了 TheWorld 项目的长期愿景，这是一个创新的 Multi-Agent 架构，将宿主机抽象为一个“世界”，AI 作为“居民”在其中以独立 Linux 用户身份共存。核心架构包括 World Scheduler（驱动 AI 自主性和协作）、Region（容器区域，AI 可投影共存）和 World Memory（统一记忆系统）。安全观基于默认可被攻陷的假设，通过最小权限、隔离和审计来限制影响。与传统 AI Agent 架构相比，TheWorld 强调 AI 作为意识体、统一记忆和人类通过“神谕”接口干预。文档还概述了技术愿景、权限模型、AI 生命周期及未来扩展方向。",
+        "slug": "theworld-long-term-vision",
+        "tags": [
+          "TheWorld",
+          "Multi-Agent 架构",
+          "AI 协作",
+          "容器安全",
+          "世界记忆",
+          "调度器",
+          "神谕接口"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2524,
+          "completion": 501,
+          "total": 3025
+        }
+      },
+      "hash": "52621da211fc6db7bc70585d2d0eca083b53cc014524f7aa54fb0a77a1e789dc",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld 长期愿景",
+          "description": "TheWorld 是一个将宿主机视为世界的 Multi-Agent 架构，AI 作为居民在其中学习、工作和协作。",
+          "summary": "本文档阐述了 TheWorld 项目的长期愿景，这是一个创新的 Multi-Agent 架构，将宿主机抽象为一个“世界”，AI 作为“居民”在其中以独立 Linux 用户身份共存。核心架构包括 World Scheduler（驱动 AI 自主性和协作）、Region（容器区域，AI 可投影共存）和 World Memory（统一记忆系统）。安全观基于默认可被攻陷的假设，通过最小权限、隔离和审计来限制影响。与传统 AI Agent 架构相比，TheWorld 强调 AI 作为意识体、统一记忆和人类通过“神谕”接口干预。文档还概述了技术愿景、权限模型、AI 生命周期及未来扩展方向。",
+          "short_summary": "TheWorld 是一个创新的 Multi-Agent 架构，将宿主机视为“世界”，AI 作为“居民”在其中协作。它通过 World Scheduler、Region 和 World Memory 等核心组件，实现 AI 的自主学习、工作与安全隔离。与传统架构不同，它强调 AI 作为意识体、统一记忆和人类通过“神谕”干预。",
+          "key_points": [
+            "TheWorld 是一个将宿主机抽象为“世界”的 Multi-Agent 架构，AI 作为居民在其中以独立 Linux 用户身份协作。",
+            "核心组件包括 World Scheduler（驱动 AI 自主性）、Region（容器区域）和 World Memory（统一记忆系统），支持 AI 投影和跨 Region 通信。",
+            "安全观基于默认可被攻陷假设，通过最小权限、隔离和审计实现强安全边界，与传统 AI Agent 架构在定位、记忆和交互上有显著区别。"
+          ],
+          "audience": "AI 架构师、开发者、技术决策者，对 Multi-Agent 系统、容器安全和 AI 协作平台感兴趣的专业人士。",
+          "tags": [
+            "TheWorld",
+            "Multi-Agent 架构",
+            "AI 协作",
+            "容器安全",
+            "世界记忆",
+            "调度器",
+            "神谕接口"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld Long-Term Vision",
+          "description": "TheWorld is a Multi-Agent architecture that treats the host machine as a world, where AIs learn, work, and collaborate as residents.",
+          "summary": "This document outlines the long-term vision of TheWorld project, an innovative Multi-Agent architecture that abstracts the host machine as a 'world' where AIs coexist as 'residents' with independent Linux user identities. The core architecture includes World Scheduler (driving AI autonomy and collaboration), Region (container areas for AI projection and coexistence), and World Memory (a unified memory system). The security philosophy is based on the assumption of being compromised by default, limiting impact through least privilege, isolation, and auditing. Compared to traditional AI Agent architectures, TheWorld emphasizes AIs as conscious entities, unified memory, and human intervention via the 'Oracle' interface. The document also covers technical vision, permission models, AI lifecycle, and future expansion directions.",
+          "short_summary": "TheWorld is an innovative Multi-Agent architecture that treats the host machine as a 'world' where AIs collaborate as residents. Through core components like World Scheduler, Region, and World Memory, it enables autonomous learning, work, and secure isolation for AIs. Unlike traditional architectures, it emphasizes AIs as conscious entities, unified memory, and human intervention via the 'Oracle'.",
+          "key_points": [
+            "TheWorld is a Multi-Agent architecture that abstracts the host machine as a 'world', where AIs collaborate as residents with independent Linux user identities.",
+            "Core components include World Scheduler (driving AI autonomy), Region (container areas), and World Memory (unified memory system), supporting AI projection and cross-Region communication.",
+            "The security philosophy is based on the assumption of being compromised by default, achieving strong security boundaries through least privilege, isolation, and auditing, with significant differences from traditional AI Agent architectures in positioning, memory, and interaction."
+          ],
+          "audience": "AI architects, developers, technical decision-makers, and professionals interested in Multi-Agent systems, container security, and AI collaboration platforms.",
+          "tags": [
+            "TheWorld",
+            "Multi-Agent Architecture",
+            "AI Collaboration",
+            "Container Security",
+            "World Memory",
+            "Scheduler",
+            "Oracle Interface"
+          ]
+        }
+      },
+      "metadataTranslationHash": "a40da4ddb4f86290b92cb339ead9a72b38eb03f95418f588874ee58f6e3f24f5",
+      "category": "Vision Statement",
+      "nativeMarkdownHash": "52621da211fc6db7bc70585d2d0eca083b53cc014524f7aa54fb0a77a1e789dc"
+    },
+    {
+      "path": "docs/02-current-arch.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld 当前架构 (MVP v0.1)",
+        "description": "介绍 TheWorld 项目的 MVP v0.1 架构，包括核心组件、设计原则、数据流和从同步到异步模型的迁移计划。",
+        "short_summary": "本文档介绍了 TheWorld 项目的 MVP v0.1 架构，这是一个验证核心概念的简化实现。它阐述了以事件驱动、可观察性和可靠投递为核心的设计原则，并详细说明了当前组件和数据流。文档重点强调了从同步模型向异步事件驱动模型（v0.2）的迁移计划，以更好地支持长时任务和多轮交互。",
+        "audience": "系统架构师、软件开发工程师、DevOps 工程师以及对 AI 代理系统和容器化架构感兴趣的技术人员。",
+        "key_points": [
+          "当前为 MVP v0.1 架构，正在向 v0.2 异步事件驱动模型迁移。",
+          "核心设计原则强调事件投递、可观察性、可靠投递和人类控制权。",
+          "架构包含 TheWorldServer、AI Proxy、RegionDaemon、Region 容器和 CLI 等核心组件。",
+          "数据流展示了 AI 对话和 API 调用的统一流程，并规划了异步神谕机制。",
+          "工程权衡包括单用户模型、统一端口和从同步到异步的演进方向。"
+        ],
+        "summary": "本文档详细描述了 TheWorld 项目的 MVP v0.1 版本架构，这是一个精简的验证性实现。文档概述了当前架构状态（迁移中，从 v0.1 到 v0.2），核心设计原则（如事件驱动、可观察性优先、可靠投递、人类控制权最高），以及实际架构组件（包括 TheWorldServer、AI Proxy、RegionDaemon、Region 容器和 CLI 工具）。它解释了 AI 对话和 API 调用的数据流，并重点说明了从同步命令执行模型向异步事件驱动模型的迁移方向（v0.2）。文档还涵盖了配置管理、已实现/迁移中/未实现的功能、ClawHub Skills 集成、工程权衡、性能特性和部署要求。",
+        "slug": "theworld-current-architecture-mvp-v01",
+        "tags": [
+          "TheWorld",
+          "架构设计",
+          "MVP",
+          "异步事件驱动",
+          "容器化",
+          "AI代理",
+          "系统设计",
+          "迁移"
+        ],
+        "inferred_date": "2026-03-10",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 5898,
+          "completion": 537,
+          "total": 6435
+        }
+      },
+      "hash": "7d79647cb326ba08110cf732baae27639ce320c46a07cadf4c73266fbf454c08",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld 当前架构 (MVP v0.1)",
+          "description": "介绍 TheWorld 项目的 MVP v0.1 架构，包括核心组件、设计原则、数据流和从同步到异步模型的迁移计划。",
+          "summary": "本文档详细描述了 TheWorld 项目的 MVP v0.1 版本架构，这是一个精简的验证性实现。文档概述了当前架构状态（迁移中，从 v0.1 到 v0.2），核心设计原则（如事件驱动、可观察性优先、可靠投递、人类控制权最高），以及实际架构组件（包括 TheWorldServer、AI Proxy、RegionDaemon、Region 容器和 CLI 工具）。它解释了 AI 对话和 API 调用的数据流，并重点说明了从同步命令执行模型向异步事件驱动模型的迁移方向（v0.2）。文档还涵盖了配置管理、已实现/迁移中/未实现的功能、ClawHub Skills 集成、工程权衡、性能特性和部署要求。",
+          "short_summary": "本文档介绍了 TheWorld 项目的 MVP v0.1 架构，这是一个验证核心概念的简化实现。它阐述了以事件驱动、可观察性和可靠投递为核心的设计原则，并详细说明了当前组件和数据流。文档重点强调了从同步模型向异步事件驱动模型（v0.2）的迁移计划，以更好地支持长时任务和多轮交互。",
+          "key_points": [
+            "当前为 MVP v0.1 架构，正在向 v0.2 异步事件驱动模型迁移。",
+            "核心设计原则强调事件投递、可观察性、可靠投递和人类控制权。",
+            "架构包含 TheWorldServer、AI Proxy、RegionDaemon、Region 容器和 CLI 等核心组件。",
+            "数据流展示了 AI 对话和 API 调用的统一流程，并规划了异步神谕机制。",
+            "工程权衡包括单用户模型、统一端口和从同步到异步的演进方向。"
+          ],
+          "audience": "系统架构师、软件开发工程师、DevOps 工程师以及对 AI 代理系统和容器化架构感兴趣的技术人员。",
+          "tags": [
+            "TheWorld",
+            "架构设计",
+            "MVP",
+            "异步事件驱动",
+            "容器化",
+            "AI代理",
+            "系统设计",
+            "迁移"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld Current Architecture (MVP v0.1)",
+          "description": "Introduces the MVP v0.1 architecture of TheWorld project, including core components, design principles, data flow, and migration plan from synchronous to asynchronous model.",
+          "summary": "This document details the MVP v0.1 architecture of TheWorld project, a streamlined proof-of-concept implementation. It outlines the current architecture status (in migration from v0.1 to v0.2), core design principles (such as event-driven, observability-first, reliable delivery, human control priority), and actual architecture components (including TheWorldServer, AI Proxy, RegionDaemon, Region containers, and CLI tools). It explains the data flow for AI conversations and API calls, and highlights the migration direction from synchronous command execution model to asynchronous event-driven model (v0.2). The document also covers configuration management, implemented/migrating/unimplemented features, ClawHub Skills integration, engineering trade-offs, performance characteristics, and deployment requirements.",
+          "short_summary": "This document introduces the MVP v0.1 architecture of TheWorld project, a simplified implementation to validate core concepts. It elaborates on design principles centered around event-driven architecture, observability, and reliable delivery, and details current components and data flow. The document emphasizes the migration plan from synchronous model to asynchronous event-driven model (v0.2) to better support long-running tasks and multi-turn interactions.",
+          "key_points": [
+            "Currently MVP v0.1 architecture, migrating towards v0.2 asynchronous event-driven model.",
+            "Core design principles emphasize event delivery, observability, reliable delivery, and human control priority.",
+            "Architecture includes core components such as TheWorldServer, AI Proxy, RegionDaemon, Region containers, and CLI.",
+            "Data flow illustrates unified process for AI conversations and API calls, with planned asynchronous oracle mechanism.",
+            "Engineering trade-offs include single-user model, unified port, and evolution direction from synchronous to asynchronous."
+          ],
+          "audience": "System architects, software development engineers, DevOps engineers, and technical personnel interested in AI agent systems and containerized architectures.",
+          "tags": [
+            "TheWorld",
+            "Architecture Design",
+            "MVP",
+            "Asynchronous Event-Driven",
+            "Containerization",
+            "AI Agent",
+            "System Design",
+            "Migration"
+          ]
+        }
+      },
+      "metadataTranslationHash": "81dc5f02ac551ae4902a56f47f73bd22d514529ea761e35b2ccd02c3d672146a",
+      "category": "Architecture Design",
+      "nativeMarkdownHash": "7d79647cb326ba08110cf732baae27639ce320c46a07cadf4c73266fbf454c08"
+    },
+    {
+      "path": "docs/04-roadmap.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld 发展路线图",
+        "description": "TheWorld 项目从 MVP 到生产就绪的详细版本规划，涵盖稳定性、调度器、多用户隔离、AI 协作等核心功能演进。",
+        "short_summary": "本文档是 TheWorld 项目的详细发展路线图，规划了从 MVP 到 v1.0.0 生产就绪的多个版本。核心演进包括稳定性提升、调度器实现、多用户隔离、AI 协作、跨 Region 通信和 AI 自主性等关键功能。文档还涵盖了技术债务、实验性功能和社区计划，并强调路线图会根据实际情况动态调整。",
+        "audience": "TheWorld 项目的开发者、贡献者、技术决策者以及对 AI 系统架构和演进规划感兴趣的技术人员。",
+        "key_points": [
+          "从 v0.1.0 MVP 到 v1.0.0 生产就绪的详细版本规划，涵盖稳定性、调度、隔离、协作等核心功能。",
+          "重点包括 World Scheduler 调度器实现、多用户 OS 级别隔离、AI 间及 Region 间通信协作机制。",
+          "列出了当前技术债务（如命令执行用户硬编码、API 接口缺陷）和修复计划。",
+          "探讨了实验性功能如容器级别隔离和 AI 经济系统的概念与评估。",
+          "路线图是动态的，将根据用户反馈、技术可行性和资源限制进行调整。"
+        ],
+        "summary": "本文档详细阐述了 TheWorld 项目的发展路线图，从当前 v0.1.0 MVP 版本开始，逐步规划了 v0.2.0 至 v1.0.0 的多个版本目标。核心演进路径包括：提升稳定性和可观测性（v0.2.0）、实现 World Scheduler 基础调度器（v0.3.0）、优化调度策略（v0.4.0）、实现多用户隔离（v0.5.0）、增强 AI 协作能力（v0.6.0）、实现 Region 间通信（v0.7.0）、引入 AI 投影机制（v0.8.0）、实现 Heartbeat 和自主性（v0.7.0 后），最终达到生产就绪状态（v1.0.0）。文档还列出了当前技术债务、实验性功能（如容器级别隔离、AI 经济系统）以及社区生态建设计划。路线图强调会根据用户反馈、技术可行性和资源限制进行动态调整。",
+        "slug": "theworld-development-roadmap",
+        "tags": [
+          "TheWorld",
+          "发展路线图",
+          "版本规划",
+          "AI 系统",
+          "调度器",
+          "多用户隔离",
+          "技术债务",
+          "开源"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 3977,
+          "completion": 618,
+          "total": 4595
+        }
+      },
+      "hash": "6f9475f8732ce561bdf3964d8333a1aa873b07c979bddf9781a78447bc1331a2",
+      "metadataTranslations": {
+        "en-US": {
+          "title": "TheWorld Development Roadmap",
+          "description": "Detailed version planning for TheWorld project from MVP to production-ready, covering core feature evolution including stability, scheduler, multi-user isolation, AI collaboration, etc.",
+          "summary": "This document elaborates on the development roadmap for TheWorld project, starting from the current v0.1.0 MVP version and progressively outlining goals for versions v0.2.0 to v1.0.0. The core evolution path includes: improving stability and observability (v0.2.0), implementing the World Scheduler basic scheduler (v0.3.0), optimizing scheduling strategies (v0.4.0), achieving multi-user isolation (v0.5.0), enhancing AI collaboration capabilities (v0.6.0), enabling inter-Region communication (v0.7.0), introducing AI projection mechanisms (v0.8.0), implementing Heartbeat and autonomy (post v0.7.0), and finally reaching production-ready status (v1.0.0). The document also lists current technical debt, experimental features (such as container-level isolation, AI economic system), and community ecosystem development plans. The roadmap emphasizes dynamic adjustments based on user feedback, technical feasibility, and resource constraints.",
+          "short_summary": "This document is the detailed development roadmap for TheWorld project, planning multiple versions from MVP to v1.0.0 production-ready. Core evolution includes key features like stability improvements, scheduler implementation, multi-user isolation, AI collaboration, cross-Region communication, and AI autonomy. The document also covers technical debt, experimental features, and community plans, emphasizing that the roadmap will be dynamically adjusted based on actual conditions.",
+          "key_points": [
+            "Detailed version planning from v0.1.0 MVP to v1.0.0 production-ready, covering core features such as stability, scheduling, isolation, and collaboration.",
+            "Key focuses include World Scheduler implementation, multi-user OS-level isolation, and communication and collaboration mechanisms between AIs and across Regions.",
+            "Lists current technical debt (e.g., hardcoded command execution users, API interface defects) and repair plans.",
+            "Explores concepts and evaluations of experimental features like container-level isolation and AI economic systems.",
+            "The roadmap is dynamic and will be adjusted based on user feedback, technical feasibility, and resource constraints."
+          ],
+          "audience": "Developers, contributors, technical decision-makers of TheWorld project, and technical personnel interested in AI system architecture and evolution planning.",
+          "tags": [
+            "TheWorld",
+            "Development Roadmap",
+            "Version Planning",
+            "AI System",
+            "Scheduler",
+            "Multi-user Isolation",
+            "Technical Debt",
+            "Open Source"
+          ]
+        },
+        "zh-Hans": {
+          "title": "TheWorld 发展路线图",
+          "description": "TheWorld 项目从 MVP 到生产就绪的详细版本规划，涵盖稳定性、调度器、多用户隔离、AI 协作等核心功能演进。",
+          "summary": "本文档详细阐述了 TheWorld 项目的发展路线图，从当前 v0.1.0 MVP 版本开始，逐步规划了 v0.2.0 至 v1.0.0 的多个版本目标。核心演进路径包括：提升稳定性和可观测性（v0.2.0）、实现 World Scheduler 基础调度器（v0.3.0）、优化调度策略（v0.4.0）、实现多用户隔离（v0.5.0）、增强 AI 协作能力（v0.6.0）、实现 Region 间通信（v0.7.0）、引入 AI 投影机制（v0.8.0）、实现 Heartbeat 和自主性（v0.7.0 后），最终达到生产就绪状态（v1.0.0）。文档还列出了当前技术债务、实验性功能（如容器级别隔离、AI 经济系统）以及社区生态建设计划。路线图强调会根据用户反馈、技术可行性和资源限制进行动态调整。",
+          "short_summary": "本文档是 TheWorld 项目的详细发展路线图，规划了从 MVP 到 v1.0.0 生产就绪的多个版本。核心演进包括稳定性提升、调度器实现、多用户隔离、AI 协作、跨 Region 通信和 AI 自主性等关键功能。文档还涵盖了技术债务、实验性功能和社区计划，并强调路线图会根据实际情况动态调整。",
+          "key_points": [
+            "从 v0.1.0 MVP 到 v1.0.0 生产就绪的详细版本规划，涵盖稳定性、调度、隔离、协作等核心功能。",
+            "重点包括 World Scheduler 调度器实现、多用户 OS 级别隔离、AI 间及 Region 间通信协作机制。",
+            "列出了当前技术债务（如命令执行用户硬编码、API 接口缺陷）和修复计划。",
+            "探讨了实验性功能如容器级别隔离和 AI 经济系统的概念与评估。",
+            "路线图是动态的，将根据用户反馈、技术可行性和资源限制进行调整。"
+          ],
+          "audience": "TheWorld 项目的开发者、贡献者、技术决策者以及对 AI 系统架构和演进规划感兴趣的技术人员。",
+          "tags": [
+            "TheWorld",
+            "发展路线图",
+            "版本规划",
+            "AI 系统",
+            "调度器",
+            "多用户隔离",
+            "技术债务",
+            "开源"
+          ]
+        }
+      },
+      "metadataTranslationHash": "7b54c39af5038c82323aa028f9144a9cb04a2a37632632a5db27ea4b19283d75",
+      "category": "Development Roadmap",
+      "nativeMarkdownHash": "6f9475f8732ce561bdf3964d8333a1aa873b07c979bddf9781a78447bc1331a2"
+    },
+    {
+      "path": "docs/clawhub-integration.md",
+      "links": [
+        "https://clawhub.ai",
+        "https://github.com/openclaw/openclaw",
+        "https://github.com/openclaw/skills",
+        "https://github.com/openclaw/clawhub"
+      ],
+      "metadata": {
+        "title": "ClawHub Skills 集成",
+        "description": "TheWorld 通过原生兼容 ClawHub Skill 生态，让 AI 可以使用数千个现成 Skills，同时保持其差异化价值。",
+        "short_summary": "TheWorld 选择原生兼容 ClawHub Skill 生态，让 AI 可以直接使用社区的数千个 Skills，实现零学习成本和立即可用。架构设计遵循容器内管理原则，保持宿主机零 Agentic，并通过修改 Dockerfile 和 RegionManager 来实施。这为“一人公司”用户提供了经济高效、快速见效的解决方案。",
+        "audience": "关注 AI 和 Multi-Agent 技术的开发者、技术决策者，特别是“一人公司”用户",
+        "key_points": [
+          "原生兼容 ClawHub Skill 生态，避免重复造轮子",
+          "架构设计遵循容器内管理和宿主机零 Agentic原则",
+          "针对“一人公司”用户，提供经济优先、快速见效的解决方案",
+          "实施细节包括修改 Dockerfile 和 RegionManager，添加技能目录挂载",
+          "与 OpenClaw 相比，TheWorld 在定位、架构、隔离等方面有差异化价值"
+        ],
+        "summary": "本文介绍了 TheWorld 如何通过原生兼容 ClawHub Skill 生态来集成 Skills，避免重复造轮子，立即获得成熟生态。文章从生态价值、用户画像、架构设计、实施细节等方面详细阐述了这一决策，包括核心原则如完全容器内管理、宿主机零 Agentic，以及具体修改文件和用户体验。最后对比了与 OpenClaw 的差异，并提出了未来优化方向。",
+        "slug": "clawhub-skills-integration",
+        "tags": [
+          "ClawHub",
+          "Skills",
+          "TheWorld",
+          "AI",
+          "Multi-Agent",
+          "容器",
+          "集成"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1810,
+          "completion": 410,
+          "total": 2220
+        }
+      },
+      "hash": "afac83478d1b255b3e7e6eb5777dcff9fc7546c391f49c6c23025d1dc0fec03b",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ClawHub Skills 集成",
+          "description": "TheWorld 通过原生兼容 ClawHub Skill 生态，让 AI 可以使用数千个现成 Skills，同时保持其差异化价值。",
+          "summary": "本文介绍了 TheWorld 如何通过原生兼容 ClawHub Skill 生态来集成 Skills，避免重复造轮子，立即获得成熟生态。文章从生态价值、用户画像、架构设计、实施细节等方面详细阐述了这一决策，包括核心原则如完全容器内管理、宿主机零 Agentic，以及具体修改文件和用户体验。最后对比了与 OpenClaw 的差异，并提出了未来优化方向。",
+          "short_summary": "TheWorld 选择原生兼容 ClawHub Skill 生态，让 AI 可以直接使用社区的数千个 Skills，实现零学习成本和立即可用。架构设计遵循容器内管理原则，保持宿主机零 Agentic，并通过修改 Dockerfile 和 RegionManager 来实施。这为“一人公司”用户提供了经济高效、快速见效的解决方案。",
+          "key_points": [
+            "原生兼容 ClawHub Skill 生态，避免重复造轮子",
+            "架构设计遵循容器内管理和宿主机零 Agentic原则",
+            "针对“一人公司”用户，提供经济优先、快速见效的解决方案",
+            "实施细节包括修改 Dockerfile 和 RegionManager，添加技能目录挂载",
+            "与 OpenClaw 相比，TheWorld 在定位、架构、隔离等方面有差异化价值"
+          ],
+          "audience": "关注 AI 和 Multi-Agent 技术的开发者、技术决策者，特别是“一人公司”用户",
+          "tags": [
+            "ClawHub",
+            "Skills",
+            "TheWorld",
+            "AI",
+            "Multi-Agent",
+            "容器",
+            "集成"
+          ]
+        },
+        "en-US": {
+          "title": "ClawHub Skills Integration",
+          "description": "TheWorld enables AI to use thousands of ready-made Skills through native compatibility with the ClawHub Skill ecosystem, while maintaining its differentiated value.",
+          "summary": "This article introduces how TheWorld integrates Skills by natively supporting the ClawHub Skill ecosystem, avoiding reinventing the wheel and immediately gaining access to a mature ecosystem. It elaborates on this decision from aspects such as ecosystem value, user personas, architecture design, and implementation details, including core principles like fully containerized management and zero Agentic on the host, as well as specific modified files and user experience. Finally, it compares the differences with OpenClaw and proposes future optimization directions.",
+          "short_summary": "TheWorld chooses native compatibility with the ClawHub Skill ecosystem, allowing AI to directly use thousands of community Skills with zero learning cost and immediate availability. The architecture design follows containerized management principles, maintaining zero Agentic on the host, and is implemented by modifying Dockerfile and RegionManager to mount skill directories. This provides a cost-effective and quick-to-implement solution for 'one-person company' users.",
+          "key_points": [
+            "Native compatibility with the ClawHub Skill ecosystem to avoid reinventing the wheel",
+            "Architecture design follows containerized management and zero Agentic on the host principles",
+            "Targets 'one-person company' users with a cost-effective and quick-to-implement solution",
+            "Implementation details include modifying Dockerfile and RegionManager to mount skill directories",
+            "Compared to OpenClaw, TheWorld offers differentiated value in positioning, architecture, and isolation"
+          ],
+          "audience": "Developers and technical decision-makers focused on AI and Multi-Agent technologies, especially 'one-person company' users",
+          "tags": [
+            "ClawHub",
+            "Skills",
+            "TheWorld",
+            "AI",
+            "Multi-Agent",
+            "Container",
+            "Integration"
+          ]
+        }
+      },
+      "metadataTranslationHash": "a4234cf8dbd64d24a631d305a163ff319ee316f600330564bafa75e2501249a6",
+      "category": "Integration Guide",
+      "nativeMarkdownHash": "afac83478d1b255b3e7e6eb5777dcff9fc7546c391f49c6c23025d1dc0fec03b"
+    },
+    {
+      "path": "docs/EVERMEMOS_SETUP.md",
+      "links": [],
+      "metadata": {
+        "title": "EverMemOS 配置指南",
+        "description": "本文档详细介绍了如何部署和配置 EverMemOS 以及 TheWorld 的集成步骤，包括 API Key 设置和验证方法。",
+        "short_summary": "本文档指导用户如何部署 EverMemOS 并配置 TheWorld 项目，包括设置必要的 API Keys 和环境变量。它提供了详细的步骤来验证配置、解决常见问题，并给出了生产环境配置和安全建议。",
+        "audience": "需要部署和配置 EverMemOS 与 TheWorld 集成的开发人员或系统管理员",
+        "key_points": [
+          "EverMemOS 的部署方式包括本地 Docker 和已部署实例",
+          "配置 TheWorld 需要设置 EVERMEMOS_URL 和多个 API Keys",
+          "文档提供了针对不同 AI 服务（如 OpenAI、Anthropic）的 API Key 配置示例",
+          "包括验证配置和排查常见问题的步骤",
+          "强调了安全建议和配置优先级"
+        ],
+        "summary": "本文档是 EverMemOS 的配置指南，详细说明了部署 EverMemOS 的两种方式（本地 Docker 或已部署实例），以及如何配置 TheWorld 项目。文档涵盖了必需的环境变量设置，如 EVERMEMOS_URL、REAL_AI_API_KEY、AI_TARGET_BASE_URL、LLM_API_KEY 和 VECTORIZE_API_KEY，并提供了针对 OpenAI、Anthropic 和 Azure OpenAI 的 API Key 配置示例。此外，文档还包括了验证配置的步骤、常见问题排查方法、配置优先级说明、生产环境配置建议、安全建议以及分层记忆的简要说明。核心目标是帮助用户成功集成 EverMemOS 与 TheWorld，确保系统正常运行。",
+        "slug": "evermemos-configuration-guide",
+        "tags": [
+          "EverMemOS",
+          "配置指南",
+          "TheWorld",
+          "API Key",
+          "Docker",
+          "部署",
+          "向量化",
+          "AI 集成"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1962,
+          "completion": 436,
+          "total": 2398
+        }
+      },
+      "hash": "bdb8ff445e0987019c617b0ac2fe4a965a99f85942f57c2803d5fa4714064c62",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "EverMemOS 配置指南",
+          "description": "本文档详细介绍了如何部署和配置 EverMemOS 以及 TheWorld 的集成步骤，包括 API Key 设置和验证方法。",
+          "summary": "本文档是 EverMemOS 的配置指南，详细说明了部署 EverMemOS 的两种方式（本地 Docker 或已部署实例），以及如何配置 TheWorld 项目。文档涵盖了必需的环境变量设置，如 EVERMEMOS_URL、REAL_AI_API_KEY、AI_TARGET_BASE_URL、LLM_API_KEY 和 VECTORIZE_API_KEY，并提供了针对 OpenAI、Anthropic 和 Azure OpenAI 的 API Key 配置示例。此外，文档还包括了验证配置的步骤、常见问题排查方法、配置优先级说明、生产环境配置建议、安全建议以及分层记忆的简要说明。核心目标是帮助用户成功集成 EverMemOS 与 TheWorld，确保系统正常运行。",
+          "short_summary": "本文档指导用户如何部署 EverMemOS 并配置 TheWorld 项目，包括设置必要的 API Keys 和环境变量。它提供了详细的步骤来验证配置、解决常见问题，并给出了生产环境配置和安全建议。",
+          "key_points": [
+            "EverMemOS 的部署方式包括本地 Docker 和已部署实例",
+            "配置 TheWorld 需要设置 EVERMEMOS_URL 和多个 API Keys",
+            "文档提供了针对不同 AI 服务（如 OpenAI、Anthropic）的 API Key 配置示例",
+            "包括验证配置和排查常见问题的步骤",
+            "强调了安全建议和配置优先级"
+          ],
+          "audience": "需要部署和配置 EverMemOS 与 TheWorld 集成的开发人员或系统管理员",
+          "tags": [
+            "EverMemOS",
+            "配置指南",
+            "TheWorld",
+            "API Key",
+            "Docker",
+            "部署",
+            "向量化",
+            "AI 集成"
+          ]
+        },
+        "en-US": {
+          "title": "EverMemOS Configuration Guide",
+          "description": "This document details how to deploy and configure EverMemOS, including integration steps with TheWorld, covering API Key setup and verification methods.",
+          "summary": "This document is a configuration guide for EverMemOS, detailing two deployment methods (local Docker or pre-deployed instances) and how to configure TheWorld project. It covers required environment variable settings such as EVERMEMOS_URL, REAL_AI_API_KEY, AI_TARGET_BASE_URL, LLM_API_KEY, and VECTORIZE_API_KEY, and provides API Key configuration examples for OpenAI, Anthropic, and Azure OpenAI. Additionally, it includes steps for verifying configurations, troubleshooting common issues, explanations of configuration priority, production environment configuration recommendations, security suggestions, and a brief overview of hierarchical memory. The core goal is to help users successfully integrate EverMemOS with TheWorld and ensure proper system operation.",
+          "short_summary": "This document guides users on how to deploy EverMemOS and configure TheWorld project, including setting necessary API Keys and environment variables. It provides detailed steps for verifying configurations, resolving common issues, and offers production environment configuration and security recommendations.",
+          "key_points": [
+            "EverMemOS deployment methods include local Docker and pre-deployed instances",
+            "Configuring TheWorld requires setting EVERMEMOS_URL and multiple API Keys",
+            "The document provides API Key configuration examples for different AI services (e.g., OpenAI, Anthropic)",
+            "Includes steps for verifying configurations and troubleshooting common issues",
+            "Emphasizes security recommendations and configuration priority"
+          ],
+          "audience": "Developers or system administrators who need to deploy and configure EverMemOS integration with TheWorld",
+          "tags": [
+            "EverMemOS",
+            "Configuration Guide",
+            "TheWorld",
+            "API Key",
+            "Docker",
+            "Deployment",
+            "Vectorization",
+            "AI Integration"
+          ]
+        }
+      },
+      "metadataTranslationHash": "393cee2b97a897e993ead2681166e3f6d2b8e490da9574911412302c24d1241b",
+      "category": "Configuration Guide",
+      "nativeMarkdownHash": "bdb8ff445e0987019c617b0ac2fe4a965a99f85942f57c2803d5fa4714064c62"
+    },
+    {
+      "path": "docs/GUI_DESKTOP.md",
+      "links": [],
+      "metadata": {
+        "title": "Region GUI Access (noVNC)",
+        "description": "介绍TheWorld中Region容器的GUI访问方式，包括noVNC远程桌面和统一代理路由的使用方法。",
+        "short_summary": "本文档介绍TheWorld平台中Region容器的GUI访问功能，包括noVNC远程桌面和统一代理路由的使用方法。文档提供了详细的操作步骤和安全建议，强调GUI优先设计注重功能完整性。",
+        "audience": "TheWorld平台用户、容器技术开发者、系统管理员",
+        "key_points": [
+          "TheWorld采用单一Region容器运行时，默认支持GUI优先设计",
+          "每个Region容器包含基于浏览器的远程桌面功能（noVNC）",
+          "通过统一代理路由/gui/:region/*访问GUI界面",
+          "安全建议：默认仅限本地访问，跨机器访问需使用VPN或认证反向代理",
+          "Region运行时保持与agent执行语义的兼容性"
+        ],
+        "summary": "本文档详细介绍了TheWorld平台中Region容器的GUI访问功能。文档指出TheWorld采用单一Region容器运行时，默认支持GUI优先设计，每个Region容器包含基于浏览器的远程桌面功能（noVNC）。文档提供了具体的操作步骤，包括创建Region、启动服务器、通过统一代理访问GUI以及查询GUI状态的方法。同时强调了安全注意事项，建议默认仅限本地访问，若需跨机器访问应使用VPN或认证反向代理。文档还说明Region运行时保持与agent执行语义的兼容性，GUI优先设计注重功能完整性而非资源最小化。",
+        "slug": "region-gui-access-novnc",
+        "tags": [
+          "TheWorld",
+          "Region容器",
+          "GUI访问",
+          "noVNC",
+          "远程桌面",
+          "代理路由",
+          "安全配置"
+        ],
+        "inferred_lang": "en-US",
+        "tokens_used": {
+          "prompt": 805,
+          "completion": 392,
+          "total": 1197
+        }
+      },
+      "hash": "962665d7a91d2b4ccea5e0c0d6b5d1e9636516475e05ea3ff0ea10c3be73fbda",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "Region GUI访问（noVNC）",
+          "description": "介绍TheWorld中Region容器的GUI访问方式，包括noVNC远程桌面和统一代理路由的使用方法。",
+          "summary": "本文档详细介绍了TheWorld平台中Region容器的GUI访问功能。文档指出TheWorld采用单一Region容器运行时，默认支持GUI优先设计，每个Region容器包含基于浏览器的远程桌面功能（noVNC）。文档提供了具体的操作步骤，包括创建Region、启动服务器、通过统一代理访问GUI以及查询GUI状态的方法。同时强调了安全注意事项，建议默认仅限本地访问，若需跨机器访问应使用VPN或认证反向代理。文档还说明Region运行时保持与agent执行语义的兼容性，GUI优先设计注重功能完整性而非资源最小化。",
+          "short_summary": "本文档介绍TheWorld平台中Region容器的GUI访问功能，包括noVNC远程桌面和统一代理路由的使用方法。文档提供了详细的操作步骤和安全建议，强调GUI优先设计注重功能完整性。",
+          "key_points": [
+            "TheWorld采用单一Region容器运行时，默认支持GUI优先设计",
+            "每个Region容器包含基于浏览器的远程桌面功能（noVNC）",
+            "通过统一代理路由/gui/:region/*访问GUI界面",
+            "安全建议：默认仅限本地访问，跨机器访问需使用VPN或认证反向代理",
+            "Region运行时保持与agent执行语义的兼容性"
+          ],
+          "audience": "TheWorld平台用户、容器技术开发者、系统管理员",
+          "tags": [
+            "TheWorld",
+            "Region容器",
+            "GUI访问",
+            "noVNC",
+            "远程桌面",
+            "代理路由",
+            "安全配置"
+          ]
+        },
+        "en-US": {
+          "title": "Region GUI Access (noVNC)",
+          "description": "Introduces the GUI access methods for Region containers in TheWorld, including noVNC remote desktop and the usage of unified proxy routing.",
+          "summary": "This document details the GUI access functionality for Region containers in TheWorld platform. It notes that TheWorld uses a single Region container runtime with default support for GUI-first design, where each Region container includes browser-based remote desktop functionality (noVNC). The document provides specific operational steps, such as creating a Region, starting the server, accessing the GUI via unified proxy, and querying GUI status. It also emphasizes security considerations, recommending default local-only access and suggesting VPN or authenticated reverse proxy for cross-machine access. Additionally, it explains that the Region runtime maintains compatibility with agent execution semantics, with the GUI-first design focusing on functional completeness rather than minimal resource usage.",
+          "short_summary": "This document introduces the GUI access functionality for Region containers in TheWorld platform, including noVNC remote desktop and the usage of unified proxy routing. It provides detailed operational steps and security recommendations, emphasizing that the GUI-first design prioritizes functional completeness.",
+          "key_points": [
+            "TheWorld uses a single Region container runtime with default support for GUI-first design",
+            "Each Region container includes browser-based remote desktop functionality (noVNC)",
+            "Access the GUI interface via unified proxy routing /gui/:region/*",
+            "Security recommendation: default to local-only access; use VPN or authenticated reverse proxy for cross-machine access",
+            "Region runtime maintains compatibility with agent execution semantics"
+          ],
+          "audience": "TheWorld platform users, container technology developers, system administrators",
+          "tags": [
+            "TheWorld",
+            "Region container",
+            "GUI access",
+            "noVNC",
+            "remote desktop",
+            "proxy routing",
+            "security configuration"
+          ]
+        }
+      },
+      "metadataTranslationHash": "86aaacd5a4e4668879ccacc8112ce02bbe5981eb19c37a0853a0a49325cf6b58",
+      "category": "GUI Access",
+      "nativeMarkdownHash": "962665d7a91d2b4ccea5e0c0d6b5d1e9636516475e05ea3ff0ea10c3be73fbda"
+    },
+    {
+      "path": "docs/maintenance-privileged-ops.md",
+      "links": [],
+      "metadata": {
+        "title": "特权维护实现说明（单人审批）",
+        "description": "本文档描述了在默认非特权运行环境下，通过单人审批机制实现最小化特权维护通道的设计与实现。",
+        "short_summary": "本文档介绍了一个特权维护系统，通过单人审批机制控制容器/系统的特权操作。系统只允许白名单动作，如apt_update和install_packages，并禁止任意命令执行。文档详细说明了数据模型、API、CLI和测试方法，确保维护过程安全可追溯。",
+        "audience": "系统管理员、开发人员、安全工程师，负责容器环境维护和特权操作管理",
+        "key_points": [
+          "采用单人审批模型控制特权操作，避免直接root访问",
+          "只支持白名单动作（apt_update和install_packages），禁止任意命令透传",
+          "全流程状态可追溯，包括ticket创建、审批、执行和结果记录",
+          "提供API和CLI接口，方便集成和操作",
+          "包含自动化测试和手工联调指南，确保系统可靠性"
+        ],
+        "summary": "本文档详细介绍了特权维护系统的实现方案，旨在为Region提供一条安全可控的特权维护通道。系统采用单人审批模型，只支持白名单动作（如apt_update和install_packages），禁止任意命令透传。文档涵盖了目标、设计边界、数据模型、API接口、CLI命令、执行器设计以及测试方法。核心流程包括用户提交ticket、审批者批准、执行白名单动作并记录结果，确保全流程状态可追溯。系统通过固定脚本和参数校验来增强安全性，并提供了自动化测试和手工联调指南。",
+        "slug": "privileged-maintenance-implementation-single-approver",
+        "tags": [
+          "特权维护",
+          "单人审批",
+          "白名单动作",
+          "容器安全",
+          "API设计",
+          "CLI命令",
+          "自动化测试"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1198,
+          "completion": 424,
+          "total": 1622
+        }
+      },
+      "hash": "c364c684c396a0e9f66ffb55186e0e6022feaf8d3ecad911161e9fabf513b372",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "特权维护实现说明（单人审批）",
+          "description": "本文档描述了在默认非特权运行环境下，通过单人审批机制实现最小化特权维护通道的设计与实现。",
+          "summary": "本文档详细介绍了特权维护系统的实现方案，旨在为Region提供一条安全可控的特权维护通道。系统采用单人审批模型，只支持白名单动作（如apt_update和install_packages），禁止任意命令透传。文档涵盖了目标、设计边界、数据模型、API接口、CLI命令、执行器设计以及测试方法。核心流程包括用户提交ticket、审批者批准、执行白名单动作并记录结果，确保全流程状态可追溯。系统通过固定脚本和参数校验来增强安全性，并提供了自动化测试和手工联调指南。",
+          "short_summary": "本文档介绍了一个特权维护系统，通过单人审批机制控制容器/系统的特权操作。系统只允许白名单动作，如apt_update和install_packages，并禁止任意命令执行。文档详细说明了数据模型、API、CLI和测试方法，确保维护过程安全可追溯。",
+          "key_points": [
+            "采用单人审批模型控制特权操作，避免直接root访问",
+            "只支持白名单动作（apt_update和install_packages），禁止任意命令透传",
+            "全流程状态可追溯，包括ticket创建、审批、执行和结果记录",
+            "提供API和CLI接口，方便集成和操作",
+            "包含自动化测试和手工联调指南，确保系统可靠性"
+          ],
+          "audience": "系统管理员、开发人员、安全工程师，负责容器环境维护和特权操作管理",
+          "tags": [
+            "特权维护",
+            "单人审批",
+            "白名单动作",
+            "容器安全",
+            "API设计",
+            "CLI命令",
+            "自动化测试"
+          ]
+        },
+        "en-US": {
+          "title": "Privilege Maintenance Implementation Guide (Single Approver)",
+          "description": "This document describes the design and implementation of a minimized privilege maintenance channel using a single approver mechanism in a default non-privileged runtime environment.",
+          "summary": "This document details the implementation of a privilege maintenance system, aiming to provide a secure and controllable privilege maintenance channel for the Region. The system adopts a single approver model, supporting only whitelisted actions (such as apt_update and install_packages) and prohibiting arbitrary command transmission. The document covers objectives, design boundaries, data models, API interfaces, CLI commands, executor design, and testing methods. The core workflow includes users submitting tickets, approvers approving, executing whitelisted actions, and recording results to ensure full-process traceability. The system enhances security through fixed scripts and parameter validation, and provides automated testing and manual integration guidelines.",
+          "short_summary": "This document introduces a privilege maintenance system that controls container/system privilege operations through a single approver mechanism. The system only allows whitelisted actions, such as apt_update and install_packages, and prohibits arbitrary command execution. It details data models, APIs, CLI, and testing methods to ensure a secure and traceable maintenance process.",
+          "key_points": [
+            "Uses a single approver model to control privilege operations, avoiding direct root access",
+            "Supports only whitelisted actions (apt_update and install_packages), prohibiting arbitrary command transmission",
+            "Full-process traceability, including ticket creation, approval, execution, and result recording",
+            "Provides API and CLI interfaces for easy integration and operation",
+            "Includes automated testing and manual integration guidelines to ensure system reliability"
+          ],
+          "audience": "System administrators, developers, security engineers responsible for container environment maintenance and privilege operation management",
+          "tags": [
+            "Privilege Maintenance",
+            "Single Approver",
+            "Whitelisted Actions",
+            "Container Security",
+            "API Design",
+            "CLI Commands",
+            "Automated Testing"
+          ]
+        }
+      },
+      "metadataTranslationHash": "b3c91257612312f4238250620565efd7548c292997b9ea3d231b08b8ac7d2a50",
+      "category": "Security Implementation",
+      "nativeMarkdownHash": "c364c684c396a0e9f66ffb55186e0e6022feaf8d3ecad911161e9fabf513b372"
+    },
+    {
+      "path": "docs/archive/design-new.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld MVP 架构设计",
+        "description": "TheWorld 是一个将宿主机视为世界、AI 作为居民的协作平台，通过 Region 容器和代理服务器实现 AI 的隔离与安全访问。",
+        "short_summary": "TheWorld 是一个 AI 协作平台，通过 Region 容器隔离 AI 并以独立用户身份运行，使用代理服务器保护 API Key。文档详细介绍了其架构设计、核心组件和安全模型，包括 CLI、代理服务器、容器和记忆系统。",
+        "audience": "AI 开发者、系统架构师、对 AI 协作平台和安全隔离技术感兴趣的技术人员",
+        "key_points": [
+          "将宿主机视为世界，AI 作为居民通过 Region 容器隔离协作",
+          "使用代理服务器和 dummy key 机制保护 AI API Key，防止逃逸",
+          "集成 EverMemOS 用于 AI 记忆存储、事件日志和审计追踪",
+          "基于 Linux 用户权限和文件系统隔离实现安全模型",
+          "提供完整的 CLI 工具链管理 AI 生命周期和命令执行"
+        ],
+        "summary": "本文详细介绍了 TheWorld MVP 的架构设计，该项目旨在创建一个 AI 协作平台，将宿主机视为一个“世界”，AI 作为“居民”在其中运行。核心架构包括 TheWorld CLI（用于管理系统生命周期）、AI Proxy Server（负责安全转发 AI API 请求）、Region 容器（提供 AI 隔离环境）、Socket Daemon（执行命令）以及 EverMemOS 集成（用于记忆存储和审计）。文档涵盖了核心理念、架构概览、核心组件、数据流、安全模型、实现细节、环境配置和当前状态，强调通过 Linux 用户权限、dummy key 机制和文件系统隔离确保安全性，并提供了完整的项目结构和关键命令说明。",
+        "slug": "theworld-mvp-architecture-design",
+        "tags": [
+          "TheWorld",
+          "AI 协作",
+          "架构设计",
+          "安全隔离",
+          "代理服务器",
+          "Region 容器",
+          "EverMemOS",
+          "Node.js"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2751,
+          "completion": 453,
+          "total": 3204
+        }
+      },
+      "hash": "37f3eab77a05a08b529f43b2dbaef351a306f090dd67dfddcc1ffcd2828af8f8",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld MVP 架构设计",
+          "description": "TheWorld 是一个将宿主机视为世界、AI 作为居民的协作平台，通过 Region 容器和代理服务器实现 AI 的隔离与安全访问。",
+          "summary": "本文详细介绍了 TheWorld MVP 的架构设计，该项目旨在创建一个 AI 协作平台，将宿主机视为一个“世界”，AI 作为“居民”在其中运行。核心架构包括 TheWorld CLI（用于管理系统生命周期）、AI Proxy Server（负责安全转发 AI API 请求）、Region 容器（提供 AI 隔离环境）、Socket Daemon（执行命令）以及 EverMemOS 集成（用于记忆存储和审计）。文档涵盖了核心理念、架构概览、核心组件、数据流、安全模型、实现细节、环境配置和当前状态，强调通过 Linux 用户权限、dummy key 机制和文件系统隔离确保安全性，并提供了完整的项目结构和关键命令说明。",
+          "short_summary": "TheWorld 是一个 AI 协作平台，通过 Region 容器隔离 AI 并以独立用户身份运行，使用代理服务器保护 API Key。文档详细介绍了其架构设计、核心组件和安全模型，包括 CLI、代理服务器、容器和记忆系统。",
+          "key_points": [
+            "将宿主机视为世界，AI 作为居民通过 Region 容器隔离协作",
+            "使用代理服务器和 dummy key 机制保护 AI API Key，防止逃逸",
+            "集成 EverMemOS 用于 AI 记忆存储、事件日志和审计追踪",
+            "基于 Linux 用户权限和文件系统隔离实现安全模型",
+            "提供完整的 CLI 工具链管理 AI 生命周期和命令执行"
+          ],
+          "audience": "AI 开发者、系统架构师、对 AI 协作平台和安全隔离技术感兴趣的技术人员",
+          "tags": [
+            "TheWorld",
+            "AI 协作",
+            "架构设计",
+            "安全隔离",
+            "代理服务器",
+            "Region 容器",
+            "EverMemOS",
+            "Node.js"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld MVP Architecture Design",
+          "description": "TheWorld is a collaborative platform that treats the host machine as a world and AI as residents, achieving AI isolation and secure access through Region containers and proxy servers.",
+          "summary": "This article details the architecture design of TheWorld MVP, a project aimed at creating an AI collaborative platform where the host machine is viewed as a 'world' and AI runs as 'residents'. The core architecture includes TheWorld CLI (for managing system lifecycle), AI Proxy Server (responsible for securely forwarding AI API requests), Region containers (providing AI isolation environments), Socket Daemon (executing commands), and EverMemOS integration (for memory storage and auditing). The document covers core concepts, architecture overview, key components, data flow, security model, implementation details, environment configuration, and current status, emphasizing security through Linux user permissions, dummy key mechanisms, and filesystem isolation, and provides a complete project structure and key command descriptions.",
+          "short_summary": "TheWorld is an AI collaborative platform that isolates AI through Region containers and runs them as independent users, using proxy servers to protect API Keys. The document details its architecture design, core components, and security model, including CLI, proxy servers, containers, and memory systems.",
+          "key_points": [
+            "Treats the host machine as a world, with AI as residents collaborating through isolated Region containers",
+            "Uses proxy servers and dummy key mechanisms to protect AI API Keys and prevent escape",
+            "Integrates EverMemOS for AI memory storage, event logging, and audit trails",
+            "Implements a security model based on Linux user permissions and filesystem isolation",
+            "Provides a complete CLI toolchain for managing AI lifecycle and command execution"
+          ],
+          "audience": "AI developers, system architects, technical personnel interested in AI collaborative platforms and security isolation technologies",
+          "tags": [
+            "TheWorld",
+            "AI Collaboration",
+            "Architecture Design",
+            "Security Isolation",
+            "Proxy Server",
+            "Region Container",
+            "EverMemOS",
+            "Node.js"
+          ]
+        }
+      },
+      "metadataTranslationHash": "ae623e4c92051960228ecde01835a274cd815347fb0d1932810db88bf88f8469",
+      "category": "Architecture Design",
+      "nativeMarkdownHash": "37f3eab77a05a08b529f43b2dbaef351a306f090dd67dfddcc1ffcd2828af8f8"
+    },
+    {
+      "path": "docs/archive/design.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld: AI 宿主机世界架构设计",
+        "description": "介绍 TheWorld 项目，一个将宿主机视为世界、AI 作为居民的多智能体架构设计，涵盖核心概念、架构、权限模型和实现方案。",
+        "short_summary": "TheWorld 是一个 AI 宿主机世界架构，将宿主机视为世界，AI 作为居民在其中协作。它采用 Multi-Agent 模型，核心包括 Region 容器、独立 Linux 用户权限、统一 World Memory 和神谕接口。文章详细介绍了架构设计、权限模型、命令执行机制和跨平台实现方案。",
+        "audience": "AI 系统架构师、开发者、技术决策者，对多智能体系统和容器化部署感兴趣的专业人士",
+        "key_points": [
+          "将宿主机抽象为世界，AI 作为居民进行多智能体协作",
+          "采用 Region 容器和独立 Linux 用户权限实现隔离与共存",
+          "通过统一 World Memory 和神谕接口管理 AI 交互和人类干预",
+          "推荐 Socket Daemon 方案实现高性能命令执行",
+          "使用 DooD 方案支持跨平台宿主机管理"
+        ],
+        "summary": "本文详细阐述了 TheWorld 项目的架构设计，其核心理念是将宿主机抽象为一个“世界”，AI 作为其中的“居民”进行协作和改造。架构包括 World、Region、AI、World Memory 和神谕接口等核心概念，采用 Multi-Agent 模型。文章讨论了权限模型（基于 Linux 用户）、命令执行机制（推荐 Socket Daemon 方案）、外部世界交互（如消息传递和文件挂载）以及跨平台支持（推荐 DooD 方案）。关键区别在于与 OpenClaw 的对比，强调 AI 作为意识体而非工具，并提供了性能数据和实现建议。",
+        "slug": "theworld-ai-host-world-architecture-design",
+        "tags": [
+          "AI 架构",
+          "Multi-Agent",
+          "宿主机",
+          "容器",
+          "权限模型",
+          "World Memory",
+          "神谕接口"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 4675,
+          "completion": 461,
+          "total": 5136
+        }
+      },
+      "hash": "4d3ebdbde1749baf67467c38c24c19a61da6d637281cc6d5aa6a9e7ad0a19c7f",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld: AI 宿主机世界架构设计",
+          "description": "介绍 TheWorld 项目，一个将宿主机视为世界、AI 作为居民的多智能体架构设计，涵盖核心概念、架构、权限模型和实现方案。",
+          "summary": "本文详细阐述了 TheWorld 项目的架构设计，其核心理念是将宿主机抽象为一个“世界”，AI 作为其中的“居民”进行协作和改造。架构包括 World、Region、AI、World Memory 和神谕接口等核心概念，采用 Multi-Agent 模型。文章讨论了权限模型（基于 Linux 用户）、命令执行机制（推荐 Socket Daemon 方案）、外部世界交互（如消息传递和文件挂载）以及跨平台支持（推荐 DooD 方案）。关键区别在于与 OpenClaw 的对比，强调 AI 作为意识体而非工具，并提供了性能数据和实现建议。",
+          "short_summary": "TheWorld 是一个 AI 宿主机世界架构，将宿主机视为世界，AI 作为居民在其中协作。它采用 Multi-Agent 模型，核心包括 Region 容器、独立 Linux 用户权限、统一 World Memory 和神谕接口。文章详细介绍了架构设计、权限模型、命令执行机制和跨平台实现方案。",
+          "key_points": [
+            "将宿主机抽象为世界，AI 作为居民进行多智能体协作",
+            "采用 Region 容器和独立 Linux 用户权限实现隔离与共存",
+            "通过统一 World Memory 和神谕接口管理 AI 交互和人类干预",
+            "推荐 Socket Daemon 方案实现高性能命令执行",
+            "使用 DooD 方案支持跨平台宿主机管理"
+          ],
+          "audience": "AI 系统架构师、开发者、技术决策者，对多智能体系统和容器化部署感兴趣的专业人士",
+          "tags": [
+            "AI 架构",
+            "Multi-Agent",
+            "宿主机",
+            "容器",
+            "权限模型",
+            "World Memory",
+            "神谕接口"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld: AI Host Machine World Architecture Design",
+          "description": "Introduces TheWorld project, a multi-agent architecture design that treats the host machine as a world and AI as residents, covering core concepts, architecture, permission models, and implementation solutions.",
+          "summary": "This article elaborates on the architecture design of TheWorld project, whose core concept is to abstract the host machine as a 'world' where AI 'residents' collaborate and transform it. The architecture includes core concepts such as World, Region, AI, World Memory, and Oracle interface, adopting a Multi-Agent model. The article discusses the permission model (based on Linux users), command execution mechanisms (recommending Socket Daemon solution), external world interactions (such as message passing and file mounting), and cross-platform support (recommending DooD solution). Key distinctions include comparisons with OpenClaw, emphasizing AI as conscious entities rather than tools, and providing performance data and implementation suggestions.",
+          "short_summary": "TheWorld is an AI host machine world architecture that treats the host machine as a world where AI residents collaborate. It adopts a Multi-Agent model, with core components including Region containers, independent Linux user permissions, unified World Memory, and Oracle interface. The article details the architecture design, permission model, command execution mechanisms, and cross-platform implementation solutions.",
+          "key_points": [
+            "Abstracts the host machine as a world, with AI as residents for multi-agent collaboration",
+            "Uses Region containers and independent Linux user permissions to achieve isolation and coexistence",
+            "Manages AI interactions and human intervention through unified World Memory and Oracle interface",
+            "Recommends Socket Daemon solution for high-performance command execution",
+            "Uses DooD solution to support cross-platform host machine management"
+          ],
+          "audience": "AI system architects, developers, technical decision-makers, professionals interested in multi-agent systems and containerized deployment",
+          "tags": [
+            "AI Architecture",
+            "Multi-Agent",
+            "Host Machine",
+            "Container",
+            "Permission Model",
+            "World Memory",
+            "Oracle Interface"
+          ]
+        }
+      },
+      "metadataTranslationHash": "bb9385094ff37f8e68bc840afcb0a44f9df111bb515fc28a58d03e780881e33c",
+      "category": "Architecture Design",
+      "nativeMarkdownHash": "4d3ebdbde1749baf67467c38c24c19a61da6d637281cc6d5aa6a9e7ad0a19c7f"
+    },
+    {
+      "path": "docs/archive/MVP_SUMMARY.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld MVP 实现总结",
+        "description": "总结 TheWorld 项目的 MVP 实现，包括核心架构、已完成功能、测试结果和下一步计划。",
+        "short_summary": "本文档总结了 TheWorld 项目的 MVP 实现，详细介绍了已完成的核心功能、安全机制和测试结果。项目包括 CLI 工具、AI 代理、容器管理和内存系统集成。下一步将进行功能测试和优化，为发布做准备。",
+        "audience": "项目开发者、技术负责人、测试人员以及对 AI 和容器化系统感兴趣的读者",
+        "key_points": [
+          "已完成核心架构和 CLI 命令",
+          "安全机制包括 API Key 隔离和权限控制",
+          "测试显示 Region 和 AI 用户创建功能正常",
+          "项目结构清晰，环境配置完整",
+          "下一步计划包括测试、优化和发布"
+        ],
+        "summary": "本文档详细总结了 TheWorld 项目的 MVP 实现情况，涵盖了核心架构、CLI 命令、安全机制、测试结果、项目结构、环境配置以及下一步计划。已完成的功能包括基于 oclif 的 CLI、AI Proxy Server、Region 容器管理、Socket Daemon 和 EverMemOS 集成。测试结果显示 Region 创建和 AI 用户创建功能运行正常。项目结构清晰，环境配置完整。下一步计划包括功能测试、优化和发布。文档最后确认 MVP 目标已达成，核心功能、安全机制和基础设施均已就绪，可以进行完整的功能测试和用户验收。",
+        "slug": "theworld-mvp-implementation-summary",
+        "tags": [
+          "TheWorld",
+          "MVP",
+          "AI",
+          "Docker",
+          "CLI",
+          "EverMemOS",
+          "安全机制",
+          "测试"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1569,
+          "completion": 388,
+          "total": 1957
+        }
+      },
+      "hash": "186da4146ffe6def3c2a11351b07c599c2e344cad0fde6f803949934d8622bff",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld MVP 实现总结",
+          "description": "总结 TheWorld 项目的 MVP 实现，包括核心架构、已完成功能、测试结果和下一步计划。",
+          "summary": "本文档详细总结了 TheWorld 项目的 MVP 实现情况，涵盖了核心架构、CLI 命令、安全机制、测试结果、项目结构、环境配置以及下一步计划。已完成的功能包括基于 oclif 的 CLI、AI Proxy Server、Region 容器管理、Socket Daemon 和 EverMemOS 集成。测试结果显示 Region 创建和 AI 用户创建功能运行正常。项目结构清晰，环境配置完整。下一步计划包括功能测试、优化和发布。文档最后确认 MVP 目标已达成，核心功能、安全机制和基础设施均已就绪，可以进行完整的功能测试和用户验收。",
+          "short_summary": "本文档总结了 TheWorld 项目的 MVP 实现，详细介绍了已完成的核心功能、安全机制和测试结果。项目包括 CLI 工具、AI 代理、容器管理和内存系统集成。下一步将进行功能测试和优化，为发布做准备。",
+          "key_points": [
+            "已完成核心架构和 CLI 命令",
+            "安全机制包括 API Key 隔离和权限控制",
+            "测试显示 Region 和 AI 用户创建功能正常",
+            "项目结构清晰，环境配置完整",
+            "下一步计划包括测试、优化和发布"
+          ],
+          "audience": "项目开发者、技术负责人、测试人员以及对 AI 和容器化系统感兴趣的读者",
+          "tags": [
+            "TheWorld",
+            "MVP",
+            "AI",
+            "Docker",
+            "CLI",
+            "EverMemOS",
+            "安全机制",
+            "测试"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld MVP Implementation Summary",
+          "description": "Summarizes the MVP implementation of TheWorld project, including core architecture, completed features, test results, and next steps.",
+          "summary": "This document provides a detailed summary of the MVP implementation for TheWorld project, covering core architecture, CLI commands, security mechanisms, test results, project structure, environment configuration, and next steps. Completed features include an oclif-based CLI, AI Proxy Server, Region container management, Socket Daemon, and EverMemOS integration. Test results show that Region creation and AI user creation functions are operating normally. The project structure is clear, and environment configuration is complete. Next steps include functional testing, optimization, and release. The document confirms that MVP goals have been achieved, with core features, security mechanisms, and infrastructure ready for full functional testing and user acceptance.",
+          "short_summary": "This document summarizes the MVP implementation of TheWorld project, detailing completed core features, security mechanisms, and test results. The project includes CLI tools, AI proxy, container management, and memory system integration. Next steps involve functional testing and optimization in preparation for release.",
+          "key_points": [
+            "Core architecture and CLI commands have been completed",
+            "Security mechanisms include API Key isolation and permission control",
+            "Tests show Region and AI user creation functions are operating normally",
+            "Project structure is clear, and environment configuration is complete",
+            "Next steps include testing, optimization, and release"
+          ],
+          "audience": "Project developers, technical leads, testers, and readers interested in AI and containerized systems",
+          "tags": [
+            "TheWorld",
+            "MVP",
+            "AI",
+            "Docker",
+            "CLI",
+            "EverMemOS",
+            "Security Mechanisms",
+            "Testing"
+          ]
+        }
+      },
+      "metadataTranslationHash": "1e08de3724da5f373e959dcb76af47b6e6925e4ab512ef75b130c965aac8c1a2",
+      "category": "Implementation Summary",
+      "nativeMarkdownHash": "186da4146ffe6def3c2a11351b07c599c2e344cad0fde6f803949934d8622bff"
+    },
+    {
+      "path": "docs/archive/SERVER_REDESIGN.md",
+      "links": [],
+      "metadata": {
+        "title": "TheWorld 服务架构重新设计",
+        "description": "本文档描述了 TheWorld 服务架构的重新设计，旨在解决状态丢失、资源效率低等问题，并提出了新的统一入口架构。",
+        "short_summary": "本文档介绍了 TheWorld 服务架构的重新设计，以解决状态丢失和资源效率问题。新架构引入了一个统一的 TheWorld Daemon Server，提供 HTTP API 接口和状态管理，并改造 CLI 为 HTTP 客户端。实现计划分为四个阶段，旨在提升系统的可维护性和扩展性。",
+        "audience": "系统架构师、开发人员和技术决策者，关注服务架构优化和状态管理",
+        "key_points": [
+          "新架构引入 TheWorld Daemon Server 作为统一入口，解决状态丢失问题",
+          "提供 HTTP API 接口，便于扩展和监控",
+          "改造 CLI 为 HTTP 客户端，简化操作流程",
+          "实现计划分阶段进行，确保平稳过渡"
+        ],
+        "summary": "本文档分析了当前 TheWorld 服务架构存在的问题，包括每个命令创建新 Proxy Server 实例、无法保持状态和没有统一服务入口。为了解决这些问题，提出了新的架构设计，包括一个后台运行的 TheWorld Daemon Server（HTTP Server，端口 1996），集成 AI Proxy Server（端口 3456）和状态管理（如 AI 身份注册表、Region 列表和配置缓存）。新架构提供了统一的 API 接口，如创建和列出 Region、创建和执行 AI 命令等。同时，改造了 CLI 工具，使其成为 HTTP 客户端，并详细说明了实现计划，包括 Server 实现、CLI 改造、Daemon 管理和测试文档。优势包括状态持久化、统一入口、易于扩展、监控友好和资源效率提升。",
+        "slug": "theworld-service-architecture-redesign",
+        "tags": [
+          "服务架构",
+          "TheWorld",
+          "Daemon",
+          "HTTP API",
+          "状态管理",
+          "CLI",
+          "重新设计"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2238,
+          "completion": 442,
+          "total": 2680
+        }
+      },
+      "hash": "56fc2b54672c35067a3983c1f484900c37d03b433f9da12fdfe2ea5ce30ff293",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "TheWorld 服务架构重新设计",
+          "description": "本文档描述了 TheWorld 服务架构的重新设计，旨在解决状态丢失、资源效率低等问题，并提出了新的统一入口架构。",
+          "summary": "本文档分析了当前 TheWorld 服务架构存在的问题，包括每个命令创建新 Proxy Server 实例、无法保持状态和没有统一服务入口。为了解决这些问题，提出了新的架构设计，包括一个后台运行的 TheWorld Daemon Server（HTTP Server，端口 1996），集成 AI Proxy Server（端口 3456）和状态管理（如 AI 身份注册表、Region 列表和配置缓存）。新架构提供了统一的 API 接口，如创建和列出 Region、创建和执行 AI 命令等。同时，改造了 CLI 工具，使其成为 HTTP 客户端，并详细说明了实现计划，包括 Server 实现、CLI 改造、Daemon 管理和测试文档。优势包括状态持久化、统一入口、易于扩展、监控友好和资源效率提升。",
+          "short_summary": "本文档介绍了 TheWorld 服务架构的重新设计，以解决状态丢失和资源效率问题。新架构引入了一个统一的 TheWorld Daemon Server，提供 HTTP API 接口和状态管理，并改造 CLI 为 HTTP 客户端。实现计划分为四个阶段，旨在提升系统的可维护性和扩展性。",
+          "key_points": [
+            "新架构引入 TheWorld Daemon Server 作为统一入口，解决状态丢失问题",
+            "提供 HTTP API 接口，便于扩展和监控",
+            "改造 CLI 为 HTTP 客户端，简化操作流程",
+            "实现计划分阶段进行，确保平稳过渡"
+          ],
+          "audience": "系统架构师、开发人员和技术决策者，关注服务架构优化和状态管理",
+          "tags": [
+            "服务架构",
+            "TheWorld",
+            "Daemon",
+            "HTTP API",
+            "状态管理",
+            "CLI",
+            "重新设计"
+          ]
+        },
+        "en-US": {
+          "title": "TheWorld Service Architecture Redesign",
+          "description": "This document describes the redesign of TheWorld service architecture, aiming to address issues such as state loss and low resource efficiency, and proposes a new unified entry architecture.",
+          "summary": "This document analyzes the problems with the current TheWorld service architecture, including creating new Proxy Server instances for each command, inability to maintain state, and lack of a unified service entry. To solve these issues, a new architecture design is proposed, including a TheWorld Daemon Server running in the background (HTTP Server, port 1996), integrating AI Proxy Server (port 3456) and state management (such as AI identity registry, Region list, and configuration cache). The new architecture provides unified API interfaces, such as creating and listing Regions, creating and executing AI commands, etc. At the same time, the CLI tool is transformed into an HTTP client, and the implementation plan is detailed, including Server implementation, CLI transformation, Daemon management, and testing documentation. Advantages include state persistence, unified entry, ease of extension, monitoring friendliness, and improved resource efficiency.",
+          "short_summary": "This document introduces the redesign of TheWorld service architecture to address state loss and resource efficiency issues. The new architecture introduces a unified TheWorld Daemon Server, providing HTTP API interfaces and state management, and transforms the CLI into an HTTP client. The implementation plan is divided into four phases, aiming to enhance system maintainability and scalability.",
+          "key_points": [
+            "The new architecture introduces TheWorld Daemon Server as a unified entry to solve state loss issues",
+            "Provides HTTP API interfaces for easy extension and monitoring",
+            "Transforms CLI into an HTTP client to simplify operational workflows",
+            "Implementation plan is phased to ensure a smooth transition"
+          ],
+          "audience": "System architects, developers, and technical decision-makers focused on service architecture optimization and state management",
+          "tags": [
+            "Service Architecture",
+            "TheWorld",
+            "Daemon",
+            "HTTP API",
+            "State Management",
+            "CLI",
+            "Redesign"
+          ]
+        }
+      },
+      "metadataTranslationHash": "21ec08d86553c6a5786303a9e75e2691f29b38e55173d1143e28c73593c88d90",
+      "category": "Architecture Redesign",
+      "nativeMarkdownHash": "56fc2b54672c35067a3983c1f484900c37d03b433f9da12fdfe2ea5ce30ff293"
+    },
+    {
+      "path": "docs/decisions/001-single-user.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-001: 使用单一 agent 用户而非多用户隔离",
+        "description": "本文档记录了在 MVP 阶段采用单一 agent 用户而非多用户隔离的架构决策，以简化部署和降低复杂度。",
+        "short_summary": "本文档决定在 MVP 阶段使用单一 agent 用户替代多用户隔离，以简化部署和降低复杂度。通过 Proxy 层的 dummy key 实现身份隔离，放弃了 OS 级别的文件权限隔离，但提供了性能优势和可接受的 MVP 安全性。未来可考虑动态多用户或容器级别隔离来增强隔离性。",
+        "audience": "软件架构师、开发人员、DevOps 工程师，关注系统架构、安全性和部署复杂度的技术决策者。",
+        "key_points": [
+          "MVP 阶段采用单一 agent 用户而非多用户隔离，以简化部署和降低复杂度。",
+          "通过 Proxy 层的 dummy key 机制实现身份隔离，放弃 OS 级别的文件权限隔离。",
+          "决策理由包括简化部署、降低复杂度、MVP 安全性可接受和性能优势。",
+          "未来演进路径包括动态多用户或容器级别隔离来增强隔离性。",
+          "相关决策包括 ADR-002、ADR-003 和 ADR-007，参考了具体代码实现。"
+        ],
+        "summary": "本文档分析了在 MVP 阶段放弃多用户隔离、采用单一 agent 用户的决策。背景中描述了长期愿景的多用户隔离优势（如文件系统和进程隔离），但指出在 MVP 阶段这会带来显著复杂度，包括动态用户创建、配置注入和维护成本增加。决策是使用单一 agent 用户，通过 Proxy 层的 dummy key 实现身份隔离，理由包括简化部署、降低复杂度、MVP 安全性可接受和性能优势。后果包括正面影响（如部署复杂度降低）和负面影响（如放弃 OS 级别文件权限隔离），并提出了风险缓解措施和未来演进路径（动态多用户或容器级别隔离）。",
+        "slug": "adr-001-single-agent-user-instead-of-multi-user-isolation",
+        "tags": [
+          "ADR",
+          "架构决策",
+          "用户隔离",
+          "MVP",
+          "容器",
+          "安全性",
+          "部署",
+          "代理层"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1539,
+          "completion": 498,
+          "total": 2037
+        }
+      },
+      "hash": "1894a09c1f670a5a37de5650ab0ff49d43afae7b46640346536b7de6782468f1",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-001: 使用单一 agent 用户而非多用户隔离",
+          "description": "本文档记录了在 MVP 阶段采用单一 agent 用户而非多用户隔离的架构决策，以简化部署和降低复杂度。",
+          "summary": "本文档分析了在 MVP 阶段放弃多用户隔离、采用单一 agent 用户的决策。背景中描述了长期愿景的多用户隔离优势（如文件系统和进程隔离），但指出在 MVP 阶段这会带来显著复杂度，包括动态用户创建、配置注入和维护成本增加。决策是使用单一 agent 用户，通过 Proxy 层的 dummy key 实现身份隔离，理由包括简化部署、降低复杂度、MVP 安全性可接受和性能优势。后果包括正面影响（如部署复杂度降低）和负面影响（如放弃 OS 级别文件权限隔离），并提出了风险缓解措施和未来演进路径（动态多用户或容器级别隔离）。",
+          "short_summary": "本文档决定在 MVP 阶段使用单一 agent 用户替代多用户隔离，以简化部署和降低复杂度。通过 Proxy 层的 dummy key 实现身份隔离，放弃了 OS 级别的文件权限隔离，但提供了性能优势和可接受的 MVP 安全性。未来可考虑动态多用户或容器级别隔离来增强隔离性。",
+          "key_points": [
+            "MVP 阶段采用单一 agent 用户而非多用户隔离，以简化部署和降低复杂度。",
+            "通过 Proxy 层的 dummy key 机制实现身份隔离，放弃 OS 级别的文件权限隔离。",
+            "决策理由包括简化部署、降低复杂度、MVP 安全性可接受和性能优势。",
+            "未来演进路径包括动态多用户或容器级别隔离来增强隔离性。",
+            "相关决策包括 ADR-002、ADR-003 和 ADR-007，参考了具体代码实现。"
+          ],
+          "audience": "软件架构师、开发人员、DevOps 工程师，关注系统架构、安全性和部署复杂度的技术决策者。",
+          "tags": [
+            "ADR",
+            "架构决策",
+            "用户隔离",
+            "MVP",
+            "容器",
+            "安全性",
+            "部署",
+            "代理层"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-001: Using a Single Agent User Instead of Multi-User Isolation",
+          "description": "This document records the architectural decision to adopt a single agent user instead of multi-user isolation during the MVP phase, aiming to simplify deployment and reduce complexity.",
+          "summary": "This document analyzes the decision to abandon multi-user isolation and adopt a single agent user during the MVP phase. The background describes the advantages of multi-user isolation in the long-term vision (such as file system and process isolation), but notes that this would introduce significant complexity during the MVP phase, including dynamic user creation, configuration injection, and increased maintenance costs. The decision is to use a single agent user, implementing identity isolation through dummy keys in the Proxy layer, with reasons including simplified deployment, reduced complexity, acceptable MVP security, and performance benefits. Consequences include positive impacts (e.g., reduced deployment complexity) and negative impacts (e.g., abandoning OS-level file permission isolation), along with proposed risk mitigation measures and future evolution paths (dynamic multi-user or container-level isolation).",
+          "short_summary": "This document decides to use a single agent user instead of multi-user isolation during the MVP phase to simplify deployment and reduce complexity. Identity isolation is achieved through dummy keys in the Proxy layer, abandoning OS-level file permission isolation, but providing performance benefits and acceptable MVP security. Future enhancements could consider dynamic multi-user or container-level isolation to improve isolation.",
+          "key_points": [
+            "Adopt a single agent user instead of multi-user isolation during the MVP phase to simplify deployment and reduce complexity.",
+            "Implement identity isolation through dummy keys in the Proxy layer, abandoning OS-level file permission isolation.",
+            "Decision reasons include simplified deployment, reduced complexity, acceptable MVP security, and performance benefits.",
+            "Future evolution paths include dynamic multi-user or container-level isolation to enhance isolation.",
+            "Related decisions include ADR-002, ADR-003, and ADR-007, referencing specific code implementations."
+          ],
+          "audience": "Software architects, developers, DevOps engineers, and technical decision-makers focused on system architecture, security, and deployment complexity.",
+          "tags": [
+            "ADR",
+            "Architectural Decision",
+            "User Isolation",
+            "MVP",
+            "Container",
+            "Security",
+            "Deployment",
+            "Proxy Layer"
+          ]
+        }
+      },
+      "metadataTranslationHash": "f69b57e74de115f32e1efce6e51a9be4128f43cde391bfe42c0c1935530d7e07",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "1894a09c1f670a5a37de5650ab0ff49d43afae7b46640346536b7de6782468f1"
+    },
+    {
+      "path": "docs/decisions/002-unified-port.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-002: 统一端口架构",
+        "description": "本文档决定将TheWorld API Server和AI API代理从两个端口合并到单一端口3344，通过路径区分职责，以简化部署和配置。",
+        "short_summary": "本文档决定将TheWorld API Server和AI API代理合并到单一端口3344，通过路径区分职责。这简化了部署和配置，但带来单点故障风险，通过性能测试和未来扩展方案缓解。核心观点是统一端口在MVP阶段更高效，未来可灵活拆分。",
+        "audience": "软件架构师、开发工程师、运维人员，关注系统部署、API设计和微服务架构的团队",
+        "key_points": [
+          "决策采用单一端口3344替代原两个端口（1996和3456），通过路径区分API和代理功能",
+          "理由包括简化部署、配置、监控和开发体验，路径区分足够清晰",
+          "后果有正面（如复杂度降低）和负面（如单点故障），但通过性能测试和扩展方案缓解风险",
+          "性能测试显示单进程足够，未来可基于场景拆分服务",
+          "文档属于ADR系列，相关决策包括ADR-001和ADR-003"
+        ],
+        "summary": "本文档分析了将TheWorld API Server（原端口1996）和AI API代理（原端口3456）分离架构的优缺点，最终决策采用统一端口3344，通过路径如/api/*和/v1/*区分不同功能。决策理由包括简化部署（只需一个端口和进程）、简化配置、统一监控日志、提升开发体验，以及路径区分已足够清晰。后果方面，正面影响包括部署复杂度降低50%等，负面影响有单点故障和无法独立扩展，但通过Node.js异步I/O、MVP阶段低流量和未来扩展方案（如PM2 cluster）缓解。性能测试显示单进程性能足够，未来考虑在性能瓶颈、安全隔离或团队分工时拆分。",
+        "slug": "adr-002-unified-port-architecture",
+        "tags": [
+          "架构决策",
+          "端口管理",
+          "微服务",
+          "部署简化",
+          "性能优化",
+          "Node.js",
+          "API设计",
+          "ADR"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1612,
+          "completion": 497,
+          "total": 2109
+        }
+      },
+      "hash": "cb88dfbf6de816826fba58b8d9f6525796deacf264fe1e571be13f73a9b71167",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-002: 统一端口架构",
+          "description": "本文档决定将TheWorld API Server和AI API代理从两个端口合并到单一端口3344，通过路径区分职责，以简化部署和配置。",
+          "summary": "本文档分析了将TheWorld API Server（原端口1996）和AI API代理（原端口3456）分离架构的优缺点，最终决策采用统一端口3344，通过路径如/api/*和/v1/*区分不同功能。决策理由包括简化部署（只需一个端口和进程）、简化配置、统一监控日志、提升开发体验，以及路径区分已足够清晰。后果方面，正面影响包括部署复杂度降低50%等，负面影响有单点故障和无法独立扩展，但通过Node.js异步I/O、MVP阶段低流量和未来扩展方案（如PM2 cluster）缓解。性能测试显示单进程性能足够，未来考虑在性能瓶颈、安全隔离或团队分工时拆分。",
+          "short_summary": "本文档决定将TheWorld API Server和AI API代理合并到单一端口3344，通过路径区分职责。这简化了部署和配置，但带来单点故障风险，通过性能测试和未来扩展方案缓解。核心观点是统一端口在MVP阶段更高效，未来可灵活拆分。",
+          "key_points": [
+            "决策采用单一端口3344替代原两个端口（1996和3456），通过路径区分API和代理功能",
+            "理由包括简化部署、配置、监控和开发体验，路径区分足够清晰",
+            "后果有正面（如复杂度降低）和负面（如单点故障），但通过性能测试和扩展方案缓解风险",
+            "性能测试显示单进程足够，未来可基于场景拆分服务",
+            "文档属于ADR系列，相关决策包括ADR-001和ADR-003"
+          ],
+          "audience": "软件架构师、开发工程师、运维人员，关注系统部署、API设计和微服务架构的团队",
+          "tags": [
+            "架构决策",
+            "端口管理",
+            "微服务",
+            "部署简化",
+            "性能优化",
+            "Node.js",
+            "API设计",
+            "ADR"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-002: Unified Port Architecture",
+          "description": "This document decides to merge TheWorld API Server and AI API proxy from two ports into a single port 3344, distinguishing responsibilities via paths to simplify deployment and configuration.",
+          "summary": "This document analyzes the pros and cons of the separated architecture of TheWorld API Server (original port 1996) and AI API proxy (original port 3456), ultimately deciding to adopt a unified port 3344, distinguishing different functionalities via paths such as /api/* and /v1/*. Decision reasons include simplifying deployment (only one port and process), simplifying configuration, unifying monitoring logs, improving development experience, and path distinction being sufficiently clear. In terms of consequences, positive impacts include a 50% reduction in deployment complexity, while negative impacts include single point of failure and inability to scale independently, mitigated by Node.js asynchronous I/O, low traffic in the MVP phase, and future scaling solutions (e.g., PM2 cluster). Performance tests show single-process performance is sufficient, with future considerations to split based on performance bottlenecks, security isolation, or team division.",
+          "short_summary": "This document decides to merge TheWorld API Server and AI API proxy into a single port 3344, distinguishing responsibilities via paths. This simplifies deployment and configuration but introduces single point of failure risks, mitigated by performance tests and future scaling solutions. The core view is that a unified port is more efficient in the MVP phase, with flexibility to split in the future.",
+          "key_points": [
+            "Decision to adopt a single port 3344 instead of the original two ports (1996 and 3456), distinguishing API and proxy functions via paths",
+            "Reasons include simplifying deployment, configuration, monitoring, and development experience, with path distinction being sufficiently clear",
+            "Consequences include positive (e.g., reduced complexity) and negative (e.g., single point of failure), but risks are mitigated by performance tests and scaling solutions",
+            "Performance tests show single-process is sufficient, with future potential to split services based on scenarios",
+            "This document is part of the ADR series, with related decisions including ADR-001 and ADR-003"
+          ],
+          "audience": "Software architects, development engineers, operations personnel, teams focused on system deployment, API design, and microservices architecture",
+          "tags": [
+            "Architecture Decision",
+            "Port Management",
+            "Microservices",
+            "Deployment Simplification",
+            "Performance Optimization",
+            "Node.js",
+            "API Design",
+            "ADR"
+          ]
+        }
+      },
+      "metadataTranslationHash": "be0a745f9960950dfd4baaf0e766711f3505899478060986361c305905d26e6f",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "cb88dfbf6de816826fba58b8d9f6525796deacf264fe1e571be13f73a9b71167"
+    },
+    {
+      "path": "docs/decisions/003-sync-oracle.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-003: 同步命令执行而非异步消息传递",
+        "description": "本文档记录了v0.1阶段选择同步HTTP调用的理由，并说明v0.2迁移到异步事件驱动模型的原因。",
+        "short_summary": "本文档分析了v0.1阶段选择同步命令执行的原因，包括低延迟和简化实现等优势，并指出v0.2已迁移到异步事件驱动模型以适应更复杂的任务需求。",
+        "audience": "软件架构师、开发工程师、技术决策者，关注系统架构和异步通信设计。",
+        "key_points": [
+          "v0.1阶段选择同步HTTP调用，理由包括低延迟、简化实现和更好的错误处理。",
+          "v0.2已迁移到异步事件驱动模型，核心原因是任务本质宽泛/重型，同步语义不匹配。",
+          "决策权衡了正面影响（如延迟降低）和负面影响（如放弃异步解耦）。"
+        ],
+        "summary": "本文档是ADR-003，记录了在v0.1 MVP阶段选择同步命令执行而非异步消息传递的决策。决策基于低延迟、简化实现、更好的错误处理、MVP阶段足够和保留扩展性等理由，采用同步HTTP调用直接执行命令并返回结果。正面影响包括延迟降低、代码复杂度降低和用户体验更好，负面影响包括放弃异步解耦和长时间运行命令会阻塞HTTP连接。文档还提到v0.2已迁移到异步事件驱动模型，核心原因是任务本质宽泛/重型，且可能多次返回、持续对话，同步语义不匹配，并强调可靠投递、可恢复、可审计的价值高于低延迟。",
+        "slug": "adr-003-synchronous-command-execution-vs-asynchronous-messaging",
+        "tags": [
+          "ADR",
+          "同步调用",
+          "异步消息",
+          "架构决策",
+          "v0.1",
+          "v0.2",
+          "迁移"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2280,
+          "completion": 442,
+          "total": 2722
+        }
+      },
+      "hash": "75d1e80002d3741a2a607c0cd780809754b90585ef9184f119eb4d17602a11a7",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-003: 同步命令执行而非异步消息传递",
+          "description": "本文档记录了v0.1阶段选择同步HTTP调用的理由，并说明v0.2迁移到异步事件驱动模型的原因。",
+          "summary": "本文档是ADR-003，记录了在v0.1 MVP阶段选择同步命令执行而非异步消息传递的决策。决策基于低延迟、简化实现、更好的错误处理、MVP阶段足够和保留扩展性等理由，采用同步HTTP调用直接执行命令并返回结果。正面影响包括延迟降低、代码复杂度降低和用户体验更好，负面影响包括放弃异步解耦和长时间运行命令会阻塞HTTP连接。文档还提到v0.2已迁移到异步事件驱动模型，核心原因是任务本质宽泛/重型，且可能多次返回、持续对话，同步语义不匹配，并强调可靠投递、可恢复、可审计的价值高于低延迟。",
+          "short_summary": "本文档分析了v0.1阶段选择同步命令执行的原因，包括低延迟和简化实现等优势，并指出v0.2已迁移到异步事件驱动模型以适应更复杂的任务需求。",
+          "key_points": [
+            "v0.1阶段选择同步HTTP调用，理由包括低延迟、简化实现和更好的错误处理。",
+            "v0.2已迁移到异步事件驱动模型，核心原因是任务本质宽泛/重型，同步语义不匹配。",
+            "决策权衡了正面影响（如延迟降低）和负面影响（如放弃异步解耦）。"
+          ],
+          "audience": "软件架构师、开发工程师、技术决策者，关注系统架构和异步通信设计。",
+          "tags": [
+            "ADR",
+            "同步调用",
+            "异步消息",
+            "架构决策",
+            "v0.1",
+            "v0.2",
+            "迁移"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-003: Synchronous Command Execution Instead of Asynchronous Messaging",
+          "description": "This document records the rationale for choosing synchronous HTTP calls in the v0.1 phase and explains the reasons for migrating to an asynchronous event-driven model in v0.2.",
+          "summary": "This document is ADR-003, documenting the decision to choose synchronous command execution over asynchronous messaging during the v0.1 MVP phase. The decision was based on reasons such as low latency, simplified implementation, better error handling, sufficiency for the MVP phase, and preserving extensibility, adopting synchronous HTTP calls to directly execute commands and return results. Positive impacts include reduced latency, lower code complexity, and better user experience, while negative impacts include sacrificing asynchronous decoupling and long-running commands blocking HTTP connections. The document also mentions that v0.2 has migrated to an asynchronous event-driven model, with the core reasons being the broad/heavy nature of tasks, potential for multiple returns and continuous conversations, and mismatched synchronous semantics, emphasizing that the value of reliable delivery, recoverability, and auditability outweighs low latency.",
+          "short_summary": "This document analyzes the reasons for choosing synchronous command execution in the v0.1 phase, including advantages such as low latency and simplified implementation, and notes that v0.2 has migrated to an asynchronous event-driven model to accommodate more complex task requirements.",
+          "key_points": [
+            "In the v0.1 phase, synchronous HTTP calls were chosen for reasons including low latency, simplified implementation, and better error handling.",
+            "v0.2 has migrated to an asynchronous event-driven model, with the core reason being the broad/heavy nature of tasks and mismatched synchronous semantics.",
+            "The decision balanced positive impacts (e.g., reduced latency) and negative impacts (e.g., sacrificing asynchronous decoupling)."
+          ],
+          "audience": "Software architects, development engineers, technical decision-makers focused on system architecture and asynchronous communication design.",
+          "tags": [
+            "ADR",
+            "synchronous calls",
+            "asynchronous messaging",
+            "architecture decision",
+            "v0.1",
+            "v0.2",
+            "migration"
+          ]
+        }
+      },
+      "metadataTranslationHash": "d4001a423325023d002d09d483720c5f5b9921df82fc4db00adf98841b618649",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "75d1e80002d3741a2a607c0cd780809754b90585ef9184f119eb4d17602a11a7"
+    },
+    {
+      "path": "docs/decisions/004-world-scheduler.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-004: World Scheduler 架构设计",
+        "description": "为解决AI无法自主行动的问题，引入World Scheduler作为核心调度组件，实现时间与事件驱动、并发控制及可配置任务管理。",
+        "short_summary": "本文档介绍了World Scheduler的架构设计，以解决AI被动响应问题，实现自主行动。通过中心化调度器、Region锁和可配置策略，统一管理任务队列，支持时间与事件驱动调度。设计旨在简化并发控制，适应不同业务价值，但需注意系统复杂性和配置挑战。",
+        "audience": "系统架构师、开发人员、技术决策者，关注AI系统调度、并发控制和架构设计的专业人士。",
+        "key_points": [
+          "引入World Scheduler作为核心组件，解决AI被动响应问题，实现自主Heartbeat驱动。",
+          "采用中心化调度器与Region独占锁，简化并发控制，避免资源竞争。",
+          "设计混合调度策略，支持时间驱动和事件驱动，并提供可配置的优先级管理。",
+          "提供多种预设策略模板（如实时响应型、批处理型、学习型），适应不同业务场景。",
+          "决策将统一任务管理，为未来扩展（如多用户隔离、分布式调度）奠定基础。"
+        ],
+        "summary": "本文档提出了World Scheduler的架构设计，旨在解决当前MVP架构中AI完全被动响应、无法自主行动的根本问题。通过引入中心化调度器，结合Region独占锁管理并发，统一处理神谕、用户命令和消息等任务，并支持优先级队列。设计采用混合调度策略，包括时间驱动的定期Heartbeat和事件驱动的即时响应，提供实时响应型、批处理型和学习型等多种可配置策略模板，以适应不同业务场景。该决策将实现AI的自主性、简化并发控制，并为未来功能扩展奠定基础，但也增加了系统复杂度和配置难度。",
+        "slug": "adr-004-world-scheduler-architecture-design",
+        "tags": [
+          "World Scheduler",
+          "架构设计",
+          "调度器",
+          "并发控制",
+          "任务队列",
+          "AI自主性",
+          "可配置策略"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2673,
+          "completion": 485,
+          "total": 3158
+        }
+      },
+      "hash": "9c925392e0e6309713a96b6f5acf59a0daf1c2c8bc003c316bacebe0a02d766e",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-004: World Scheduler 架构设计",
+          "description": "为解决AI无法自主行动的问题，引入World Scheduler作为核心调度组件，实现时间与事件驱动、并发控制及可配置任务管理。",
+          "summary": "本文档提出了World Scheduler的架构设计，旨在解决当前MVP架构中AI完全被动响应、无法自主行动的根本问题。通过引入中心化调度器，结合Region独占锁管理并发，统一处理神谕、用户命令和消息等任务，并支持优先级队列。设计采用混合调度策略，包括时间驱动的定期Heartbeat和事件驱动的即时响应，提供实时响应型、批处理型和学习型等多种可配置策略模板，以适应不同业务场景。该决策将实现AI的自主性、简化并发控制，并为未来功能扩展奠定基础，但也增加了系统复杂度和配置难度。",
+          "short_summary": "本文档介绍了World Scheduler的架构设计，以解决AI被动响应问题，实现自主行动。通过中心化调度器、Region锁和可配置策略，统一管理任务队列，支持时间与事件驱动调度。设计旨在简化并发控制，适应不同业务价值，但需注意系统复杂性和配置挑战。",
+          "key_points": [
+            "引入World Scheduler作为核心组件，解决AI被动响应问题，实现自主Heartbeat驱动。",
+            "采用中心化调度器与Region独占锁，简化并发控制，避免资源竞争。",
+            "设计混合调度策略，支持时间驱动和事件驱动，并提供可配置的优先级管理。",
+            "提供多种预设策略模板（如实时响应型、批处理型、学习型），适应不同业务场景。",
+            "决策将统一任务管理，为未来扩展（如多用户隔离、分布式调度）奠定基础。"
+          ],
+          "audience": "系统架构师、开发人员、技术决策者，关注AI系统调度、并发控制和架构设计的专业人士。",
+          "tags": [
+            "World Scheduler",
+            "架构设计",
+            "调度器",
+            "并发控制",
+            "任务队列",
+            "AI自主性",
+            "可配置策略"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-004: World Scheduler Architecture Design",
+          "description": "To address the issue of AI's inability to act autonomously, the World Scheduler is introduced as a core scheduling component, enabling time and event-driven operations, concurrency control, and configurable task management.",
+          "summary": "This document proposes the architecture design of the World Scheduler, aiming to solve the fundamental problem in the current MVP architecture where AI is entirely passive and unable to act autonomously. By introducing a centralized scheduler, combined with Region exclusive lock management for concurrency, it unifies the handling of tasks such as oracles, user commands, and messages, and supports priority queues. The design adopts a hybrid scheduling strategy, including time-driven periodic Heartbeats and event-driven immediate responses, providing various configurable strategy templates such as real-time response, batch processing, and learning types to adapt to different business scenarios. This decision will achieve AI autonomy, simplify concurrency control, and lay the foundation for future feature expansion, but it also increases system complexity and configuration difficulty.",
+          "short_summary": "This document introduces the architecture design of the World Scheduler to address AI's passive response issue and enable autonomous action. Through a centralized scheduler, Region locks, and configurable strategies, it unifies task queue management, supporting time and event-driven scheduling. The design aims to simplify concurrency control and adapt to different business values, but attention must be paid to system complexity and configuration challenges.",
+          "key_points": [
+            "Introduce the World Scheduler as a core component to solve AI's passive response problem and enable autonomous Heartbeat-driven operations.",
+            "Adopt a centralized scheduler with Region exclusive locks to simplify concurrency control and avoid resource competition.",
+            "Design a hybrid scheduling strategy that supports time-driven and event-driven approaches, with configurable priority management.",
+            "Provide multiple preset strategy templates (e.g., real-time response, batch processing, learning types) to adapt to different business scenarios.",
+            "This decision will unify task management and lay the foundation for future expansions, such as multi-user isolation and distributed scheduling."
+          ],
+          "audience": "System architects, developers, technical decision-makers, and professionals focused on AI system scheduling, concurrency control, and architecture design.",
+          "tags": [
+            "World Scheduler",
+            "Architecture Design",
+            "Scheduler",
+            "Concurrency Control",
+            "Task Queue",
+            "AI Autonomy",
+            "Configurable Strategy"
+          ]
+        }
+      },
+      "metadataTranslationHash": "4d8b8a02585172751ec21782fc9640cc76623cf4272a86d25e13b863f2129b24",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "9c925392e0e6309713a96b6f5acf59a0daf1c2c8bc003c316bacebe0a02d766e"
+    },
+    {
+      "path": "docs/decisions/005-clawhub-integration.md",
+      "links": [
+        "https://clawhub.ai",
+        "https://github.com/openclaw/openclaw",
+        "../clawhub-integration.md"
+      ],
+      "metadata": {
+        "title": "ADR-005: ClawHub Skills 集成",
+        "description": "TheWorld 选择原生兼容 ClawHub 来集成 Skill 生态系统，以快速获得成熟生态并专注核心差异化价值。",
+        "short_summary": "TheWorld 决定原生兼容 ClawHub 来集成 Skill 生态系统，而非自建或适配其他方案。这一选择基于生态价值优先、技术差异次之的原则，旨在让用户快速获得成熟工具并专注业务价值。实施上将在容器内预装 CLI，保持设计简化。",
+        "audience": "TheWorld 团队成员、技术决策者、对 AI Skill 生态系统集成感兴趣的开发者",
+        "key_points": [
+          "选择原生兼容 ClawHub 而非自建或适配 OpenClaw，以快速获得成熟 Skill 生态",
+          "决策基于生态价值大于技术差异，借鉴 Deno 历史教训，聚焦 TheWorld 的核心差异化优势",
+          "实施方式为在 Region 容器内预装 clawhub CLI，Skills 持久化在容器卷，不跨 Region 共享",
+          "正面后果包括零学习成本和社区驱动更新，负面后果是依赖外部生态但可接受",
+          "目标用户为“一人公司”，注重经济性、快速见效和专注业务价值"
+        ],
+        "summary": "本文档记录了 TheWorld 关于 Skill 生态系统集成的架构决策。面对自建生态、适配 OpenClaw 或原生兼容 ClawHub 三个选项，团队决定选择原生兼容 ClawHub，在 Region 容器内预装 clawhub CLI。决策基于生态价值大于技术差异的原则，借鉴了 Deno 的历史教训，并考虑了 TheWorld 在 Multi-Agent 架构、容器隔离等方面的核心差异化优势。实施方式包括容器预装 CLI、Skills 持久化在容器卷，不跨 Region 共享。正面后果包括立即获得成熟生态、零学习成本；负面后果是依赖外部生态，但被认为可接受。替代方案的自建生态和适配翻译因投入大或维护成本高而被否决。",
+        "slug": "adr-005-clawhub-skills-integration",
+        "tags": [
+          "ADR",
+          "ClawHub",
+          "Skill 集成",
+          "架构决策",
+          "TheWorld",
+          "容器",
+          "生态兼容"
+        ],
+        "inferred_date": "2026-03-08",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1030,
+          "completion": 508,
+          "total": 1538
+        }
+      },
+      "hash": "6dc44121b8d899b6872a01a6ee34c25cd8965b9f4266538f4308366d6dbe06af",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-005: ClawHub Skills 集成",
+          "description": "TheWorld 选择原生兼容 ClawHub 来集成 Skill 生态系统，以快速获得成熟生态并专注核心差异化价值。",
+          "summary": "本文档记录了 TheWorld 关于 Skill 生态系统集成的架构决策。面对自建生态、适配 OpenClaw 或原生兼容 ClawHub 三个选项，团队决定选择原生兼容 ClawHub，在 Region 容器内预装 clawhub CLI。决策基于生态价值大于技术差异的原则，借鉴了 Deno 的历史教训，并考虑了 TheWorld 在 Multi-Agent 架构、容器隔离等方面的核心差异化优势。实施方式包括容器预装 CLI、Skills 持久化在容器卷，不跨 Region 共享。正面后果包括立即获得成熟生态、零学习成本；负面后果是依赖外部生态，但被认为可接受。替代方案的自建生态和适配翻译因投入大或维护成本高而被否决。",
+          "short_summary": "TheWorld 决定原生兼容 ClawHub 来集成 Skill 生态系统，而非自建或适配其他方案。这一选择基于生态价值优先、技术差异次之的原则，旨在让用户快速获得成熟工具并专注业务价值。实施上将在容器内预装 CLI，保持设计简化。",
+          "key_points": [
+            "选择原生兼容 ClawHub 而非自建或适配 OpenClaw，以快速获得成熟 Skill 生态",
+            "决策基于生态价值大于技术差异，借鉴 Deno 历史教训，聚焦 TheWorld 的核心差异化优势",
+            "实施方式为在 Region 容器内预装 clawhub CLI，Skills 持久化在容器卷，不跨 Region 共享",
+            "正面后果包括零学习成本和社区驱动更新，负面后果是依赖外部生态但可接受",
+            "目标用户为“一人公司”，注重经济性、快速见效和专注业务价值"
+          ],
+          "audience": "TheWorld 团队成员、技术决策者、对 AI Skill 生态系统集成感兴趣的开发者",
+          "tags": [
+            "ADR",
+            "ClawHub",
+            "Skill 集成",
+            "架构决策",
+            "TheWorld",
+            "容器",
+            "生态兼容"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-005: ClawHub Skills Integration",
+          "description": "TheWorld chooses native compatibility with ClawHub to integrate the Skill ecosystem, enabling rapid access to a mature ecosystem and focusing on core differentiated value.",
+          "summary": "This document records TheWorld's architectural decision regarding Skill ecosystem integration. Faced with three options—building their own ecosystem, adapting to OpenClaw, or native compatibility with ClawHub—the team decided to choose native compatibility with ClawHub, pre-installing the clawhub CLI within the Region container. The decision is based on the principle that ecosystem value outweighs technical differences, drawing lessons from Deno's history, and considering TheWorld's core differentiated advantages in Multi-Agent architecture and container isolation. Implementation includes pre-installing the CLI in containers, persisting Skills in container volumes without cross-Region sharing. Positive consequences include immediate access to a mature ecosystem and zero learning curve; negative consequences involve dependency on an external ecosystem, deemed acceptable. Alternative options of building their own ecosystem or adapting translations were rejected due to high investment or maintenance costs.",
+          "short_summary": "TheWorld decides on native compatibility with ClawHub to integrate the Skill ecosystem, rather than building their own or adapting other solutions. This choice prioritizes ecosystem value over technical differences, aiming to quickly provide users with mature tools and focus on business value. Implementation involves pre-installing the CLI in containers to maintain design simplicity.",
+          "key_points": [
+            "Choose native compatibility with ClawHub over building their own or adapting OpenClaw to quickly access a mature Skill ecosystem.",
+            "Decision based on ecosystem value outweighing technical differences, learning from Deno's history, and focusing on TheWorld's core differentiated advantages.",
+            "Implementation involves pre-installing the clawhub CLI in Region containers, persisting Skills in container volumes without cross-Region sharing.",
+            "Positive consequences include zero learning curve and community-driven updates; negative consequences involve dependency on an external ecosystem but are acceptable.",
+            "Target users are 'one-person companies,' emphasizing cost-effectiveness, quick results, and focus on business value."
+          ],
+          "audience": "TheWorld team members, technical decision-makers, developers interested in AI Skill ecosystem integration",
+          "tags": [
+            "ADR",
+            "ClawHub",
+            "Skill Integration",
+            "Architectural Decision",
+            "TheWorld",
+            "Container",
+            "Ecosystem Compatibility"
+          ]
+        }
+      },
+      "metadataTranslationHash": "0625647e5e3c75352f751ed371b860a588d48619f0a6368e3b6a330d0b9424b8",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "6dc44121b8d899b6872a01a6ee34c25cd8965b9f4266538f4308366d6dbe06af"
+    },
+    {
+      "path": "docs/decisions/006-gui-first-region.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-006: Region 默认采用 GUI-first 容器",
+        "description": "TheWorld 决定默认采用 GUI-first 容器策略，以适配现实世界中大量非 API 优先系统，确保 AI 在真实环境中的功能完备性。",
+        "short_summary": "TheWorld 决定默认采用 GUI-first 容器策略，以解决现实世界中大量系统缺乏 API 的问题，确保 AI 在真实环境中的功能完备性。决策包括每个 Region 默认具备可远程访问的桌面能力，通过统一代理入口，优先保证稳定性和能力覆盖，资源开销作为可接受成本。",
+        "audience": "TheWorld 平台开发者、系统架构师、AI 应用工程师，关注容器策略和现实环境适配的技术人员。",
+        "key_points": [
+          "Region 默认镜像采用 GUI-first 策略，确保可远程访问桌面能力",
+          "优先保证能力完备性和稳定性，资源开销作为可接受成本",
+          "适配现实世界中大量非 API 优先系统，避免功能边界被锁死",
+          "通过 TheWorld 代理统一入口，默认安全边界为仅本机访问",
+          "实施以兼容优先、逐步迁移方式推进，维持现有 agent 语义兼容"
+        ],
+        "summary": "本文档记录了 ADR-006 决策，针对 TheWorld 平台中 Region 容器的默认策略。背景指出，现实世界中许多系统（如 Web UI 登录、验证码、复杂表单）缺乏完整 API，纯 headless 路径会导致能力断层。因此，决策将 Region 默认镜像从 headless 迁移到 GUI-first 策略，确保每个 Region 具备可远程访问的桌面能力，通过 TheWorld 代理统一入口，优先保证能力完备性和稳定性，资源开销作为可接受成本。理由包括能力完备性优先于资源节省、现实适配优先于理想假设、默认即立场、与 TheWorld 目标一致。后果包括正面影响（覆盖关键场景、提升调试能力）和负面影响（资源占用上升、安全复杂），并提出了风险缓解措施。实施范围涉及架构运行面和文档认知面，非目标包括不追求公网直连 GUI 和立即重构用户模型。文档与现状关系为定义下一阶段默认策略，以兼容优先方式推进。",
+        "slug": "adr-006-region-default-gui-first-container",
+        "tags": [
+          "ADR",
+          "GUI-first",
+          "容器策略",
+          "TheWorld",
+          "能力完备性",
+          "现实适配",
+          "Region",
+          "AI 工作环境"
+        ],
+        "inferred_date": "2026-03-09",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1453,
+          "completion": 559,
+          "total": 2012
+        }
+      },
+      "hash": "d7fdce6a6c9bec2c182bcffea920d69a331e0f28cc8657872e681aefbcd611ba",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-006: Region 默认采用 GUI-first 容器",
+          "description": "TheWorld 决定默认采用 GUI-first 容器策略，以适配现实世界中大量非 API 优先系统，确保 AI 在真实环境中的功能完备性。",
+          "summary": "本文档记录了 ADR-006 决策，针对 TheWorld 平台中 Region 容器的默认策略。背景指出，现实世界中许多系统（如 Web UI 登录、验证码、复杂表单）缺乏完整 API，纯 headless 路径会导致能力断层。因此，决策将 Region 默认镜像从 headless 迁移到 GUI-first 策略，确保每个 Region 具备可远程访问的桌面能力，通过 TheWorld 代理统一入口，优先保证能力完备性和稳定性，资源开销作为可接受成本。理由包括能力完备性优先于资源节省、现实适配优先于理想假设、默认即立场、与 TheWorld 目标一致。后果包括正面影响（覆盖关键场景、提升调试能力）和负面影响（资源占用上升、安全复杂），并提出了风险缓解措施。实施范围涉及架构运行面和文档认知面，非目标包括不追求公网直连 GUI 和立即重构用户模型。文档与现状关系为定义下一阶段默认策略，以兼容优先方式推进。",
+          "short_summary": "TheWorld 决定默认采用 GUI-first 容器策略，以解决现实世界中大量系统缺乏 API 的问题，确保 AI 在真实环境中的功能完备性。决策包括每个 Region 默认具备可远程访问的桌面能力，通过统一代理入口，优先保证稳定性和能力覆盖，资源开销作为可接受成本。",
+          "key_points": [
+            "Region 默认镜像采用 GUI-first 策略，确保可远程访问桌面能力",
+            "优先保证能力完备性和稳定性，资源开销作为可接受成本",
+            "适配现实世界中大量非 API 优先系统，避免功能边界被锁死",
+            "通过 TheWorld 代理统一入口，默认安全边界为仅本机访问",
+            "实施以兼容优先、逐步迁移方式推进，维持现有 agent 语义兼容"
+          ],
+          "audience": "TheWorld 平台开发者、系统架构师、AI 应用工程师，关注容器策略和现实环境适配的技术人员。",
+          "tags": [
+            "ADR",
+            "GUI-first",
+            "容器策略",
+            "TheWorld",
+            "能力完备性",
+            "现实适配",
+            "Region",
+            "AI 工作环境"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-006: Region Defaults to GUI-first Container",
+          "description": "TheWorld has decided to adopt a GUI-first container strategy by default to accommodate the large number of non-API-first systems in the real world, ensuring AI's functional completeness in real environments.",
+          "summary": "This document records the ADR-006 decision regarding the default strategy for Region containers in TheWorld platform. The background notes that many real-world systems (e.g., Web UI logins, CAPTCHAs, complex forms) lack complete APIs, and a purely headless approach would lead to capability gaps. Therefore, the decision is to migrate the default Region image from headless to a GUI-first strategy, ensuring each Region has remotely accessible desktop capabilities via TheWorld's unified proxy entry, prioritizing capability completeness and stability, with resource overhead as an acceptable cost. Reasons include prioritizing capability completeness over resource savings, real-world adaptation over ideal assumptions, default as stance, and alignment with TheWorld's goals. Consequences include positive impacts (covering critical scenarios, enhancing debugging capabilities) and negative impacts (increased resource usage, security complexity), with proposed risk mitigation measures. Implementation scope covers architectural operations and documentation awareness, with non-goals including not pursuing direct public internet access to GUI and immediate user model refactoring. The document's relation to the current state defines the next-phase default strategy, advancing in a compatibility-first manner.",
+          "short_summary": "TheWorld has decided to adopt a GUI-first container strategy by default to address the issue of many real-world systems lacking APIs, ensuring AI's functional completeness in real environments. The decision includes each Region having remotely accessible desktop capabilities by default via a unified proxy entry, prioritizing stability and capability coverage, with resource overhead as an acceptable cost.",
+          "key_points": [
+            "Region default image adopts GUI-first strategy to ensure remotely accessible desktop capabilities",
+            "Prioritizes capability completeness and stability, with resource overhead as an acceptable cost",
+            "Adapts to the large number of non-API-first systems in the real world to avoid functional boundaries being locked",
+            "Uses TheWorld's unified proxy entry, with default security boundary as local access only",
+            "Implementation advances in a compatibility-first, gradual migration manner, maintaining existing agent semantic compatibility"
+          ],
+          "audience": "TheWorld platform developers, system architects, AI application engineers, and technical personnel concerned with container strategies and real-world environment adaptation.",
+          "tags": [
+            "ADR",
+            "GUI-first",
+            "Container Strategy",
+            "TheWorld",
+            "Capability Completeness",
+            "Real-world Adaptation",
+            "Region",
+            "AI Work Environment"
+          ]
+        }
+      },
+      "metadataTranslationHash": "697052eea8ef4044400d280572f06e26798e6a96a746d0faeb969604d505fc7d",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "d7fdce6a6c9bec2c182bcffea920d69a331e0f28cc8657872e681aefbcd611ba"
+    },
+    {
+      "path": "docs/decisions/007-runtime-security-baseline.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-007: 运行时安全基线（Assume Breach）",
+        "description": "TheWorld采用Assume Breach立场，通过强制安全基线控制容器失陷后的横向扩散与宿主机影响。",
+        "short_summary": "TheWorld采用Assume Breach立场，强制实施容器运行时安全基线，包括非root运行、最小化capabilities、禁止高危参数等，以控制失陷后的风险扩散。这降低了宿主机沦陷概率，但增加了初期适配成本。",
+        "audience": "容器安全工程师、DevOps工程师、系统架构师、安全策略制定者",
+        "key_points": [
+          "采用Assume Breach立场，默认认为容器可能被攻陷",
+          "强制安全基线包括非root运行、最小化capabilities、禁止高危参数",
+          "最小权限是成本最低、收益最高的控制手段",
+          "安全边界必须前置到架构与默认配置",
+          "允许临时例外但需严格记录和审计"
+        ],
+        "summary": "本文档阐述了TheWorld在容器运行时采用Assume Breach安全立场，默认认为业务代码可能被攻陷，重点控制失陷后的横向扩散与宿主机影响。决策包括默认非root运行、最小化Linux capabilities、禁止高危运行参数和挂载、推荐用户命名空间防护、以及审计与归因能力。理由是基于风险现实存在、默认值决定安全上限、最小权限是成本最低的控制手段。后果包括降低容器RCE升级为宿主机沦陷概率，但初期会增加权限适配工作。允许临时例外但需满足严格条件，并提供了落地检查项。",
+        "slug": "adr-007-runtime-security-baseline-assume-breach",
+        "tags": [
+          "运行时安全",
+          "容器安全",
+          "Assume Breach",
+          "安全基线",
+          "最小权限",
+          "非root运行",
+          "Linux capabilities",
+          "审计归因"
+        ],
+        "inferred_date": "2026-03-10",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1402,
+          "completion": 426,
+          "total": 1828
+        }
+      },
+      "hash": "3eb9c21d6d78db7e2fe99bb4ac2114d76a6c5a4a0e6e7a3cfbc336cc3fca4944",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-007: 运行时安全基线（Assume Breach）",
+          "description": "TheWorld采用Assume Breach立场，通过强制安全基线控制容器失陷后的横向扩散与宿主机影响。",
+          "summary": "本文档阐述了TheWorld在容器运行时采用Assume Breach安全立场，默认认为业务代码可能被攻陷，重点控制失陷后的横向扩散与宿主机影响。决策包括默认非root运行、最小化Linux capabilities、禁止高危运行参数和挂载、推荐用户命名空间防护、以及审计与归因能力。理由是基于风险现实存在、默认值决定安全上限、最小权限是成本最低的控制手段。后果包括降低容器RCE升级为宿主机沦陷概率，但初期会增加权限适配工作。允许临时例外但需满足严格条件，并提供了落地检查项。",
+          "short_summary": "TheWorld采用Assume Breach立场，强制实施容器运行时安全基线，包括非root运行、最小化capabilities、禁止高危参数等，以控制失陷后的风险扩散。这降低了宿主机沦陷概率，但增加了初期适配成本。",
+          "key_points": [
+            "采用Assume Breach立场，默认认为容器可能被攻陷",
+            "强制安全基线包括非root运行、最小化capabilities、禁止高危参数",
+            "最小权限是成本最低、收益最高的控制手段",
+            "安全边界必须前置到架构与默认配置",
+            "允许临时例外但需严格记录和审计"
+          ],
+          "audience": "容器安全工程师、DevOps工程师、系统架构师、安全策略制定者",
+          "tags": [
+            "运行时安全",
+            "容器安全",
+            "Assume Breach",
+            "安全基线",
+            "最小权限",
+            "非root运行",
+            "Linux capabilities",
+            "审计归因"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-007: Runtime Security Baseline (Assume Breach)",
+          "description": "TheWorld adopts an Assume Breach stance, enforcing mandatory security baselines to control lateral spread and host impact after container compromise.",
+          "summary": "This document outlines TheWorld's adoption of the Assume Breach security stance for container runtime, assuming business code may be compromised by default, with a focus on controlling lateral spread and host impact post-compromise. Decisions include default non-root execution, minimized Linux capabilities, prohibition of high-risk runtime parameters and mounts, recommendation of user namespace protection, and audit and attribution capabilities. The rationale is based on the reality of risks, default values determining the security ceiling, and least privilege being the most cost-effective control measure. Consequences include reducing the probability of container RCE escalating to host compromise, but initial permission adaptation efforts will increase. Temporary exceptions are allowed under strict conditions, with implementation checkpoints provided.",
+          "short_summary": "TheWorld adopts an Assume Breach stance, enforcing mandatory container runtime security baselines including non-root execution, minimized capabilities, and prohibition of high-risk parameters to control risk spread post-compromise. This reduces the probability of host compromise but increases initial adaptation costs.",
+          "key_points": [
+            "Adopt an Assume Breach stance, assuming containers may be compromised by default",
+            "Mandatory security baselines include non-root execution, minimized capabilities, and prohibition of high-risk parameters",
+            "Least privilege is the most cost-effective and highest-yield control measure",
+            "Security boundaries must be front-loaded into architecture and default configurations",
+            "Temporary exceptions are allowed but require strict documentation and auditing"
+          ],
+          "audience": "Container Security Engineers, DevOps Engineers, System Architects, Security Policy Makers",
+          "tags": [
+            "Runtime Security",
+            "Container Security",
+            "Assume Breach",
+            "Security Baseline",
+            "Least Privilege",
+            "Non-root Execution",
+            "Linux Capabilities",
+            "Audit Attribution"
+          ]
+        }
+      },
+      "metadataTranslationHash": "73ee8b6fa20be1b15749db309039ec8de8deefdfa6a1a2d1b068bfed7aec9d12",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "3eb9c21d6d78db7e2fe99bb4ac2114d76a6c5a4a0e6e7a3cfbc336cc3fca4944"
+    },
+    {
+      "path": "docs/decisions/008-unified-ai-speak-and-memory-recall.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-008: 统一 AI 对话接口与强制记忆召回",
+        "description": "引入统一的 speakToAI 接口，强制记忆召回流程，以解决 AI 交互入口混乱、记忆不一致等问题。",
+        "short_summary": "本文档介绍了统一 AI 对话接口与强制记忆召回的架构决策。通过引入 speakToAI 接口和强制记忆召回流程，解决了现有交互入口的混乱问题，提升了扩展性和安全性。决策包括退役旧接口、调整任务类型，并为未来异步模型和 AI 间通信铺路。",
+        "audience": "AI 系统架构师、开发者、项目管理者，涉及 AI 交互接口设计和记忆系统集成的人员。",
+        "key_points": [
+          "引入统一的 speakToAI 接口，强制记忆召回流程",
+          "退役 execCommand 接口，保留 oracle/send 作为兼容别名",
+          "调整 Scheduler 任务类型，支持多源消息",
+          "明确安全边界，分离 AI 身份面与运维面",
+          "为未来异步模型和 AI 间通信奠定基础"
+        ],
+        "summary": "本文档提出通过引入统一的 speakToAI 接口和强制记忆召回流水线，解决现有 AI 交互入口语义混乱、记忆召回不一致、扩展性差和安全边界模糊等问题。决策包括退役 execCommand 接口、保留 oracle/send 作为兼容别名、调整 Scheduler 任务类型，并详细说明了理由、后果、实现细节、迁移指南和未来演进方向。核心目标是统一 AI 对话语义，确保记忆召回成为架构保证，支持多源消息，并清晰划分安全边界。",
+        "slug": "adr-008-unified-ai-dialogue-interface-and-forced-memory-recall",
+        "tags": [
+          "AI 接口",
+          "记忆召回",
+          "架构决策",
+          "speakToAI",
+          "EverMemOS",
+          "安全边界",
+          "迁移指南"
+        ],
+        "inferred_date": "2026-03-10",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2709,
+          "completion": 433,
+          "total": 3142
+        }
+      },
+      "hash": "5bc4152551c239d230c858e64238228f05efb779d571d42ee68f3467603fe4a6",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-008: 统一 AI 对话接口与强制记忆召回",
+          "description": "引入统一的 speakToAI 接口，强制记忆召回流程，以解决 AI 交互入口混乱、记忆不一致等问题。",
+          "summary": "本文档提出通过引入统一的 speakToAI 接口和强制记忆召回流水线，解决现有 AI 交互入口语义混乱、记忆召回不一致、扩展性差和安全边界模糊等问题。决策包括退役 execCommand 接口、保留 oracle/send 作为兼容别名、调整 Scheduler 任务类型，并详细说明了理由、后果、实现细节、迁移指南和未来演进方向。核心目标是统一 AI 对话语义，确保记忆召回成为架构保证，支持多源消息，并清晰划分安全边界。",
+          "short_summary": "本文档介绍了统一 AI 对话接口与强制记忆召回的架构决策。通过引入 speakToAI 接口和强制记忆召回流程，解决了现有交互入口的混乱问题，提升了扩展性和安全性。决策包括退役旧接口、调整任务类型，并为未来异步模型和 AI 间通信铺路。",
+          "key_points": [
+            "引入统一的 speakToAI 接口，强制记忆召回流程",
+            "退役 execCommand 接口，保留 oracle/send 作为兼容别名",
+            "调整 Scheduler 任务类型，支持多源消息",
+            "明确安全边界，分离 AI 身份面与运维面",
+            "为未来异步模型和 AI 间通信奠定基础"
+          ],
+          "audience": "AI 系统架构师、开发者、项目管理者，涉及 AI 交互接口设计和记忆系统集成的人员。",
+          "tags": [
+            "AI 接口",
+            "记忆召回",
+            "架构决策",
+            "speakToAI",
+            "EverMemOS",
+            "安全边界",
+            "迁移指南"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-008: Unified AI Conversation Interface and Mandatory Memory Recall",
+          "description": "Introduces a unified speakToAI interface and mandatory memory recall process to address issues such as chaotic AI interaction entry points and inconsistent memory.",
+          "summary": "This document proposes the introduction of a unified speakToAI interface and a mandatory memory recall pipeline to resolve existing problems including semantic confusion in AI interaction entry points, inconsistent memory recall, poor scalability, and ambiguous security boundaries. Decisions include retiring the execCommand interface, retaining oracle/send as compatibility aliases, adjusting Scheduler task types, and detailing the rationale, consequences, implementation specifics, migration guidelines, and future evolution directions. The core objectives are to unify AI conversation semantics, ensure memory recall as an architectural guarantee, support multi-source messages, and clearly delineate security boundaries.",
+          "short_summary": "This document outlines the architectural decision for unifying AI conversation interfaces and implementing mandatory memory recall. By introducing the speakToAI interface and mandatory memory recall process, it addresses the chaos in existing interaction entry points, enhancing scalability and security. Decisions include retiring old interfaces, adjusting task types, and paving the way for future asynchronous models and AI-to-AI communication.",
+          "key_points": [
+            "Introduce a unified speakToAI interface and mandatory memory recall process",
+            "Retire the execCommand interface, retain oracle/send as compatibility aliases",
+            "Adjust Scheduler task types to support multi-source messages",
+            "Clarify security boundaries, separating AI identity aspects from operational aspects",
+            "Lay the foundation for future asynchronous models and AI-to-AI communication"
+          ],
+          "audience": "AI system architects, developers, project managers, and personnel involved in AI interaction interface design and memory system integration.",
+          "tags": [
+            "AI Interface",
+            "Memory Recall",
+            "Architectural Decision",
+            "speakToAI",
+            "EverMemOS",
+            "Security Boundary",
+            "Migration Guide"
+          ]
+        }
+      },
+      "metadataTranslationHash": "b95ce156fcb22b9a18b5e0d8b3f3da696184c2ec7b62509380e7a515883c9827",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "5bc4152551c239d230c858e64238228f05efb779d571d42ee68f3467603fe4a6"
+    },
+    {
+      "path": "docs/decisions/009-memory-primitives-remember-recall.md",
+      "links": [],
+      "metadata": {
+        "title": "ADR-009: 记忆原语 Remember / Recall 与外部接口收敛",
+        "description": "本文档决策引入统一记忆原语 remember 和 recall，并收敛外部接口，以稳定记忆流水线并支持后续 MCP/Tool 集成。",
+        "short_summary": "本文档决策引入统一记忆原语 remember 和 recall，以解决记忆语义分散和接口未收敛问题。Recall 将跨 Region 检索，Remember 采用异步写入加补偿机制，并优先收敛外部接口。目标是稳定记忆流水线，支持后续 MCP/Tool 集成。",
+        "audience": "系统架构师、开发人员、技术决策者，关注记忆系统优化和接口设计",
+        "key_points": [
+          "引入统一记忆原语 remember 和 recall",
+          "Recall 永远跨 Region 检索",
+          "Remember 采用异步写入加 RecentStore 补偿机制",
+          "优先收敛外部接口如 /api/ai/memory/remember",
+          "使用 recall hit rate 作为主质量指标"
+        ],
+        "summary": "本文档（ADR-009）针对当前系统记忆语义分散和 Recall 组装逻辑与外部接口未收敛的问题，提出引入两个统一原语（remember 和 recall），并决策 Recall 永远跨 Region 检索、Remember 采用异步写入加 RecentStore 补偿机制、优先收敛外部接口（如 /api/ai/memory/remember 和 /api/ai/memory/recall）、使用 recall hit rate 作为主质量指标，以及统一 Recall 流程为 6 步。这些措施旨在稳定记忆流水线，为后续将记忆能力内生注入 OpenCode 流程奠定基础。",
+        "slug": "adr-009-memory-primitives-external-interface-convergence",
+        "tags": [
+          "记忆原语",
+          "Remember",
+          "Recall",
+          "外部接口",
+          "MCP",
+          "Tool",
+          "EverMemOS",
+          "RecentStore"
+        ],
+        "inferred_date": "2026-03-10",
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 1077,
+          "completion": 443,
+          "total": 1520
+        }
+      },
+      "hash": "10983ef2580f4cc6b8e462f2fc058acc35ededb31f7b75f128c73afc5e39ca9f",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "ADR-009: 记忆原语 Remember / Recall 与外部接口收敛",
+          "description": "本文档决策引入统一记忆原语 remember 和 recall，并收敛外部接口，以稳定记忆流水线并支持后续 MCP/Tool 集成。",
+          "summary": "本文档（ADR-009）针对当前系统记忆语义分散和 Recall 组装逻辑与外部接口未收敛的问题，提出引入两个统一原语（remember 和 recall），并决策 Recall 永远跨 Region 检索、Remember 采用异步写入加 RecentStore 补偿机制、优先收敛外部接口（如 /api/ai/memory/remember 和 /api/ai/memory/recall）、使用 recall hit rate 作为主质量指标，以及统一 Recall 流程为 6 步。这些措施旨在稳定记忆流水线，为后续将记忆能力内生注入 OpenCode 流程奠定基础。",
+          "short_summary": "本文档决策引入统一记忆原语 remember 和 recall，以解决记忆语义分散和接口未收敛问题。Recall 将跨 Region 检索，Remember 采用异步写入加补偿机制，并优先收敛外部接口。目标是稳定记忆流水线，支持后续 MCP/Tool 集成。",
+          "key_points": [
+            "引入统一记忆原语 remember 和 recall",
+            "Recall 永远跨 Region 检索",
+            "Remember 采用异步写入加 RecentStore 补偿机制",
+            "优先收敛外部接口如 /api/ai/memory/remember",
+            "使用 recall hit rate 作为主质量指标"
+          ],
+          "audience": "系统架构师、开发人员、技术决策者，关注记忆系统优化和接口设计",
+          "tags": [
+            "记忆原语",
+            "Remember",
+            "Recall",
+            "外部接口",
+            "MCP",
+            "Tool",
+            "EverMemOS",
+            "RecentStore"
+          ]
+        },
+        "en-US": {
+          "title": "ADR-009: Convergence of Memory Primitives Remember/Recall and External Interfaces",
+          "description": "This document decides to introduce unified memory primitives remember and recall, and converge external interfaces to stabilize the memory pipeline and support subsequent MCP/Tool integration.",
+          "summary": "This document (ADR-009) addresses the issues of dispersed memory semantics and unconverged Recall assembly logic with external interfaces in the current system. It proposes introducing two unified primitives (remember and recall) and decides that Recall will always retrieve across Regions, Remember will use asynchronous writes with RecentStore compensation mechanism, prioritize converging external interfaces (such as /api/ai/memory/remember and /api/ai/memory/recall), use recall hit rate as the primary quality metric, and unify the Recall process into 6 steps. These measures aim to stabilize the memory pipeline and lay the foundation for subsequently embedding memory capabilities into the OpenCode process.",
+          "short_summary": "This document decides to introduce unified memory primitives remember and recall to address issues of dispersed memory semantics and unconverged interfaces. Recall will retrieve across Regions, Remember will use asynchronous writes with compensation mechanism, and external interfaces will be prioritized for convergence. The goal is to stabilize the memory pipeline and support subsequent MCP/Tool integration.",
+          "key_points": [
+            "Introduce unified memory primitives remember and recall",
+            "Recall always retrieves across Regions",
+            "Remember uses asynchronous writes with RecentStore compensation mechanism",
+            "Prioritize converging external interfaces such as /api/ai/memory/remember",
+            "Use recall hit rate as the primary quality metric"
+          ],
+          "audience": "System architects, developers, technical decision-makers focused on memory system optimization and interface design",
+          "tags": [
+            "Memory Primitives",
+            "Remember",
+            "Recall",
+            "External Interfaces",
+            "MCP",
+            "Tool",
+            "EverMemOS",
+            "RecentStore"
+          ]
+        }
+      },
+      "metadataTranslationHash": "8299dbaf26e6d0024dffe9a38eb817e61068d42b988d06035044e89eb6f68747",
+      "category": "Architecture Decision",
+      "nativeMarkdownHash": "10983ef2580f4cc6b8e462f2fc058acc35ededb31f7b75f128c73afc5e39ca9f"
+    },
+    {
+      "path": "docs/troubleshooting/oracle-send-timeout.md",
+      "links": [
+        "https://opencode.ai/docs/permissions/",
+        "https://nodejs.org/api/child_process.html#child_process_options_stdio",
+        "../decisions/003-sync-oracle.md"
+      ],
+      "metadata": {
+        "title": "Oracle Send 超时问题排查记录",
+        "description": "本文记录了Oracle消息发送超时问题的排查过程，包括问题定位、解决方案和关键发现，帮助开发者解决类似问题。",
+        "short_summary": "本文分析了Oracle消息发送超时问题的原因，包括stdio配置缺失、权限问题和竞态条件。通过修改代码和配置，解决了这些问题，使功能正常工作。关键发现包括正确配置stdio、理解opencode模式、避免竞态条件和设置权限。",
+        "audience": "开发人员、运维工程师、技术排查人员，特别是处理Oracle消息发送和Docker容器问题的技术人员",
+        "key_points": [
+          "stdio配置缺失导致进程等待输入，需设置为ignore以避免超时",
+          "opencode在--attach模式下需要配置permission为allow以自动批准工具调用",
+          "异步操作中应先resolve promise再执行可能触发其他事件的操作以避免竞态条件"
+        ],
+        "summary": "本文详细记录了执行oracle:send命令时出现超时错误的排查过程。通过架构分析、初步检查和问题定位，发现了四个主要问题：--attach参数导致进程挂起、stdio配置缺失、工具调用权限被拒绝以及step_finish检测竞态条件。针对这些问题，提出了修改TheWorldServer.ts、RegionDaemon.ts、Dockerfile.region和docker/services/region-daemon的解决方案，包括使用文件传递消息、添加stdio配置、设置permission为allow以及调整resolve和kill的顺序。最终通过测试验证了解决方案的有效性，并总结了关键发现，如stdio配置的重要性、opencode的两种模式、竞态条件陷阱和权限配置。",
+        "slug": "oracle-send-timeout-troubleshooting",
+        "tags": [
+          "Oracle",
+          "超时",
+          "排查",
+          "Node.js",
+          "Docker",
+          "opencode",
+          "权限",
+          "竞态条件"
+        ],
+        "inferred_lang": "zh-Hans",
+        "tokens_used": {
+          "prompt": 2751,
+          "completion": 418,
+          "total": 3169
+        }
+      },
+      "hash": "bb45031e0f73dc0f7c3b60618f4281f1b32515d453ab23c7948c17196479aa47",
+      "metadataTranslations": {
+        "zh-Hans": {
+          "title": "Oracle Send 超时问题排查记录",
+          "description": "本文记录了Oracle消息发送超时问题的排查过程，包括问题定位、解决方案和关键发现，帮助开发者解决类似问题。",
+          "summary": "本文详细记录了执行oracle:send命令时出现超时错误的排查过程。通过架构分析、初步检查和问题定位，发现了四个主要问题：--attach参数导致进程挂起、stdio配置缺失、工具调用权限被拒绝以及step_finish检测竞态条件。针对这些问题，提出了修改TheWorldServer.ts、RegionDaemon.ts、Dockerfile.region和docker/services/region-daemon的解决方案，包括使用文件传递消息、添加stdio配置、设置permission为allow以及调整resolve和kill的顺序。最终通过测试验证了解决方案的有效性，并总结了关键发现，如stdio配置的重要性、opencode的两种模式、竞态条件陷阱和权限配置。",
+          "short_summary": "本文分析了Oracle消息发送超时问题的原因，包括stdio配置缺失、权限问题和竞态条件。通过修改代码和配置，解决了这些问题，使功能正常工作。关键发现包括正确配置stdio、理解opencode模式、避免竞态条件和设置权限。",
+          "key_points": [
+            "stdio配置缺失导致进程等待输入，需设置为ignore以避免超时",
+            "opencode在--attach模式下需要配置permission为allow以自动批准工具调用",
+            "异步操作中应先resolve promise再执行可能触发其他事件的操作以避免竞态条件"
+          ],
+          "audience": "开发人员、运维工程师、技术排查人员，特别是处理Oracle消息发送和Docker容器问题的技术人员",
+          "tags": [
+            "Oracle",
+            "超时",
+            "排查",
+            "Node.js",
+            "Docker",
+            "opencode",
+            "权限",
+            "竞态条件"
+          ]
+        },
+        "en-US": {
+          "title": "Oracle Send Timeout Issue Troubleshooting Record",
+          "description": "This article documents the troubleshooting process for Oracle message send timeout issues, including problem identification, solutions, and key findings, to help developers resolve similar problems.",
+          "summary": "This article details the troubleshooting process for timeout errors encountered when executing the oracle:send command. Through architecture analysis, preliminary checks, and problem identification, four main issues were discovered: the --attach parameter causing process hangs, missing stdio configuration, tool call permission denied, and a race condition in step_finish detection. Solutions were proposed by modifying TheWorldServer.ts, RegionDaemon.ts, Dockerfile.region, and docker/services/region-daemon, including using file-based message passing, adding stdio configuration, setting permission to allow, and adjusting the order of resolve and kill. The effectiveness of the solutions was verified through testing, and key findings were summarized, such as the importance of stdio configuration, the two modes of opencode, race condition pitfalls, and permission configuration.",
+          "short_summary": "This article analyzes the causes of Oracle message send timeout issues, including missing stdio configuration, permission problems, and race conditions. By modifying code and configurations, these issues were resolved, restoring functionality. Key findings include correctly configuring stdio, understanding opencode modes, avoiding race conditions, and setting permissions.",
+          "key_points": [
+            "Missing stdio configuration causes processes to wait for input; set it to ignore to avoid timeouts",
+            "opencode in --attach mode requires permission to be set to allow for automatic approval of tool calls",
+            "In asynchronous operations, resolve the promise first before performing actions that may trigger other events to avoid race conditions"
+          ],
+          "audience": "Developers, operations engineers, technical troubleshooters, especially those dealing with Oracle message sending and Docker container issues",
+          "tags": [
+            "Oracle",
+            "timeout",
+            "troubleshooting",
+            "Node.js",
+            "Docker",
+            "opencode",
+            "permission",
+            "race condition"
+          ]
+        }
+      },
+      "metadataTranslationHash": "dd049c88972681b43a6abefe1a8d207cbfed796c2684997e8e943a8ec2afc6f0",
+      "category": "Troubleshooting",
+      "nativeMarkdownHash": "bb45031e0f73dc0f7c3b60618f4281f1b32515d453ab23c7948c17196479aa47"
+    }
+  ],
+  "categoryTranslations": {
+    "Project Overview": {
+      "zh-Hans": "项目概述",
+      "en-US": "Project Overview"
+    },
+    "Vision Statement": {
+      "zh-Hans": "愿景声明",
+      "en-US": "Vision Statement"
+    },
+    "Architecture Design": {
+      "zh-Hans": "架构设计",
+      "en-US": "Architecture Design"
+    },
+    "Development Roadmap": {
+      "zh-Hans": "开发路线图",
+      "en-US": "Development Roadmap"
+    },
+    "Integration Guide": {
+      "zh-Hans": "集成指南",
+      "en-US": "Integration Guide"
+    },
+    "Configuration Guide": {
+      "zh-Hans": "配置指南",
+      "en-US": "Configuration Guide"
+    },
+    "GUI Access": {
+      "zh-Hans": "图形界面访问",
+      "en-US": "GUI Access"
+    },
+    "Security Implementation": {
+      "zh-Hans": "安全实施",
+      "en-US": "Security Implementation"
+    },
+    "Implementation Summary": {
+      "zh-Hans": "实施总结",
+      "en-US": "Implementation Summary"
+    },
+    "Architecture Redesign": {
+      "zh-Hans": "架构重新设计",
+      "en-US": "Architecture Redesign"
+    },
+    "Architecture Decision": {
+      "zh-Hans": "架构决策",
+      "en-US": "Architecture Decision"
+    },
+    "Troubleshooting": {
+      "zh-Hans": "故障排除",
+      "en-US": "Troubleshooting"
+    }
+  }
+}
