@@ -95,12 +95,12 @@
 │   ├── dio start                    # 启动 TheWorldServer
 │   ├── dio stop                     # 停止 TheWorldServer
 │   ├── dio status                   # 查看状态
-│   ├── dio region create            # 创建 Region
-│   ├── dio region list              # 列出 Region
-│   ├── dio ai create                # 注册 AI 身份
-│   ├── dio ai list                  # 列出 AI
-│   ├── dio ai speak                 # 向 AI 发送消息（统一接口）
-│   └── dio oracle send              # 发送神谕（兼容别名）
+│   ├── dio region:create            # 创建 Region
+│   ├── dio region:list              # 列出 Region
+│   ├── dio ai:create                # 注册 AI 身份
+│   ├── dio ai:list                  # 列出 AI
+│   ├── dio ai:speak                 # 向 AI 发送消息（统一接口）
+│   └── dio oracle:send              # 发送神谕（兼容别名）
 │
 ├── EverMemOS (外部依赖)
 │   └── http://localhost:1995        # 世界记忆系统
@@ -268,7 +268,7 @@ dio
 
 ```
 用户
-  ↓ dio ai speak -t alpha -m "hello" 或 dio oracle send --to alpha --message "hello"
+  ↓ dio ai:speak -t alpha -m "hello" 或 dio oracle:send --to alpha --message "hello"
 TheWorldServer (3344)
   ↓ POST /api/ai/speak (或 /api/oracle/send 兼容别名)
 AIUserManager.speakToAI()
@@ -327,7 +327,7 @@ TheWorldServer AI Proxy (3344/v1)
 
 ```
 用户
-  ↓ dio oracle send --to alpha --message "hello"
+  ↓ dio oracle:send --to alpha --message "hello"
 TheWorldServer
   ↓ POST /api/oracle/send
   ↓ 生成 message_id，写入 /world/inbox/message-{id}.msg

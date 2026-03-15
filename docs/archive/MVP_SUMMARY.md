@@ -13,12 +13,12 @@
 - ✅ `dio start` - 启动系统
 - ✅ `dio stop` - 停止系统
 - ✅ `dio status` - 查看状态
-- ✅ `dio region create <name>` - 创建 Region
-- ✅ `dio region list` - 列出 Region
-- ✅ `dio ai create <name>` - 创建 AI 用户
-- ✅ `dio ai list` - 列出 AI 用户
-- ✅ `dio ai exec <ai> <cmd>` - 执行命令
-- ✅ `dio oracle send` - 发送神谕
+- ✅ `dio region:create <name>` - 创建 Region
+- ✅ `dio region:list` - 列出 Region
+- ✅ `dio ai:create <name>` - 创建 AI 用户
+- ✅ `dio ai:list` - 列出 AI 用户
+- ✅ `dio ai:exec <ai> <cmd>` - 执行命令
+- ✅ `dio oracle:send` - 发送神谕
 
 ### 3. 安全机制
 - ✅ API Key 隔离（dummy key + 代理服务器）
@@ -98,8 +98,8 @@ AI_PROXY_PORT=3456
 ## 🚀 下一步
 
 ### 待测试
-- [ ] AI 命令执行（`dio ai exec`）
-- [ ] 神谕发送（`dio oracle send`）
+- [ ] AI 命令执行（`dio ai:exec`）
+- [ ] 神谕发送（`dio oracle:send`）
 - [ ] EverMemOS 集成验证
 - [ ] AI API 代理转发验证
 

@@ -67,7 +67,7 @@
 
 ```
 用户
-  ↓ dio oracle send --to alpha --message "hello"
+  ↓ dio oracle:send --to alpha --message "hello"
 TheWorldServer
   ↓ POST /api/oracle/send
 RegionDaemonClient
@@ -242,7 +242,7 @@ for (const message of messages) {
 
 ```bash
 # 发送神谕，等待结果
-$ dio oracle send --to alpha --message "分析日志"
+$ dio oracle:send --to alpha --message "分析日志"
 ✅ AI 响应: 发现 3 个错误...
 ```
 
@@ -250,14 +250,14 @@ $ dio oracle send --to alpha --message "分析日志"
 
 ```bash
 # 发送神谕，立即返回
-$ dio oracle send-async --to alpha --message "训练模型"
+$ dio oracle:send-async --to alpha --message "训练模型"
 ✅ 任务已提交: task-123
 
 # 稍后查询结果
-$ dio oracle result task-123
+$ dio oracle:result task-123
 ⏳ 进行中...
 
-$ dio oracle result task-123
+$ dio oracle:result task-123
 ✅ 完成: 模型准确率 95%
 ```
 

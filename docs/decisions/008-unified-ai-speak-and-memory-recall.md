@@ -62,7 +62,7 @@ interface SpeakToAIParams {
 
 - 删除 `POST /api/ai/exec`
 - 删除 `AIUserManager.execCommand(...)`
-- 删除 `dio ai exec` CLI 命令
+- 删除 `dio ai:exec` CLI 命令
 - 删除 Scheduler 的 `command` 任务类型
 
 **理由**：`execCommand` 的语义是"以 AI 身份执行任意 shell 命令"，这属于提权运维面，不应作为 AI 交互接口。真正的运维需求应通过专门的 maintenance 通道（见 ADR-007）。
@@ -131,7 +131,7 @@ AI 身份面（speak）与提权运维面（maintenance）彻底分离，符合 
 
 ### 负面影响
 
-⚠️ 破坏性变更：`/api/ai/exec` 和 `dio ai exec` 被移除  
+⚠️ 破坏性变更：`/api/ai/exec` 和 `dio ai:exec` 被移除  
 ⚠️ 现有依赖 `execCommand` 的外部调用方需要迁移  
 ⚠️ 每次 speak 都召回记忆，EverMemOS 负载增加（可通过缓存优化）
 
@@ -213,15 +213,15 @@ curl -X POST http://localhost:3344/api/ai/speak \
 **旧命令**：
 
 ```bash
-dio ai exec -a alpha -r region-a -c "opencode run 'hello'"
+dio ai:exec -a alpha -r region-a -c "opencode run 'hello'"
 ```
 
 **新命令**：
 
 ```bash
-dio ai speak -t alpha -r region-a -m "hello"
+dio ai:speak -t alpha -r region-a -m "hello"
 # 或继续使用 oracle（兼容别名）
-dio oracle send --to alpha --region region-a --message "hello"
+dio oracle:send --to alpha --region region-a --message "hello"
 ```
 
 ### 对于 Scheduler 任务
@@ -294,6 +294,6 @@ await speakToAI({
 - [ ] Scheduler 的 oracle/heartbeat/message 任务正常执行
 - [ ] 每次 speak 都生成 `/home/agent/MEMORY.md`
 - [ ] EverMemOS 不可用时，speak 仍可执行（降级）
-- [ ] `dio ai speak` CLI 命令正常工作
-- [ ] `dio ai exec` 已删除
+- [ ] `dio ai:speak` CLI 命令正常工作
+- [ ] `dio ai:exec` 已删除
 - [ ] 构建通过，无 TypeScript 错误

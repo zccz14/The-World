@@ -15,7 +15,7 @@ There is no separate standalone GUI container path anymore.
 1. Create a Region:
 
 ```bash
-dio region create -n region-a
+dio region:create -n region-a
 ```
 
 2. Start TheWorld server:

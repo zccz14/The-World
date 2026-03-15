@@ -105,24 +105,24 @@ dio status
 
 ```bash
 # Create Region container
-dio region create -n region-a
+dio region:create -n region-a
 
 # Register AI identity
-dio ai create -n alpha
-dio ai create -n beta
+dio ai:create -n alpha
+dio ai:create -n beta
 
 # List AIs
-dio ai list
+dio ai:list
 ```
 
 ### Communicate with AI
 
 ```bash
 # Speak to AI (unified interface with memory recall)
-dio ai speak -t alpha -r region-a -m "Analyze this project architecture"
+dio ai:speak -t alpha -r region-a -m "Analyze this project architecture"
 
 # Or use oracle send (compatibility alias)
-dio oracle send --to alpha --region region-a --message "Analyze this project architecture"
+dio oracle:send --to alpha --region region-a --message "Analyze this project architecture"
 
 # Recall memory only (cross-region, no AI execution)
 dio ai:memory:recall -t alpha -q "project architecture"
@@ -143,11 +143,11 @@ AI agents can directly use the ClawHub skill ecosystem:
 
 ```bash
 # AI searches and installs skills autonomously
-dio ai speak -t alpha -r region-a \
+dio ai:speak -t alpha -r region-a \
   -m "Find and install a calendar management skill"
 
 # Or use oracle (compatibility alias)
-dio oracle send --to alpha --region region-a \
+dio oracle:send --to alpha --region region-a \
   --message "Find and install a calendar management skill"
 ```
 
@@ -319,17 +319,17 @@ dio start                           # Start server
 dio stop                            # Stop server
 dio status                          # Check status
 
-dio region create -n <name>         # Create Region
-dio region list                     # List Regions
+dio region:create -n <name>         # Create Region
+dio region:list                     # List Regions
 
-dio ai create -n <name>             # Register AI
-dio ai list                         # List AIs
-dio ai speak -t <ai> -r <region> -m <msg>  # Speak to AI (unified interface)
+dio ai:create -n <name>             # Register AI
+dio ai:list                         # List AIs
+dio ai:speak -t <ai> -r <region> -m <msg>  # Speak to AI (unified interface)
 dio ai:memory:recall -t <ai> -q <query>    # Recall AI memory to stdout (cross-region)
 dio ai:memory:remember -t <ai> -k <kind> -c <content>  # Remember memory (async)
 dio ai:memory:health                 # Memory pipeline health
 
-dio oracle send --to <ai> --region <region> --message <msg>  # Send Oracle (compatibility alias)
+dio oracle:send --to <ai> --region <region> --message <msg>  # Send Oracle (compatibility alias)
 ```
 
 ## Engineering Decisions

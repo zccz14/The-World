@@ -25,9 +25,9 @@
 │
 ├── the-world-ai (Node.js CLI + 代理服务器)
 │   ├── dio start                    # 启动系统
-│   ├── dio region create            # 创建 Region 容器
-│   ├── dio ai create alpha          # 创建 AI 用户
-│   ├── dio ai exec alpha "cmd"      # 执行命令
+│   ├── dio region:create            # 创建 Region 容器
+│   ├── dio ai:create alpha          # 创建 AI 用户
+│   ├── dio ai:exec alpha "cmd"      # 执行命令
 │   └── 代理服务器 (:3456)            # AI API 请求转发
 │
 ├── EverMemOS (已部署)
@@ -110,7 +110,7 @@
 ### AI 执行 opencode 命令
 
 ```
-用户 → dio ai exec alpha "analyze code"
+用户 → dio ai:exec alpha "analyze code"
   → TheWorld CLI (宿主机)
     → Docker API
       → Region 容器
@@ -133,7 +133,7 @@
 ### 神谕流程
 
 ```
-用户 → dio oracle send --to alpha --message "hello"
+用户 → dio oracle:send --to alpha --message "hello"
   → TheWorld CLI
     → 记录到 EverMemOS
     → 写入 ~/.the-world/regions/region-a/inbox/oracle.msg
@@ -226,17 +226,17 @@ the-world-ai/
 - 验证 EverMemOS 连接
 - 启动 AI Proxy Server（监听 :3456）
 
-#### `dio region create <name>`
+#### `dio region:create <name>`
 - 构建 Region 镜像（如果不存在）
 - 创建容器并挂载文件系统
 - 启动 Socket Daemon
 
-#### `dio ai create <name>`
+#### `dio ai:create <name>`
 - 注册 AI 到代理服务器（生成 dummy key）
 - 在容器内创建 Linux 用户
 - 注入 opencode 配置（包含 dummy key）
 
-#### `dio ai exec <ai> <cmd>`
+#### `dio ai:exec <ai> <cmd>`
 - 通过 Socket Daemon 执行命令
 - 以 AI 用户身份运行
 

@@ -32,11 +32,11 @@
 │   ├── dio start                      # 启动 daemon
 │   ├── dio stop                       # 停止 daemon
 │   ├── dio status                     # 查看 daemon 状态
-│   ├── dio region create <name>       # 调用 POST /api/regions
-│   ├── dio region list                # 调用 GET /api/regions
-│   ├── dio ai create <name>           # 调用 POST /api/ai
-│   ├── dio ai exec <ai> <cmd>         # 调用 POST /api/ai/exec
-│   └── dio oracle send                # 调用 POST /api/oracle/send
+│   ├── dio region:create <name>       # 调用 POST /api/regions
+│   ├── dio region:list                # 调用 GET /api/regions
+│   ├── dio ai:create <name>           # 调用 POST /api/ai
+│   ├── dio ai:exec <ai> <cmd>         # 调用 POST /api/ai/exec
+│   └── dio oracle:send                # 调用 POST /api/oracle/send
 │
 ├── EverMemOS (已部署)
 │   └── http://localhost:1995

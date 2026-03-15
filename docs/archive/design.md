@@ -325,7 +325,7 @@ docker run \
 
 ```
 1. 人类 → TheWorld CLI/API
-   dio oracle send --to alpha --message "检查生产日志"
+   dio oracle:send --to alpha --message "检查生产日志"
 
 2. TheWorld 层
    ├── 验证目标 AI 存在

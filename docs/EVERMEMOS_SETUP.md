@@ -211,13 +211,13 @@ WORLD_DATA_DIR=/var/lib/the-world
 dio start
 
 # 创建 Region
-dio region create -n region-a
+dio region:create -n region-a
 
 # 创建 AI
-dio ai create -n alpha
+dio ai:create -n alpha
 
 # 开始使用！
-dio ai speak -t alpha -r region-a -m "hello world"
+dio ai:speak -t alpha -r region-a -m "hello world"
 ```
 
 ## 11. 分层记忆说明

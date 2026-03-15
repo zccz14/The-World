@@ -69,7 +69,7 @@
 
 ### 手工联调
 
-1. 创建 Region：`dio region create -n region-a`
+1. 创建 Region：`dio region:create -n region-a`
 2. 提交 ticket：`dio maintenance:request -r region-a -a apt_update -m "refresh apt index"`
 3. 批准 ticket：`dio maintenance:approve -i <id>`
 4. 执行 ticket：`dio maintenance:run -i <id>`
